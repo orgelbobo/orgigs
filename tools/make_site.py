@@ -11,7 +11,7 @@
 
   tools/make_site.py [--version X.Y] [OUT_DIR]      (default: dev, build/site)
 
-Build the packages first (./build.sh and ./build.sh --board smk37 --model elite). Nothing is uploaded."""
+Build the packages first (./build.sh and ./build.sh --board smk37 --model elite, with --release X.Y for --version X.Y). Nothing is uploaded."""
 import argparse
 import json
 import re
@@ -23,8 +23,9 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 import fm1_install as I  # noqa: E402
 
-# the editions on the site: (build file, published suffix, model the package must carry)
-PACKAGES = [("build/orgigs_fm1-smk37-elite.fwsc", "-smk37-elite", "SMK-37 Elite"), ("build/orgigs_fm1.fwsc", "", "FM-1")]
+# the editions on the site: (build file, published suffix, model the package must carry); a release's files carry
+# its version (./build.sh --release X.Y: build/orgigs_fm1-X.Y.fwsc)
+PACKAGES = [("build/orgigs_fm1{v}-smk37-elite.fwsc", "-smk37-elite", "SMK-37 Elite"), ("build/orgigs_fm1{v}.fwsc", "", "FM-1")]
 DOCS = ["OrGigs_Elite_Manual.pdf", "OrGigs_Elite_At_a_glance.pdf", "OrGigs_FM-1_Manual.pdf", "OrGigs_FM-1_At_a_glance.pdf"]
 
 
@@ -110,7 +111,8 @@ def main(argv=None):
     ap.add_argument("out", nargs="?", default=str(ROOT / "build/site"))
     a = ap.parse_args(argv)
     out = Path(a.out)
-    pkgs = [package(p, s, m, a.version) for p, s, m in PACKAGES]
+    v = "" if a.version == "dev" else "-" + a.version
+    pkgs = [package(p.format(v=v), s, m, a.version) for p, s, m in PACKAGES]
     sim = ROOT / "sim/web"
     for f in ("index.html", "sim.js", "orgigs_sim.js"):
         if not (sim / f).exists():
