@@ -1,0 +1,54 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: GPL-3.0-only -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OrGigs</title>
+<style>
+  :root { --bg: #f6f5f2; --panel: #fff; --fg: #1d1b18; --dim: #6b655c; --line: #dcd7ce; --acc: #b86a00; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --bg: #12110f; --panel: #1b1a17; --fg: #ece8e1; --dim: #a39b8f; --line: #34302a; --acc: #e68700; }
+  }
+  :root[data-theme="dark"] { --bg: #12110f; --panel: #1b1a17; --fg: #ece8e1; --dim: #a39b8f; --line: #34302a; --acc: #e68700; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 40px 16px 64px; }
+  h1 { font-size: 34px; margin: 0; } h1 span { color: var(--acc); }
+  .lead { color: var(--dim); max-width: 64ch; }
+  .eds { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 24px 0; }
+  .ed { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 16px; display: grid; gap: 10px; align-content: start; }
+  .ed img { width: 100%; max-width: 240px; image-rendering: pixelated; border-radius: 4px; justify-self: center; }
+  .ed h2 { margin: 0; font-size: 20px; } .ed h2 small { color: var(--dim); font-weight: 400; font-size: 14px; }
+  .ed p { margin: 0; }
+  .links { display: flex; flex-wrap: wrap; gap: 8px; }
+  .links a { border: 1px solid var(--acc); color: var(--acc); border-radius: 4px; padding: 4px 10px; text-decoration: none; font-size: 15px; }
+  .links a.main { background: var(--acc); color: #fff; }
+  .small { color: var(--dim); font-size: 14px; } a { color: var(--acc); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Or<span>Gigs</span></h1>
+  <p class="lead">It's an organ. Free and open source (GPL-3.0), for the M-VAVE SMK-37 Elite and FM-1. Version dev.</p>
+  <div class="eds">
+    <div class="ed">
+      <img src="docs/card-elite.png" alt="The OrGigs welcome screen on the SMK-37 Elite">
+      <h2>SMK-37 Elite</h2>
+      <p>A three-manual organ with 84 free-running tone generators and no voice stealing: eight models from tonewheel and combo organs to pipe organs and free reeds, drawbars, percussion, rotary, drive, delay and reverb, 16 performance setups, three MIDI zones and Yamaha SEQTRAK control.</p>
+      <div class="links"><a class="main" href="install/">Install</a><a href="docs/OrGigs_Elite_Manual.pdf">Manual</a>
+        <a href="docs/OrGigs_Elite_At_a_glance.pdf">At a glance</a></div>
+    </div>
+    <div class="ed">
+      <img src="docs/card-fm1.png" alt="The OrGigs welcome screen on the FM-1">
+      <h2>FM-1</h2>
+      <p>A three-manual organ with 84 free-running tone generators and no voice stealing: eight models from tonewheel and combo organs to pipe organs and free reeds, drawbars, percussion, rotary, drive, delay and reverb, 16 performance setups, three MIDI zones and Yamaha SEQTRAK control.</p>
+      <div class="links"><a class="main" href="install/">Install</a><a href="try/">Try it</a>
+        <a href="docs/OrGigs_FM-1_Manual.pdf">Manual</a><a href="docs/OrGigs_FM-1_At_a_glance.pdf">At a glance</a></div>
+    </div>
+  </div>
+  <p class="small">Packages: <a href="firmware/orgigs-dev-smk37-elite.fwsc">orgigs-dev-smk37-elite.fwsc</a> (SMK-37 Elite_970), <a href="firmware/orgigs-dev.fwsc">orgigs-dev.fwsc</a> (FM-1_970) · <a href="firmware/LICENSING.md">licences</a>. Installing custom firmware is at
+    your own risk. All product names are trademarks of their owners and are used only to identify compatible devices;
+    OrGigs is not affiliated with them.</p>
+</main>
+</body>
+</html>
