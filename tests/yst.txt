@@ -1,0 +1,78 @@
+# YST on the FM-1 (tests/run_host.sh tests/yst.txt): a SEQTRAK answers (the replies are typed in here as it sends them).
+# Buttons: 2 FX 3 SEL 7 GLO 8 HOME 10 ARP 11 SEQ. Encoders: 0 SELECT 2..5 KNOB1..4 6 PRESETS.
+# --- the YST screen: GLO five times (ZONE CLONE HARMONIC CHORD YST): YST is off, nothing goes to the USB
+2000 btn 7
+2100 btn 7
+2200 btn 7
+2300 btn 7
+2400 btn 7
+2500 shot
+# --- ENV: YST on (3000); it reads the tracks
+3000 btn 4
+# --- OrGigs asks, one question at a time, the type and sound of every track (not the sampler's sound: it
+#     never answers that); the SEQTRAK answers each 10 ms later. Track 4 re-typed to synth, track 8 sound 858.
+3010 sysex 43107F1C0C01103C01
+3020 sysex 43107F1C0C0110330001
+3030 sysex 43107F1C0C01113C01
+3040 sysex 43107F1C0C0111330027
+3050 sysex 43107F1C0C01123C01
+3060 sysex 43107F1C0C011233004C
+3070 sysex 43107F1C0C01133C02
+3080 sysex 43107F1C0C0113330703
+3090 sysex 43107F1C0C01143C01
+3100 sysex 43107F1C0C0114330077
+3110 sysex 43107F1C0C01153C01
+3120 sysex 43107F1C0C011533022B
+3130 sysex 43107F1C0C01163C01
+3140 sysex 43107F1C0C0116330341
+3150 sysex 43107F1C0C01173C02
+3160 sysex 43107F1C0C0117330659
+3170 sysex 43107F1C0C01183C02
+3180 sysex 43107F1C0C0118330767
+3190 sysex 43107F1C0C01193C04
+3200 sysex 43107F1C0C0119330F0C
+3210 sysex 43107F1C0C011A3C05
+4100 shot
+# --- SELECT: track 8 (SYNTH 1); the upper zone now plays channel 8
+4200 enc 0 7
+4300 keys 0x80
+4400 keys 0
+4500 shot
+# --- KNOB1 cutoff +3 steps, SEL + KNOB1 volume; PRESETS the next sound; ARP mute, SEQ voice
+4600 enc 2 3
+4700 down 3
+4750 enc 2 -2
+4800 up 3
+4900 enc 6 1
+5000 btn 10
+5100 btn 11
+5200 shot
+# --- the SEQTRAK turns its cutoff knob on track 8: it shows, the organ does not get it
+5300 midi 0xB7 74 20
+# --- DX chosen on the SEQTRAK (it sends CurrentPart 01 10 27): the keys play channel 10; then SYNTH 1 again
+5310 sysex 43107F1C0C01102709
+5320 keys 0x80
+5330 keys 0
+5340 sysex 43107F1C0C01102707
+5400 shot
+# --- its pattern plays track 1 (channel 1, where the upper zone listens) and it sends its clock: nothing goes back
+5420 midi 0x90 60 100
+5430 midi 0xF8 0 0
+5440 midi 0x80 60 0
+# --- LFO: REFRESH, read again (the SEQTRAK answers the first question); ENV: off, its notes reach the zones again
+#     (the upper zone plays channel 8); ENV: on again, it reads from the start
+5450 btn 5
+5460 sysex 43107F1C0C01103C01
+5500 btn 4
+5520 midi 0x90 60 100
+5525 midi 0x80 60 0
+5550 btn 4
+5560 sysex 43107F1C0C01103C01
+# --- the mixer and the cloner show the tracks
+5800 btn 7
+5900 btn 7
+6000 shot
+6100 btn 8
+6150 btn 8
+6200 shot
+6300 end

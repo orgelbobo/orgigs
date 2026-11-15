@@ -1,0 +1,20 @@
+# The Elite's panic and lights (BOARD=smk37 tests/run_host.sh tests/elite_panel.txt; checked by tests/elite_test.py).
+# Buttons: 8 SCALE 10 GLOBE 12 PATCH. Encoders 0..7 = K1..K8.
+# --- a key held on the drawbar screen; SCALE + PATCH: panic (all notes off on all 16 channels), drawbar 9 stays
+500 keys 0x1000
+600 down 8
+650 btn 12
+700 up 8
+800 keys 0
+# --- SCALE + GLOBE: the lights; K4 nothing, K1 the pads' colours (GLOW -> SPLIT), K3 their brightness down
+1000 down 8
+1050 btn 10
+1100 up 8
+1150 shot
+1200 enc 3 2
+1250 shot
+1300 enc 0 1
+1350 shot
+1400 enc 2 -4
+1450 shot
+1600 end

@@ -1,0 +1,59 @@
+# YST on the SMK-37 Elite (BOARD=smk37 tests/run_host.sh tests/yst_elite.txt): bank YST with a SEQTRAK.
+# Buttons: 1 FADER BANK 2 < 3 > 8 SCALE 12 PATCH. Encoders 0..7 = K1..K8. Pads 0..15. Faders 0..3.
+# --- the faders sit somewhere; GLOBE, PATCH twice: the YST screen (off); CHORD: YST on (3000), it reads the tracks
+2800 fader 0 10
+2800 fader 3 100
+2820 btn 10
+2860 btn 12
+2900 btn 12
+3000 btn 9
+# --- OrGigs asks, one question at a time, the type and sound of every track (not the sampler's sound: it
+#     never answers that); the SEQTRAK answers each 10 ms later. Tracks 1-3 are synth tracks.
+3010 sysex 43107F1C0C01103C02
+3020 sysex 43107F1C0C011033066F
+3030 sysex 43107F1C0C01113C02
+3040 sysex 43107F1C0C0111330704
+3050 sysex 43107F1C0C01123C02
+3060 sysex 43107F1C0C0112330B5B
+3070 sysex 43107F1C0C01133C01
+3080 sysex 43107F1C0C0113330077
+3090 sysex 43107F1C0C01143C01
+3100 sysex 43107F1C0C011433022B
+3110 sysex 43107F1C0C01153C01
+3120 sysex 43107F1C0C0115330341
+3130 sysex 43107F1C0C01163C01
+3140 sysex 43107F1C0C0116330373
+3150 sysex 43107F1C0C01173C02
+3160 sysex 43107F1C0C0117330659
+3170 sysex 43107F1C0C01183C02
+3180 sysex 43107F1C0C0118330767
+3190 sysex 43107F1C0C01193C04
+3200 sysex 43107F1C0C0119330F0C
+3210 sysex 43107F1C0C011A3C05
+3700 shot
+# --- pad 10: track 10 (DX, sound 1933); SCALE + K1 its FM algorithm, K5 its volume; > its next sound (1934)
+3800 pad 9 100
+3850 pad 9 0
+3880 down 8
+3900 enc 0 2
+3920 up 8
+4000 enc 4 -3
+4100 btn 3
+4200 shot
+# --- faders 1..3 the SEQTRAK's touch sliders (FX LEVEL CC 102 on channel 1, whatever track); the cutoff (80) is K1's now
+4300 midi 0xB9 74 80
+4400 fader 0 30
+4500 shot
+4600 fader 0 90
+4700 fader 0 100
+# --- fader 4 is the volume here too (no CC); SCALE + pad 2: mute track 2
+4800 fader 3 40
+4900 down 8
+4950 pad 1 100
+4960 pad 1 0
+5000 up 8
+5100 shot
+# --- back to PERFORMANCE
+5200 btn 1
+5300 shot
+5400 end

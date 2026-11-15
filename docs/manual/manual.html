@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>OrGigs FM-1 Owner's Manual</title>
+<style>
+@page { size: A4; margin: 18mm 17mm 20mm 17mm;
+  @bottom-left { content: "OrGigs FM-1 Owner's Manual"; font: 8pt "Segoe UI", Arial, sans-serif; color: #888; }
+  @bottom-right { content: counter(page); font: 9pt "Segoe UI", Arial, sans-serif; color: #555; } }
+@page cover { margin: 0; @bottom-left { content: none; } @bottom-right { content: none; } }
+:root { --ink: #1d1d22; --muted: #5b5b66; --line: #d9d6cf; --amber: #f2a51d; --amber-soft: #fff4dd;
+  --green: #2fbf7d; --dark: #121214; --tint: #f6f4ef; }
+* { -webkit-print-color-adjust: exact; print-color-adjust: exact; box-sizing: border-box; }
+html, body { margin: 0; background: #fff; color: var(--ink); }
+body { font: 10pt/1.5 "Segoe UI", "Helvetica Neue", Arial, sans-serif; }
+h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; font-weight: normal; color: var(--ink); }
+h1 { font-size: 23pt; margin: 0 0 4mm; padding-top: 1mm; break-before: page; break-after: avoid; }
+h1 .num { color: var(--amber); margin-right: 3mm; }
+h2 { font-size: 14pt; margin: 6mm 0 2mm; break-after: avoid; }
+h3 { font-size: 11pt; font-family: "Segoe UI", Arial, sans-serif; font-weight: 600; margin: 4mm 0 1mm; break-after: avoid; }
+p { margin: 0 0 2.4mm; }
+ul, ol { margin: 0 0 2.6mm; padding-left: 5.5mm; }
+li { margin-bottom: 0.8mm; }
+.lead { font-size: 11pt; color: var(--muted); margin-bottom: 4mm; }
+b, strong { font-weight: 600; }
+.k { display: inline-block; font: 600 8pt/1 "Consolas", "Courier New", monospace; letter-spacing: .02em;
+  border: 0.6pt solid #9a978f; border-bottom-width: 1.4pt; border-radius: 3px; padding: 1.2pt 3.5pt; background: #fbfaf7; white-space: nowrap; }
+.d { font: 8.6pt "Consolas", "Courier New", monospace; background: var(--dark); color: var(--amber); padding: 0.6pt 3pt; border-radius: 2px; white-space: nowrap; }
+code { font: 8.8pt "Consolas", "Courier New", monospace; background: var(--tint); padding: 0.5pt 2.5pt; border-radius: 2px; }
+pre { font: 8.6pt/1.45 "Consolas", "Courier New", monospace; background: var(--tint); border-left: 2.5pt solid var(--amber);
+  padding: 2.5mm 3.5mm; margin: 0 0 3mm; white-space: pre-wrap; break-inside: avoid; }
+table { width: 100%; border-collapse: collapse; margin: 1mm 0 4mm; font-size: 9pt; break-inside: auto; }
+th { text-align: left; font-weight: 600; font-size: 8pt; text-transform: uppercase; letter-spacing: .05em; color: var(--muted);
+  border-bottom: 1.2pt solid var(--ink); padding: 1.4mm 2mm 1.2mm 0; }
+td { border-bottom: 0.5pt solid var(--line); padding: 1.5mm 2mm 1.5mm 0; vertical-align: top; }
+tr { break-inside: avoid; }
+td:first-child { white-space: nowrap; }
+.wrap td:first-child { white-space: normal; }
+.note { background: var(--amber-soft); border-left: 2.5pt solid var(--amber); padding: 2.5mm 3.5mm; margin: 2mm 0 4mm; break-inside: avoid; }
+.note.warn { background: #fdeceb; border-left-color: #d9443a; }
+.note p:last-child { margin: 0; }
+.fig { display: flex; gap: 6mm; align-items: flex-start; margin: 2mm 0 4mm; break-inside: avoid; }
+.fig img { width: 62mm; height: 62mm; image-rendering: pixelated; border-radius: 2mm; box-shadow: 0 0 0 0.6pt #000; flex: none; }
+.fig .cap { flex: 1; font-size: 9pt; }
+.fig .cap ol { padding-left: 5mm; }
+.shots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; margin: 2mm 0 4mm; break-inside: avoid; }
+.shots figure { margin: 0; }
+.shots img { width: 100%; image-rendering: pixelated; border-radius: 1.5mm; box-shadow: 0 0 0 0.6pt #000; display: block; }
+.shots figcaption { font-size: 8pt; color: var(--muted); margin-top: 1.2mm; }
+.cols { columns: 2; column-gap: 8mm; }
+.cols > * { break-inside: avoid; }
+.dept { font-size: 7.5pt; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.tag { display: inline-block; font: 600 7.5pt "Consolas", monospace; background: var(--dark); color: var(--amber); padding: 0.8pt 3pt; border-radius: 2px; }
+
+/* cover */
+.cover { page: cover; height: 297mm; width: 210mm; background: var(--dark); color: #eee; position: relative; overflow: hidden; }
+.cover .bars { position: absolute; left: 22mm; right: 22mm; top: 40mm; height: 95mm; display: flex; gap: 5mm; align-items: flex-start; }
+.cover .bar { flex: 1; border-radius: 1.5mm 1.5mm 0 0; position: relative; }
+.cover .bar::after { content: ""; position: absolute; left: -1mm; right: -1mm; bottom: -3mm; height: 3mm; background: #e9e4d6; border-radius: 0.6mm; }
+.cover .t { position: absolute; left: 22mm; right: 22mm; top: 168mm; }
+.cover .t .pre { font: 600 9pt "Segoe UI", Arial, sans-serif; letter-spacing: .25em; text-transform: uppercase; color: var(--amber); }
+.cover .t h1 { break-before: auto; color: #fff; font-size: 46pt; line-height: 1.05; margin: 3mm 0 4mm; padding: 0; }
+.cover .t .sub { font: 13pt/1.45 Georgia, serif; color: #cfcac0; max-width: 150mm; }
+.cover .foot { position: absolute; left: 22mm; right: 22mm; bottom: 20mm; display: flex; justify-content: space-between;
+  font: 8.5pt "Segoe UI", Arial, sans-serif; color: #8d8a84; border-top: 0.6pt solid #3a3a3e; padding-top: 3mm; }
+
+/* contents */
+.toc { list-style: none; padding: 0; margin: 4mm 0 0; font-size: 10.5pt; }
+.toc li { display: flex; gap: 3mm; padding: 1.6mm 0; border-bottom: 0.5pt solid var(--line); margin: 0; }
+.toc .n { color: var(--amber); width: 7mm; font-family: Georgia, serif; }
+.toc .s { color: var(--muted); font-size: 9pt; margin-left: auto; text-align: right; }
+.first h1 { break-before: auto; }
+</style>
+</head>
+<body>
+
+<!-- ============ COVER ============ -->
+<section class="cover">
+  <div class="bars">
+    <div class="bar" style="height:100%;background:#8b4a26"></div>
+    <div class="bar" style="height:100%;background:#8b4a26"></div>
+    <div class="bar" style="height:100%;background:#efe9da"></div>
+    <div class="bar" style="height:58%;background:#efe9da"></div>
+    <div class="bar" style="height:30%;background:#2b2b30"></div>
+    <div class="bar" style="height:72%;background:#efe9da"></div>
+    <div class="bar" style="height:20%;background:#2b2b30"></div>
+    <div class="bar" style="height:44%;background:#2b2b30"></div>
+    <div class="bar" style="height:86%;background:#f2a51d"></div>
+  </div>
+  <div class="t">
+    <div class="pre">Owner's Manual</div>
+    <h1>OrGigs FM-1</h1>
+    <div class="sub">Three-manual organ, pipe organ and free-reed workstation with three MIDI Zones, for the M-VAVE FM-1.</div>
+  </div>
+  <div class="foot"><span>Firmware package FM-1_970</span><span>October 2026</span></div>
+</section>
+
+<!-- ============ CONTENTS ============ -->
+<section class="first">
+<h1>Contents</h1>
+<ol class="toc">
+  <li><span class="n">1</span>Welcome<span class="s">What OrGigs is</span></li>
+  <li><span class="n">2</span>Quick start<span class="s">Play in five minutes</span></li>
+  <li><span class="n">3</span>The panel<span class="s">Every control at a glance</span></li>
+  <li><span class="n">4</span>The screens<span class="s">Drawbars, FX, MIDI Zones</span></li>
+  <li><span class="n">5</span>The eight instruments<span class="s">Models and departments</span></li>
+  <li><span class="n">6</span>Drawbars and stops<span class="s">What each drawbar means</span></li>
+  <li><span class="n">7</span>Manuals and coupler<span class="s">Upper, lower, pedal</span></li>
+  <li><span class="n">8</span>Drawbar presets and performance setups<span class="s">Recall and save your sounds, back them up</span></li>
+  <li><span class="n">9</span>Effects and the FX screen<span class="s">Drive, vibrato, rotary, delay, reverb</span></li>
+  <li><span class="n">10</span>MIDI Zones<span class="s">Router, cloner, harmonic, chord memory</span></li>
+  <li><span class="n">11</span>Installing, updating, going back<span class="s">Firmware tools and recovery</span></li>
+  <li><span class="n">12</span>The browser simulator<span class="s">Practise without the FM-1</span></li>
+  <li><span class="n">13</span>Specifications and limits</li>
+  <li><span class="n">A</span>MIDI implementation chart</li>
+  <li><span class="n">B</span>Troubleshooting</li>
+</ol>
+<p class="note">All product names are trademarks of their owners and are used only to identify compatible devices. OrGigs is not affiliated with them.</p>
+</section>
+
+<!-- ============ 1 ============ -->
+<section>
+<h1><span class="num">1</span>Welcome</h1>
+<p class="lead">OrGigs turns the M-VAVE FM-1 into a complete organ: tonewheel and 1960s combo organs, baroque and cathedral pipe organs, and French musette and tango bandoneon reeds. It plays on three manuals, and it works as a MIDI router between your keyboards and your synths.</p>
+
+<h3>Highlights</h3>
+<ul>
+  <li><b>84 free-running tone generators</b> from C1 to B7. Every key gets its own sound, and no note is ever cut off to make room for another (no voice stealing).</li>
+  <li><b>Eight instrument models</b> in three departments: Vintage &amp; Combo, Pipe, and Free Reed.</li>
+  <li><b>Three manuals</b> with independent registrations: Upper (9 drawbars), Lower (9 drawbars) and Pedal (4 stops).</li>
+  <li><b>Effects per manual, like a mixer</b>: each manual has its own tube drive, scanner vibrato and chorus or tremulant, its own rotary switch and its own sends to a shared stereo ping-pong delay and four reverbs up to a 7.5-second cathedral. Tonewheel percussion and a two-rotor rotary with real inertia.</li>
+  <li><b>One list of drawbar registrations</b>: 36 classic tonewheel registrations, pipe and free-reed registrations, a pedal list, and 16 user slots. <b>16 performance setups</b> store the whole instrument, one on each white key.</li>
+  <li><b>A MIDI mixer</b>: 16 channel volumes (CC 7), kept with each setup.</li>
+  <li><b>Panel lights</b> for dark stages: all keys and buttons can glow dimly, or light fully.</li>
+  <li><b>Three MIDI Zones</b>, one per manual: each takes its own MIDI channel and key range, plays its manual, and sends the notes on (with their velocity) to your synths, transposed, cloned to more channels, spread over nine harmonic channels or turned into chords.</li>
+</ul>
+
+<h3>How to read this manual</h3>
+<p>Panel buttons and encoders are written like <span class="k">FX</span> or <span class="k">PRESETS</span>. Text that appears on the FM-1's screen is written like <span class="d">ROTARY FAST</span>. <span class="k">SEL</span> + <span class="k">KNOB 3</span> means: hold <span class="k">SEL</span> and turn <span class="k">KNOB 3</span>.</p>
+
+<div class="note"><p><b>About SEL.</b> The FM-1's four knobs can't be pushed. OrGigs uses a held <span class="k">SEL</span> button as the "push" instead, so every knob has a second function.</p></div>
+<p><b>The full version.</b> OrGigs is at heart a firmware for the M-VAVE SMK-37 Elite: its main features were designed there, and this FM-1 version is a compact edition of it. The Elite version has the same organ and more around it: an insert effect, a master EQ and compressor, your own rotary cabinets, a mixer with pan, sends, mute and solo, and five pad layouts. If you have an Elite, check it out. Both read each other's backups (chapter 8).</p>
+</section>
+
+<!-- ============ 2 ============ -->
+<section>
+<h1><span class="num">2</span>Quick start</h1>
+<p class="lead">Five steps from power-on to a full organ sound.</p>
+<ol>
+  <li><b>Power on.</b> OrGigs starts as you left it. On a new install that is performance setup 1, a tonewheel jazz sound with percussion and chorus.</li>
+  <li><b>Play.</b> The 27 keys cover F3 to G5. Use <span class="k">OCT−</span> and <span class="k">OCT+</span> to move the keyboard down two or up three octaves. Set the volume with the <span class="k">MASTER</span> knob.</li>
+  <li><b>Try the 16 factory setups.</b> Hold <span class="k">SEL</span>: the 16 white keys (F3 to G5) light up. Press one of them: 1 tonewheel jazz, 2 cathedral, 3 Paris musette, 4 Brit Combo, 5 tonewheel rock, 6 Italo Combo, 7 baroque organ, 8 tango bandoneon, 9 British hard rock, 10 gospel, 11 baroque rock ballad, 12 60s transistor combo, 13 reggae, 14 cathedral trumpet, 15 musette master, 16 psychedelic space pad.</li>
+  <li><b>Pull the drawbars.</b> <span class="k">ENV</span>, then <span class="k">KNOB 1</span>–<span class="k">KNOB 4</span> move drawbars 1–4; <span class="k">LFO</span> gives drawbars 5–8, <span class="k">EDIT</span> drawbar 9. Or turn <span class="k">PRESETS</span> for ready-made registrations, from the classic jazz lead to the Mixtur.</li>
+  <li><b>Speed up the rotary.</b> Press <span class="k">REC</span> to switch the rotary speaker between slow and fast, and listen to it ramp up. <span class="k">PLAY</span> brakes it to a stop.</li>
+</ol>
+<p>To try another instrument, turn <span class="k">ALGORITHM</span> (models 1–8). To keep what you've built, hold <span class="k">SAVE</span> and press one of the 16 white keys: the whole instrument is stored in that performance setup.</p>
+</section>
+
+<!-- ============ 3 ============ -->
+<section>
+<h1><span class="num">3</span>The panel</h1>
+<p class="lead">Every control of the FM-1 and what OrGigs does with it.</p>
+
+<h2>Three rules that hold on every screen</h2>
+<table class="wrap">
+<tr><th style="width:28%">Encoder</th><th>Always does</th></tr>
+<tr><td><span class="k">SELECT</span></td><td>Chooses the manual (and its MIDI zone): <span class="d">UPPER</span>, <span class="d">LOWER</span>, <span class="d">PEDAL</span></td></tr>
+<tr><td><span class="k">ALGORITHM</span></td><td>Chooses the instrument model 1–8</td></tr>
+<tr><td><span class="k">PRESETS</span></td><td>Turns through the drawbar list of that manual (chapter 8)</td></tr>
+</table>
+
+<h2>The buttons</h2>
+<p>The twelve buttons beside the screen sit in two rows of six. The FX, mixer, lights and MIDI screens draw the same two rows at their bottom edge, so you can see what each button does there.</p>
+<table>
+<tr><th></th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th></tr>
+<tr><td>Top row</td><td><span class="k">FX</span></td><td><span class="k">SEL</span></td><td><span class="k">ENV</span></td><td><span class="k">LFO</span></td><td><span class="k">EDIT</span></td><td><span class="k">GLO</span></td></tr>
+<tr><td>Bottom row</td><td><span class="k">HOME</span></td><td><span class="k">SAVE</span></td><td><span class="k">ARP</span></td><td><span class="k">SEQ</span></td><td><span class="k">PLAY</span></td><td><span class="k">REC</span></td></tr>
+</table>
+
+<table class="wrap">
+<tr><th style="width:24%">Control</th><th>Function</th><th style="width:30%">With SEL held</th></tr>
+<tr><td><span class="k">KNOB 1</span>–<span class="k">KNOB 4</span></td><td>The four parameters of the screen</td><td>The second row of the screen</td></tr>
+<tr><td><span class="k">MASTER</span></td><td>Output volume</td><td>—</td></tr>
+<tr><td><span class="k">ENV</span></td><td>Drawbars 1–4. FX: the upper manual's row. Mixer: row 1. In the MIDI Zones: a switch of the screen</td><td>In the MIDI Zones: a second switch</td></tr>
+<tr><td><span class="k">LFO</span></td><td>Drawbars 5–8. FX: the lower manual's row. Mixer: row 2. In the MIDI Zones: a switch</td><td>Ditto</td></tr>
+<tr><td><span class="k">EDIT</span></td><td>Drawbars 1, 3, 4 and 9 (drawbar 9 on <span class="k">KNOB 4</span>). In the MIDI Zones: a switch</td><td>Ditto</td></tr>
+<tr><td><span class="k">FX</span></td><td>The FX screen. Press again: back to the drawbars</td><td>—</td></tr>
+<tr><td><span class="k">GLO</span></td><td>The MIDI Zones. Press again: the next of their five screens</td><td>The panel lights (chapter 4)</td></tr>
+<tr><td><span class="k">HOME</span></td><td>On the drawbars: the MIDI mixer; press again: back. Everywhere else: back to the drawbars</td><td><b>Panic</b>: all notes off, inside and on all 16 MIDI channels</td></tr>
+<tr><td><span class="k">SAVE</span></td><td>Tap: store the drawbars of the manual into a user slot of the drawbar list. Hold + one of the 16 white keys: store the whole instrument into that performance setup</td><td>—</td></tr>
+<tr><td><span class="k">SEL</span></td><td>Held: the 16 white keys recall the performance setups. Pressing it also shows the processor load, <span class="d">DSP 10%</span></td><td>—</td></tr>
+<tr><td><span class="k">ARP</span></td><td>Vibrato / chorus of the manual on and off (tremulant on pipe and reed models). FX: the pedal's row. Mixer: row 3. In the MIDI Zones: a switch</td><td>In the MIDI Zones: a second switch</td></tr>
+<tr><td><span class="k">SEQ</span></td><td>Coupler II/I on and off (the upper keys also play the lower registration). FX: the manual through the rotary or not. Mixer: row 4. In the MIDI Zones: a switch</td><td>Ditto</td></tr>
+<tr><td><span class="k">PLAY</span></td><td>Rotary brake</td><td>—</td></tr>
+<tr><td><span class="k">REC</span></td><td>Rotary slow ↔ fast</td><td>The manual through the rotary or not</td></tr>
+<tr><td><span class="k">OCT−</span> <span class="k">OCT+</span></td><td>Octave of the FM-1's keys, −2 … +3</td><td>—</td></tr>
+<tr><td>Keys</td><td>Play the organ. In the clone and harmonic screens they become switches (chapter 10)</td><td>The 16 white keys: performance setups</td></tr>
+</table>
+
+<p>The button lights show what's active: the drawbar group (<span class="k">ENV</span>/<span class="k">LFO</span>/<span class="k">EDIT</span>), the FX, mixer or MIDI screen (<span class="k">FX</span>/<span class="k">HOME</span>/<span class="k">GLO</span>), vibrato (<span class="k">ARP</span>), the coupler (<span class="k">SEQ</span>), rotary brake (<span class="k">PLAY</span>) and fast (<span class="k">REC</span>), and a shifted octave (<span class="k">OCT−</span>/<span class="k">OCT+</span>). On the FX and mixer screens the row buttons glow and the chosen row is lit. In the MIDI Zones the five switch buttons light when their switch is on. For dark stages, the panel lights (chapter 4) let all keys and buttons glow.</p>
+
+<div class="note"><p><b>Touch strips.</b> The FM-1's two touch strips can't be read by this firmware. Their jobs (rotary speed, bellows, pitch bend or rotary kick) are available from any external controller as MIDI CC 1 and pitch bend; see chapter 10.</p></div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section>
+<h1><span class="num">4</span>The screens</h1>
+<p class="lead">The 240 × 240 display shows the drawbars, the FX screen, the MIDI mixer, the panel lights and the five screens of the MIDI Zones (the fifth: YST, the Yamaha SEQTRAK). At power-on the welcome screen lets the nine drawbars grow down before the OrGigs logo appears; any key or button skips it.</p>
+
+<h2>The drawbars</h2>
+<div class="fig">
+  <img src="img/screen-b3.png" alt="Drawbar screen">
+  <div class="cap">
+    <ol>
+      <li><b>Top bar.</b> Model number and short name (<span class="d">1 WHEEL</span>), the manual (<span class="d">UPPER</span>), the drawbar group the knobs hold (<span class="d">DB1-4</span>, <span class="d">DB5-8</span>, <span class="d">DB9</span>), and on the right the drawbar preset (<span class="d">P1</span>). A star (<span class="d">P1*</span>) means the drawbars have been moved since the preset was recalled.</li>
+      <li><b>Drawbars.</b> The nine drawbars of the manual, 0–8. The colour shows the family. Vintage: brown sub-harmonics, white octaves, dark grey the in-between footages, as on a tonewheel organ. Pipe: gold principals, blue flutes, red strings and reeds. Reed: violet the detuned reeds, grey the air. The amber marks show the drawbars the four knobs move right now.</li>
+      <li><b>Mini-bars.</b> The other two manuals, so you see the whole registration; <span class="d">II/I</span> when the coupler is on, and the performance setup (<span class="d">S1</span>). When you change something, its name and value cover this strip for about one and a half seconds, for example <span class="d">DRIVE 70</span>.</li>
+      <li><b>Tabs.</b> Three switches in the tonewheel-organ colours, lit when on. <b>Green</b>: vibrato/chorus (<span class="d">V1</span>…<span class="d">C3</span>), or the tremulant on pipe and reed models. <b>Red</b>: percussion on the tonewheel (<span class="d">2F</span> = 2nd fast … <span class="d">3S</span> = 3rd slow), the coupler <span class="d">II/I</span> on the other models. <b>Yellow</b>: the rotary of this manual: its speed (<span class="d">SLOW</span>, <span class="d">FAST</span>, <span class="d">BRK</span>), or <span class="d">OFF</span> when the manual goes past it.</li>
+      <li><b>Knobs</b>, of this manual. Red: drive (<span class="d">DRV</span>). Yellow: delay send (<span class="d">DLY</span>). Green: reverb send, labelled with the room: <span class="d">SPR</span>ing, <span class="d">STG</span> stage, <span class="d">HAL</span>l, <span class="d">CAT</span>hedral.</li>
+    </ol>
+  </div>
+</div>
+
+<div class="shots">
+  <figure><img src="img/screen-cathedral.png" alt=""><figcaption>Cathedral organ, performance setup 2, just recalled</figcaption></figure>
+  <figure><img src="img/screen-musette.png" alt=""><figcaption>Paris musette: violet drawbars are the detuned reeds</figcaption></figure>
+  <figure><img src="img/screen-fx.png" alt=""><figcaption>The FX screen (chapter 9)</figcaption></figure>
+</div>
+
+<h2>The FX, mixer, lights and MIDI screens</h2>
+<p>These screens all share one layout, so the screen matches the panel:</p>
+<ol>
+  <li><b>Top bar</b>: what you're editing, and the manual (zone).</li>
+  <li><b>Knob rows</b>: four columns, one under each of <span class="k">KNOB 1</span>–<span class="k">KNOB 4</span>, in the same order as the knobs. On the FX screen there is a row per manual, on the mixer a row per four channels; the row the knobs move is lit. On the MIDI screens the second row shows what the knobs do while <span class="k">SEL</span> is held.</li>
+  <li><b>Message line</b>: the last change, or a hint.</li>
+  <li><b>Button map</b>: the twelve buttons in two rows of six, as on the panel, labelled with what they do on this screen. A lit button is a switch that is on.</li>
+</ol>
+<p>The MIDI screens add a picture above the knob row: the key ranges of the three zones, the channels of the cloner, the footages of the harmonic mapper, or the stored chord (chapter 10).</p>
+
+<h2>The MIDI mixer</h2>
+<div class="fig">
+  <img src="img/screen-mixer.png" alt="MIDI mixer">
+  <div class="cap">
+    <p>On the drawbars, press <span class="k">HOME</span>: 16 knobs for the 16 MIDI channels, in four rows. Each sets the volume of its channel: turning it sends <b>CC 7</b> (channel volume) on that channel, so it acts at once, also on notes that already sound.</p>
+    <p><span class="k">ENV</span> <span class="k">LFO</span> / <span class="k">ARP</span> <span class="k">SEQ</span> choose the row (channels 1–4, 5–8, 9–12, 13–16), as the four buttons sit on the panel; they glow, the chosen one is lit. <span class="k">KNOB 1</span>–<span class="k">KNOB 4</span> move its four channels. The channels the manuals send on are named <span class="d">UM</span>, <span class="d">LM</span> and <span class="d">PM</span> (upper, lower, pedal manual); channels the zones play (out channels, clones, harmonic) are green. <span class="k">HOME</span> again goes back.</p>
+    <p>The mixer belongs to the performance setup. Recalling a setup sends its volumes to the channels that setup plays (not to the others, so the volumes of instruments you don't use stay as they are). The zones' velocity (chapter 10) is separate: it sets how hard the notes are played, the mixer how loud the channel is.</p>
+  </div>
+</div>
+
+<h2>The panel lights</h2>
+<div class="fig">
+  <img src="img/screen-lights.png" alt="Panel lights">
+  <div class="cap">
+    <p>Hold <span class="k">SEL</span> and press <span class="k">GLO</span>. Without light the button labels of the FM-1 are hard to read; here you choose, separately for the 27 keys (<span class="k">KNOB 1</span>) and the twelve buttons (<span class="k">KNOB 2</span>):</p>
+    <ul>
+      <li><span class="d">OFF</span>: only what matters lights, as before.</li>
+      <li><span class="d">DIM</span>: every key or button glows; what matters lights fully. <span class="k">KNOB 3</span> sets how bright the glow is: <span class="d">LEVEL</span> 1 is a faint glow, 10 as bright as FULL (then what matters no longer stands out).</li>
+      <li><span class="d">FULL</span>: every key or button is lit; what matters blinks.</li>
+    </ul>
+    <p>The octave buttons keep their own light. The lights are kept across power-off, not per setup. <span class="k">SEL</span> + <span class="k">GLO</span> again or <span class="k">HOME</span> goes back.</p>
+    <p><span class="d">BACKUP</span>: <span class="k">SEQ</span> sends all your settings to the computer over USB (see <i>Backing up your settings</i> in chapter 8).</p>
+  </div>
+</div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section>
+<h1><span class="num">5</span>The eight instruments</h1>
+<p class="lead">Choose a model with <span class="k">ALGORITHM</span>, on any screen. The model sets the waveforms, the meaning of the drawbars, and the attack and release.</p>
+
+<table class="wrap">
+<tr><th style="width:5%">#</th><th style="width:24%">Model</th><th>Character</th><th style="width:17%">Reverb in its setups</th></tr>
+<tr><td colspan="4" class="dept">Department I — Vintage &amp; Combo organs</td></tr>
+<tr><td>1</td><td><b>Tonewheel Organ</b> <span class="tag">WHEEL</span></td><td>Tonewheel sine tones with a touch of odd harmonics in the bass, key click, harmonic foldback, single-trigger percussion on the upper manual.</td><td>Spring</td></tr>
+<tr><td>2</td><td><b>Brit Combo</b> <span class="tag">BRIT</span></td><td>Triangle-and-pulse divider tone with bright highs and a snappy electronic attack.</td><td>Spring</td></tr>
+<tr><td>3</td><td><b>Italo Combo</b> <span class="tag">ITALO</span></td><td>Bright sawtooth/pulse combo bite of the sixties.</td><td>Spring</td></tr>
+<tr><td>4</td><td><b>Tokyo Combo</b> <span class="tag">TOKYO</span></td><td>Rich, punchy transistor combo tone.</td><td>Stage</td></tr>
+<tr><td colspan="4" class="dept">Department II — Pipe organs</td></tr>
+<tr><td>5</td><td><b>Baroque Organ</b> <span class="tag">BAROQ</span></td><td>Principals, flutes and reeds with pipe "chiff" at the attack and a slight natural detune between pipes.</td><td>Hall</td></tr>
+<tr><td>6</td><td><b>Cathedral Organ</b> <span class="tag">CATH</span></td><td>Slower, grander speech and a long release. Under chords of more than eight notes the wind sags a few cents flat and slightly softer, like a real wind chest.</td><td>Cathedral</td></tr>
+<tr><td colspan="4" class="dept">Department III — Free reeds</td></tr>
+<tr><td>7</td><td><b>Paris Musette</b> <span class="tag">MUSET</span></td><td>Accordion with a wet three-reed musette (one reed tuned up, one down), wooden cassotto body.</td><td>Stage</td></tr>
+<tr><td>8</td><td><b>Tango Bandoneon</b> <span class="tag">BANDO</span></td><td>Bandoneon reeds tuned closer together: less beating, a tighter, more serious tango tone.</td><td>Stage</td></tr>
+</table>
+
+<h3>What changes with the department</h3>
+<table class="wrap">
+<tr><th style="width:22%">&nbsp;</th><th>Vintage &amp; Combo</th><th>Pipe</th><th>Free reed</th></tr>
+<tr><td>FX, SEL + KNOB 1</td><td>Percussion (tonewheel)</td><td>Chiff (pipe attack noise)</td><td>Detune (musette width, in cents)</td></tr>
+<tr><td>FX, KNOB 2</td><td>Scanner vibrato / chorus</td><td>Tremulant</td><td>Tremulant</td></tr>
+<tr><td><span class="k">ARP</span></td><td>Vibrato on / off</td><td>Tremulant on / off</td><td>Tremulant on / off</td></tr>
+<tr><td>FX, KNOB 1 (drive)</td><td>The tube preamp itself</td><td>Tube saturation, blended in</td><td>Tube saturation, blended in</td></tr>
+<tr><td>CC 1 / mod strip</td><td><span class="d">PITCH</span>: rotary slow / fast. <span class="d">ROTARY</span>: slow / brake / fast</td><td>Same as vintage</td><td>Bellows (volume and brightness)</td></tr>
+<tr><td>Pitch bend</td><td><span class="d">PITCH</span>: bends the pitch, ±2 semitones. <span class="d">ROTARY</span>: up = rotary fast while held, down = tutti boost</td><td>Same as vintage</td><td>Bends the pitch</td></tr>
+</table>
+<p><span class="d">PITCH</span> and <span class="d">ROTARY</span> are the <span class="d">BEND</span> setting on the zone screen (<span class="k">SEL</span> + <span class="k">KNOB 4</span>, chapter 10); it counts for every zone.</p>
+<p>The effects belong to the manuals, not to the model: changing the model keeps drive, vibrato, rotary and sends as they are; a performance setup stores them. The drawbars stay where they are too; turn <span class="k">PRESETS</span> to pick a registration (the first time a model is chosen, the list starts in its department's part).</p>
+</section>
+
+<!-- ============ 6 ============ -->
+<section>
+<h1><span class="num">6</span>Drawbars and stops</h1>
+<p class="lead">Each manual has nine drawbars (0 = off, 8 = full). What they mean depends on the department. When you turn one, the screen names it, for example <span class="d">Oktave 4' 6</span>.</p>
+
+<table>
+<tr><th style="width:6%">DB</th><th>Vintage &amp; Combo</th><th>Pipe organ</th><th>Free reed</th></tr>
+<tr><td>1</td><td>16'</td><td>Bourdon 16'</td><td>Bassoon 16'</td></tr>
+<tr><td>2</td><td>5 1/3'</td><td>Prinzipal 8'</td><td>Sub-fifth 5 1/3'</td></tr>
+<tr><td>3</td><td>8'</td><td>Rohrflöte 8'</td><td>Clarinet 8'</td></tr>
+<tr><td>4</td><td>4'</td><td>Gambe / Vox Celeste 8'</td><td>Violin 8' (tuned up)</td></tr>
+<tr><td>5</td><td>2 2/3'</td><td>Oktave 4'</td><td>Musette 8' (tuned down)</td></tr>
+<tr><td>6</td><td>2'</td><td>Spitzflöte 4' + Nasat 2 2/3'</td><td>Piccolo 4'</td></tr>
+<tr><td>7</td><td>1 3/5'</td><td>Superoktave 2' + Terz 1 3/5'</td><td>Bandoneon 4' (detuned)</td></tr>
+<tr><td>8</td><td>1 1/3'</td><td>Mixtur IV</td><td>Sheen 2 2/3' + 2'</td></tr>
+<tr><td>9</td><td>1'</td><td>Trompete 8'</td><td>Valve &amp; air noise</td></tr>
+</table>
+
+<h2>Which drawbars the knobs hold</h2>
+<table><tr><th style="width:22%">Button</th><th style="width:16%">Top bar</th><th>KNOB 1 – KNOB 4</th></tr>
+<tr><td><span class="k">ENV</span></td><td><span class="d">DB1-4</span></td><td>Drawbars 1, 2, 3, 4</td></tr>
+<tr><td><span class="k">LFO</span></td><td><span class="d">DB5-8</span></td><td>Drawbars 5, 6, 7, 8</td></tr>
+<tr><td><span class="k">EDIT</span></td><td><span class="d">DB9</span></td><td>Drawbars 1, 3, 4 (16', 8', 4': the foundation) and 9 (1')</td></tr></table>
+<p>The lit button shows the group. Pressing it again changes nothing, so you always know where you are.</p>
+
+<h2>The pedal</h2>
+<p>The pedal has four stops, on <span class="k">KNOB 1</span>–<span class="k">KNOB 4</span> whichever group is chosen, when the manual is <span class="d">PEDAL</span>:</p>
+<table>
+<tr><th style="width:12%">Knob</th><th style="width:22%">Stop</th><th>Sound</th></tr>
+<tr><td>KNOB 1</td><td>Sub 32'</td><td>The deep floor an octave below 16'</td></tr>
+<tr><td>KNOB 2</td><td>Bourdon 16'</td><td>The main bass</td></tr>
+<tr><td>KNOB 3</td><td>Octave 8'</td><td>Definition and pitch</td></tr>
+<tr><td>KNOB 4</td><td>Posaune 16'</td><td>A reed for weight and attack</td></tr>
+</table>
+<p>Chapter 8 lists the drawbar list, a good set of classic registrations to start from.</p>
+</section>
+
+<!-- ============ 7 ============ -->
+<section>
+<h1><span class="num">7</span>Manuals and coupler</h1>
+<p class="lead">OrGigs is a three-manual organ. From the FM-1's 27 keys you play the manual you choose; external keyboards play all three at once through the MIDI Zones.</p>
+
+<h2>The manual</h2>
+<p>Turn <span class="k">SELECT</span> to choose <span class="d">UPPER</span>, <span class="d">LOWER</span> or <span class="d">PEDAL</span>, on any screen. It decides:</p>
+<ul>
+  <li>which manual's drawbars the knobs edit and the screen shows,</li>
+  <li>which manual's place in the drawbar list <span class="k">PRESETS</span> moves,</li>
+  <li>which manual's effects the drawbar strip and the FX screen's lit row show,</li>
+  <li>which zone the MIDI screens edit, and</li>
+  <li>which manual the FM-1's keys play (unless the keys are set to play by zone ranges, chapter 10).</li>
+</ul>
+
+<h2>Split and auto-pedal</h2>
+<p>The keyboard split of earlier versions is now part of the MIDI Zones: give each zone a key range, set the FM-1's keys to play <span class="d">BY ZONE RANGES</span>, and switch on the <span class="d">AUTO-PEDAL</span> to have the lowest note of the lower zone play the pedal. Chapter 10 shows how.</p>
+
+<h2>Coupler II/I</h2>
+<p>Press <span class="k">SEQ</span>. The upper keys now also play the lower manual's registration, adding its drawbars to your upper sound. <span class="d">II/I</span> appears under the drawbars.</p>
+
+<h2>Octave</h2>
+<p><span class="k">OCT−</span> and <span class="k">OCT+</span> shift the FM-1's keys from −2 to +3 octaves. The lights show when it's shifted. The generators cover C1 to B7, so all 84 notes are reachable.</p>
+
+<div class="note"><p>Changing the manual first releases the notes held on the FM-1's keys, so no note is ever left hanging. Notes coming in over MIDI keep sounding.</p></div>
+</section>
+
+<!-- ============ 8 ============ -->
+<section>
+<h1><span class="num">8</span>Drawbar presets and performance setups</h1>
+<p class="lead">Two kinds of memory: the drawbar list keeps registrations of one manual, performance setups keep the whole instrument.</p>
+
+<h2>The drawbar list</h2>
+<p>All models share one fixed list of registrations, sorted by department, and 16 user slots at its end. The pedal has its own list with 8 user slots. An entry holds only the drawbars (the pedal's four stops), nothing else.</p>
+<ul>
+  <li><b>Recall:</b> turn <span class="k">PRESETS</span>. The screen shows the manual, the number and the name, for example <span class="d">UM 14 BRITISH HARD ROCK</span>; the top bar shows the number (<span class="d">P14</span>). You can turn through the whole list on every model; the drawbars mean what the model's department makes of them (chapter 6).</li>
+  <li><b>Where it starts:</b> each model remembers per manual where in the list it was. The first time, it starts in its department's part: vintage upper at <i>Classic Jazz Lead</i>, lower at <i>Lower Manual Comping</i>; pipe upper at <i>Prinzipal 8'</i>, lower at <i>Begleitung</i>; free reed upper at <i>Clarinet</i>, lower at <i>Bass Chords</i>.</li>
+  <li><b>Save:</b> tap <span class="k">SAVE</span>. On a user slot, the drawbars of the manual go into it; on a factory entry, into the first free user slot: <span class="d">DRAWBARS SAVED UM USER 1</span>. When all user slots are taken, turn to the one to overwrite.</li>
+</ul>
+<p>A star after the number in the top bar (<span class="d">P3*</span>) means the drawbars differ from the entry shown.</p>
+
+<h3>The manuals' list</h3>
+<table class="wrap"><tr><th style="width:16%">Numbers</th><th>Registrations</th></tr>
+<tr><td>1–12<br>Vintage: jazz, soul, gospel</td><td>Classic Jazz Lead <code>888000000</code>, Warm Jazz Comp <code>848000000</code>, Lower Manual Comping <code>008400000</code>, Hollow Funk <code>800000888</code>, Memphis Soul <code>888800000</code>, Whistle / Soul Solo <code>888000008</code>, Gospel Shouting <code>668848588</code>, Gospel Simmering <code>830000378</code>, Real Gospel <code>800000678</code>, Mellow R&amp;B Ballad <code>803600000</code>, Modern Jazz Solo <code>888400000</code>, Big Band Punch <code>888888000</code></td></tr>
+<tr><td>13–22<br>Vintage: rock, pop, reggae</td><td>Full Organ (All Out) <code>888888888</code>, British Hard Rock <code>888800000</code>, Baroque Rock Ballad <code>688600000</code>, Latin Rock Groove <code>886400000</code>, 60s Brit Soul <code>888880000</code>, Heavy Biker Rock <code>888686868</code>, Kingston Reggae Bubble <code>808000000</code>, Psychedelic Space Pad <code>008642000</code>, 70s Arena Rock <code>888888800</code>, 60s Transistor Combo <code>004888642</code></td></tr>
+<tr><td>23–36<br>Vintage: classical imitations</td><td>Stopped Flute 8', Dulciana 8', French Horn 8', Salicional 8', Flutes 8' &amp; 4', Oboe 8', Swell Diapason 8', Trumpet 8', Full Swell, Cello 8', Flute &amp; String 8', Clarinet 8', Theater Tibia 8', Vox Humana 8'</td></tr>
+<tr><td>37–55<br>Pipe</td><td>Prinzipal 8', Prinzipal 8' 4', Begleitung, Rohrflöte 8', Flöten 8' 4', Flöte 4', Gambe Celeste, Streicher, Pianissimo, Trio, Cornet, Bourdon 16' 8', Trompete 8', Trompete + Prinzipal, Choral, Mixtur, Plenum, Organo pleno, Tutti</td></tr>
+<tr><td>56–75<br>Free reed</td><td>Clarinet, Bass Chords, Musette, Violin, Bassoon, Piccolo, Organ, Bandoneon, Bando 4', Tango, Oboe, Accordion, Master, Harmonium, Bright, Dark, Soft, Whisper, Air, Full + Air</td></tr>
+<tr><td>76–91</td><td>USER 1–16</td></tr></table>
+<p>Numbers 1–36 are the 36 classic tonewheel registrations of the list <i>drawbar_presets_36</i>; 23–36 imitate classical organ stops on the tonewheels.</p>
+
+<h3>The pedal's list</h3>
+<table class="wrap"><tr><th style="width:16%">Numbers</th><th>Registrations (Sub 32', Bourdon 16', Octave 8', Posaune 16')</th></tr>
+<tr><td>1–8 Vintage</td><td>16' 8', 16', Soft, Full, 32' 16', Punch, Walking, Rock</td></tr>
+<tr><td>9–16 Pipe</td><td>Plenum, Subbass 16', 32' 16' 8', Posaune 16', Oktavbass 8', Soft 16', Cantus firmus, Tutti</td></tr>
+<tr><td>17–24 Free reed</td><td>Bass, Deep, Reedy, Tango, Sub, Light, Ballad, Dark</td></tr>
+<tr><td>25–32</td><td>USER 1–8</td></tr></table>
+
+<h2>Performance setups</h2>
+<p>A performance setup is the whole instrument, ready for a song. There are 16, one on each white key from F3 to G5.</p>
+<ul>
+  <li><b>Recall:</b> hold <span class="k">SEL</span>. The 16 keys glow and the active one is lit. Press a key: <span class="d">PERFORMANCE SETUP 3</span>. While <span class="k">SEL</span> is held the keys don't play.</li>
+  <li><b>Save:</b> hold <span class="k">SAVE</span> and press one of the 16 keys: <span class="d">SETUP STORED 3</span>. Releasing <span class="k">SAVE</span> after that does not also store the drawbars.</li>
+</ul>
+
+<h3>What a setup stores</h3>
+<ul>
+  <li>The instrument model, and all drawbars of all three manuals, including the pedal stops</li>
+  <li>The effects of each manual: drive, vibrato or chorus, tremulant, rotary on or off, delay send and reverb send</li>
+  <li>The shared effects: percussion, chiff / detune, delay time and feedback, reverb room; the coupler</li>
+  <li>The MIDI mixer's 16 volumes</li>
+  <li>The manual, the octave and the places in the drawbar list shown</li>
+  <li>The complete MIDI Zones: channels, ranges, transpose, velocity, filters and the clone, harmonic and chord settings</li>
+</ul>
+<p>Not stored in a setup: the rotary speed, the panel lights, and the MIDI rate (<span class="d">USB-FAST</span>/<span class="d">TRS-SAFE</span>), which belongs to your cables.</p>
+
+<h3>Factory setups</h3>
+<table class="wrap"><tr><th style="width:5%">#</th><th style="width:7%">Key</th><th style="width:22%">Name</th><th>Sound</th></tr>
+<tr><td>1</td><td>F3</td><td>Tonewheel Jazz</td><td>Tonewheel Organ, upper <code>888000000</code>, 3rd percussion fast, chorus C3, rotary, spring reverb</td></tr>
+<tr><td>2</td><td>G3</td><td>Cathedral Plenum</td><td>Cathedral organ: bourdon, principal, octave, super-octave and mixture; pedal 32' 16' 8'; cathedral reverb</td></tr>
+<tr><td>3</td><td>A3</td><td>Paris Musette</td><td>Three wet 8' reeds with a little air, tremulant, a touch of delay, stage reverb</td></tr>
+<tr><td>4</td><td>B3</td><td>Brit Combo</td><td>Brit Combo 8' 4' 2 2/3' 2', vibrato V2, rotary, a little delay</td></tr>
+<tr><td>5</td><td>C4</td><td>Tonewheel Rock</td><td>Tonewheel Organ, all drawbars out, heavy drive, chorus, stage reverb</td></tr>
+<tr><td>6</td><td>D4</td><td>Italo Combo</td><td>Italo Combo, bright, a short slapback delay</td></tr>
+<tr><td>7</td><td>E4</td><td>Baroque</td><td>Baroque organ, principals 8' 4', flutes on the lower manual, hall</td></tr>
+<tr><td>8</td><td>F4</td><td>Tango</td><td>Tango bandoneon, bassoon + clarinet, a light tremulant</td></tr>
+<tr><td>9</td><td>G4</td><td>British Hard Rock</td><td>Tonewheel <code>888800000</code> hard into the tube, no vibrato, rotary</td></tr>
+<tr><td>10</td><td>A4</td><td>Gospel</td><td>Tonewheel Gospel Shouting <code>668848588</code> over Lower Manual Comping, chorus</td></tr>
+<tr><td>11</td><td>B4</td><td>Baroque Rock Ballad</td><td>Tonewheel <code>688600000</code>, chorus, rotary, hall</td></tr>
+<tr><td>12</td><td>C5</td><td>60s Transistor Combo</td><td>Brit Combo <code>004888642</code>, vibrato V2, no rotary</td></tr>
+<tr><td>13</td><td>D5</td><td>Reggae Bubble</td><td>Tonewheel <code>808000000</code>, chorus C1, a delay on the upper manual</td></tr>
+<tr><td>14</td><td>E5</td><td>Cathedral Trumpet</td><td>Plenum with Trompete over the accompaniment, pedal with Posaune, cathedral reverb</td></tr>
+<tr><td>15</td><td>F5</td><td>Musette Master</td><td>All reeds of the musette, wide detune</td></tr>
+<tr><td>16</td><td>G5</td><td>Psychedelic Space Pad</td><td>Tokyo Combo <code>008642000</code>, chorus, rotary, a long delay into the hall</td></tr></table>
+<p>All 16 start with the standard MIDI Zones (upper on channel 1, lower on 2, pedal on 3, full key range, velocity through) and the mixer at 100.</p>
+
+<h2>What is kept after power-off</h2>
+<p>Everything: the instrument as you left it, the 16 setups, the user slots of the drawbar lists, the panel lights and the MIDI rate.</p>
+<div class="note"><p>OrGigs writes to its memory about 2 seconds after your last change, and only when nothing is sounding, because writing would interrupt the audio for a moment. Before switching off, take your hands off the keys for a couple of seconds.</p></div>
+<h2>Backing up your settings</h2>
+<p>Everything OrGigs keeps (the 16 setups, the instrument as you left it, the user drawbars, the lights) fits into one small backup file, sent over the USB cable as MIDI SysEx. Keep one before you install another firmware: BoGigs, for example, uses the same memory and starts OrGigs from the factory settings afterwards. The FM-1 and the SMK-37 Elite read each other's backups.</p>
+<p>On the computer, <code>tools/orgigs_backup.py</code> (Python with mido and python-rtmidi, as the installer) does it; close other programs that use the OrGigs MIDI port first.</p>
+<table>
+<tr><th>Command</th><th>What it does</th></tr>
+<tr><td><code>orgigs_backup.py --save my.syx</code></td><td>Fetches everything into <code>my.syx</code></td></tr>
+<tr><td><code>orgigs_backup.py --save s3.syx --setup 3</code></td><td>Fetches setup 3 alone</td></tr>
+<tr><td><code>orgigs_backup.py --listen my.syx</code></td><td>Waits, then keeps what you send from the panel: <span class="k">SEL</span> + <span class="k">GLO</span>, then <span class="k">SEQ</span></td></tr>
+<tr><td><code>orgigs_backup.py --load my.syx</code></td><td>Sends the backup to OrGigs: it replaces everything</td></tr>
+<tr><td><code>orgigs_backup.py --load my.syx --setup 3 --to 7</code></td><td>Takes setup 3 out of a whole backup and loads it into setup 7; the rest stays</td></tr>
+<tr><td><code>orgigs_backup.py --show my.syx</code></td><td>Tells what a file holds</td></tr>
+</table>
+<p>A backup coming in never loads by itself. The screen asks <span class="d">LOAD BACKUP? SAVE: YES</span> (or <span class="d">LOAD INTO SETUP 7?</span>): <span class="k">SAVE</span> loads it, any other button keeps everything as it is; after a minute without an answer nothing is loaded. Before it loads, OrGigs sends back everything as it was, and the tool keeps that as <code>my-before-DATE.syx</code>, so one <code>--load</code> of that file undoes it.</p>
+<p>The files are plain SysEx: any SysEx program (MIDI-OX, SysEx Librarian, …) can receive and keep them, and send them back with about 50 ms between the messages. A damaged file, or one from another OrGigs settings version, is refused (<span class="d">BACKUP: DAMAGED</span> / <span class="d">OTHER VERSION</span>).</p>
+<div class="note"><p><b>Updating from an earlier OrGigs.</b> The eight setups of version 2 become setups 1–8 (their one effect chain goes to all three manuals; the pedal without vibrato); setups 9–16 start from the factory. Drawbar presets you stored in version 2 are not carried over: the list and its user slots start fresh. From the first version, the four registrations become setups 1–4.</p></div>
+</section>
+
+<!-- ============ 9 ============ -->
+<section class="fx">
+<h1><span class="num">9</span>Effects and the FX screen</h1>
+<style>.fx h2{margin-top:4mm}.fx td{padding:1.1mm 2mm 1.1mm 0}</style>
+<p class="lead" style="margin-bottom:1mm">Press <span class="k">FX</span>. The effects work like a mixing desk: every manual has its own channel strip, and all share the rotary, the delay and the reverb.</p>
+
+<div class="fig">
+  <img src="img/screen-fx.png" alt="FX screen">
+  <div class="cap">
+    <p>A row per manual: <span class="d">UM</span> upper, <span class="d">LM</span> lower, <span class="d">PM</span> pedal. The lit row is the manual the knobs move; choose it with <span class="k">ENV</span>, <span class="k">LFO</span>, <span class="k">ARP</span> (or <span class="k">SELECT</span>). The <span class="d">L</span> under the name lights when the manual goes through the rotary; <span class="k">SEQ</span> switches it.</p>
+    <table><tr><th style="width:18%">Knob</th><th>Turn: the manual's</th><th>SEL + turn: shared</th></tr>
+    <tr><td>KNOB 1</td><td>Drive</td><td>Percussion (tonewheel), chiff (pipe), detune (reed)</td></tr>
+    <tr><td>KNOB 2</td><td>Vibrato &amp; chorus (vintage) or tremulant (pipe, reed)</td><td>Delay feedback</td></tr>
+    <tr><td>KNOB 3</td><td>Delay send</td><td>Delay time, 20–1000 ms</td></tr>
+    <tr><td>KNOB 4</td><td>Reverb send</td><td>Reverb room</td></tr></table>
+    <p>While <span class="k">SEL</span> is held the screen shows the shared values. <span class="k">PLAY</span> brake and <span class="k">REC</span> slow/fast stay as always; <span class="k">FX</span> or <span class="k">HOME</span> go back to the drawbars.</p>
+  </div>
+</div>
+
+<p>The effects stay with the manuals when you change the model; a performance setup stores them. The sound passes through these stages, in this order.</p>
+<h2>1 · Body and drive (per manual)</h2>
+<ul>
+  <li><b>Vintage &amp; Combo:</b> asymmetric tube overdrive into a speaker cabinet. More <span class="d">DRIVE</span> gives more growl, especially with full drawbars.</li>
+  <li><b>Pipe:</b> a clean limiter; <span class="d">DRIVE</span> blends tube saturation in. The <span class="d">CHIFF</span> (<span class="k">SEL</span> + <span class="k">KNOB 1</span>) is the breathy "spit" of a pipe as it starts speaking.</li>
+  <li><b>Free reed:</b> the wooden cassotto chamber of an accordion, with brightness following the bellows; <span class="d">DRIVE</span> blends tube saturation in. <span class="k">SEL</span> + <span class="k">KNOB 1</span> sets the musette <span class="d">DETUNE C</span> (in cents): wider is wetter.</li>
+</ul>
+
+<h2>2 · Vibrato, chorus and tremulant (per manual)</h2>
+<p>Vintage models have the classic scanner settings <span class="d">V1</span> <span class="d">V2</span> <span class="d">V3</span> (vibrato, increasing depth) and <span class="d">C1</span> <span class="d">C2</span> <span class="d">C3</span> (chorus, vibrato mixed with the dry sound). Pipe and reed models have a 4.8 Hz <span class="d">TREMULANT</span> with adjustable depth instead. <span class="k">ARP</span> on the drawbars switches it off and back on for the manual shown.</p>
+
+<h2>3 · Percussion (tonewheel only)</h2>
+<p><span class="k">SEL</span> + <span class="k">KNOB 1</span> on the FX screen: <span class="d">2ND FAST</span>, <span class="d">2ND SLOW</span>, <span class="d">3RD FAST</span>, <span class="d">3RD SLOW</span> or <span class="d">OFF</span>. The percussion adds a decaying 4' (2nd) or 2 2/3' (3rd) on the upper manual. Fast decays in about 0.2 s, slow in about 1 s. It is single-trigger, like the original: it only sounds when all upper keys were released before the new note, so it disappears under legato.</p>
+
+<h2>4 · Rotary speaker (shared)</h2>
+<p>A horn and a drum turn against each other, each with its own inertia. The horn speeds up in about 0.8 s and the heavy drum in about 3 s, which gives the famous "ramp". The drum pumps the bass deeply as its baffle turns past the microphones, so the speed change is heard on dark registrations too. Each manual goes through it or past it, on every model: a cathedral organ through a rotary is possible.</p>
+<table><tr><th style="width:30%">Action</th><th>Result</th></tr>
+<tr><td><span class="k">REC</span></td><td><span class="d">ROTARY SLOW</span> ↔ <span class="d">ROTARY FAST</span></td></tr>
+<tr><td><span class="k">PLAY</span></td><td><span class="d">ROTARY BRAKE</span>: rotors coast to a stop. Press again for slow</td></tr>
+<tr><td><span class="k">SEQ</span> on the FX screen, or <span class="k">SEL</span> + <span class="k">REC</span></td><td>The manual through the rotary or past it: <span class="d">LM ROTARY OFF</span></td></tr>
+<tr><td>MIDI CC 1</td><td><span class="d">BEND PITCH</span> (factory): low half = slow, high half = fast. <span class="d">BEND ROTARY</span>: low = slow, middle = brake, high = fast</td></tr>
+<tr><td>Pitch bend up</td><td>With <span class="d">BEND ROTARY</span>: fast while held, back when released ("kick")</td></tr>
+<tr><td>Pitch bend down</td><td>With <span class="d">BEND ROTARY</span>: tutti boost while held, coupler on and about 2 dB louder (vintage and pipe models)</td></tr></table>
+
+<h2>5 · Delay and reverb (shared, fed by the sends)</h2>
+<p>Each manual sends to a stereo ping-pong delay (20–1000 ms, with feedback) and to the reverb, each with its own amount: a dry pedal under a wet upper manual is two knobs. The sends are taken after the manual's vibrato, before the rotary. The four reverb rooms are:</p>
+<table><tr><th style="width:22%">Room</th><th>Character</th></tr>
+<tr><td><span class="d">SPRING</span></td><td>The spring tank of an organ amp: short and slightly "boingy"</td></tr>
+<tr><td><span class="d">STAGE</span></td><td>A small club or stage, 0.9 s</td></tr>
+<tr><td><span class="d">HALL</span></td><td>A concert hall, 2.8 s</td></tr>
+<tr><td><span class="d">CATHEDRAL</span></td><td>A stone church, 7.5 s with 45 ms pre-delay</td></tr></table>
+</section>
+
+<!-- ============ 10 ============ -->
+<section>
+<h1><span class="num">10</span>MIDI Zones</h1>
+<p class="lead">The FM-1 connects over USB as a MIDI device. Three MIDI Zones, one for each manual, take the notes that come in, play them on the organ and send them on to your synths: OrGigs is a MIDI router and mapper as much as an organ.</p>
+
+<h2>What a zone does</h2>
+<p>Each zone belongs to one manual: upper, lower, pedal. A zone</p>
+<ol>
+  <li>listens to its <b>MIDI-in channel</b> (factory: 1 upper, 2 lower, 3 pedal),</li>
+  <li>takes only the notes in its <b>key range</b>, lowest to highest key. Zones may overlap: a note in two ranges plays both manuals, so you don't need a split,</li>
+  <li>plays them on its manual inside (unless its internal sound is off),</li>
+  <li>sends them out on its <b>MIDI-out channel</b>, <b>transposed</b> and shifted by <b>octaves</b> if you like, with the <b>velocity</b> they came with or a fixed one,</li>
+  <li>and, switched on per zone, passes them through three modules: <b>chord memory</b> (one note plays a chord), the <b>cloner</b> (the notes also go out on more channels, each with its own octave) and the <b>harmonic mapper</b> (nine channels, one per drawbar footage).</li>
+</ol>
+<p>CC, aftertouch and program changes go out on the zone's channels too, unless you filter them. Pitch bend always does. A sustain pedal (CC 64) holds the notes that came in on its channel, on the organ and on the out channels, until you lift it.</p>
+<p>The organ's own sound is never velocity-sensitive. Transpose and octave shift the MIDI output only; the organ plays the note you play.</p>
+
+<h3>A typical setup</h3>
+<pre>keyboard ── USB ──▶ MIDI host (e.g. CME H4MIDI WC) ──▶ FM-1 (USB MIDI in)
+FM-1 (USB MIDI out) ──▶ MIDI host ──▶ synth, sequencer (USB or 5-pin DIN)</pre>
+<p>The FM-1 has one USB port for MIDI in and out. A MIDI host routes the keyboard into the FM-1 and the FM-1's output on to your synths. Use <span class="d">TRS-SAFE</span> when the far end is a 5-pin DIN cable.</p>
+<div class="note warn"><p><b>Avoid loops.</b> Don't route the FM-1's output back into the FM-1 (in the MIDI host, or with "MIDI thru" in a DAW): every note would come back and go out again, without end.</p></div>
+
+<h2>The five screens</h2>
+<p>Press <span class="k">GLO</span>: the zone screen. Each further press of <span class="k">GLO</span> goes to the next screen: <span class="d">ZONE</span> → <span class="d">CLONE</span> → <span class="d">HARMONIC</span> → <span class="d">CHORD</span> → <span class="d">YST</span> → <span class="d">ZONE</span>. <span class="k">HOME</span> goes back to the drawbars, <span class="k">FX</span> to the effects. On every screen but YST <span class="k">SELECT</span> chooses the zone you edit: <span class="d">UPPER</span>, <span class="d">LOWER</span>, <span class="d">PEDAL</span>.</p>
+<p><span class="k">ENV</span> <span class="k">LFO</span> <span class="k">EDIT</span> <span class="k">ARP</span> <span class="k">SEQ</span> are the screen's switches; the button map at the bottom of the screen names them and lights the ones that are on. <span class="k">PLAY</span> and <span class="k">REC</span> stay the rotary.</p>
+
+<h3>ZONE: channels, range, transpose, velocity</h3>
+<div class="fig">
+  <img src="img/screen-zone.png" alt="Zone screen">
+  <div class="cap">
+    <p>The bars show the key range of each zone over the whole MIDI range (C-1 to G9), with its in and out channels (<span class="d">1>1</span>). The zone you edit is amber. Here the lower zone takes C1–E3 and the upper zone F3 and up: a split for an external keyboard. The pedal is played by the auto-pedal.</p>
+    <table><tr><th style="width:18%">Knob</th><th>Turn</th><th>SEL + turn</th></tr>
+    <tr><td>KNOB 1</td><td>MIDI-in channel 1–16, OFF</td><td>MIDI-out channel 1–16, OFF</td></tr>
+    <tr><td>KNOB 2</td><td>Lowest key</td><td>Highest key</td></tr>
+    <tr><td>KNOB 3</td><td>Transpose, ±24 semitones</td><td>Octave, ±3</td></tr>
+    <tr><td>KNOB 4</td><td>Fixed velocity 1–127</td><td><span class="d">BEND</span>, for all zones: what pitch bend and CC 1 do on the organs. <span class="d">PITCH</span> (factory): bend ±2 semitones, CC 1 rotary slow/fast. <span class="d">ROTARY</span>: bend up = rotary kick, down = tutti; CC 1 slow/brake/fast. The reed models always bend, and CC 1 is their bellows</td></tr></table>
+  </div>
+</div>
+<table class="wrap"><tr><th style="width:12%">Button</th><th style="width:44%">Switch</th><th>SEL + button (for all zones, except EXPR)</th></tr>
+<tr><td><span class="k">ENV</span></td><td><span class="d">VEL</span> Velocity through: the velocity of the incoming note goes out. Off: the fixed velocity</td><td><span class="d">EXPR</span> Velocity × expression: scaled by CC 11 / the bellows</td></tr>
+<tr><td><span class="k">LFO</span></td><td><span class="d">CC-F</span> Filter CC and aftertouch: they're not sent on</td><td><span class="d">THRU</span> Channels no zone listens to pass through unchanged (with clock and start/stop)</td></tr>
+<tr><td><span class="k">EDIT</span></td><td><span class="d">PC-F</span> Filter program changes</td><td><span class="d">USB</span>/<span class="d">TRS</span> MIDI rate: USB-FAST or TRS-SAFE</td></tr>
+<tr><td><span class="k">ARP</span></td><td><span class="d">INT</span> Internal sound of the zone on/off. Off: the zone only sends MIDI</td><td><span class="d">K:FL</span>/<span class="d">K:ZN</span> The FM-1's keys: follow the manual, or play by zone ranges</td></tr>
+<tr><td><span class="k">SEQ</span></td><td><span class="d">LRN</span> Learn the range: play the lowest and the highest key (on the FM-1 or on the zone's channel)</td><td><span class="d">AUTO</span> Auto-pedal: the pedal zone plays the lowest note held in the lower zone (within the pedal zone's range)</td></tr></table>
+<p>Leaving the out channel at <span class="d">OFF</span> makes a zone internal only; switching <span class="d">INT</span> off makes it MIDI only. Notes on a channel no zone listens to are dropped, unless <span class="d">THRU</span> is on.</p>
+
+<h3>CLONE: more channels</h3>
+<div class="fig">
+  <img src="img/screen-clone.png" alt="Clone screen">
+  <div class="cap">
+    <p><span class="k">ENV</span> switches the cloner of the zone on and off. Keys 1–16 (F3 to G#4) switch channels 1–16; the zone's notes go out on each of them as well as on its own out channel, marked with the manual's name (<span class="d">UM</span>, <span class="d">LM</span>, <span class="d">PM</span>, as in the mixer). <span class="k">KNOB 1</span> chooses a channel, <span class="k">KNOB 2</span> its octave (±3); pressing a key also chooses it. Here the upper zone also plays channel 5 an octave up and channel 6.</p>
+  </div>
+</div>
+
+<h3>HARMONIC: nine channels, one per drawbar</h3>
+<div class="fig">
+  <img src="img/screen-harmonic.png" alt="Harmonic screen">
+  <div class="cap">
+    <p>Turns the zone's drawbars into a MIDI additive synth. <span class="k">ENV</span> switches it on. Nine channels, from the one set with <span class="k">KNOB 1</span>, each get the note transposed to their drawbar's footage. Keys 1–9 switch the footages. <span class="k">KNOB 2</span>: the drawbar sets each note's velocity (<span class="d">VEL</span>), or moving a drawbar sends that channel's volume (<span class="d">CC7</span>/<span class="d">CC11</span>), so the mix changes while notes hold. Only footages that are switched on and whose drawbar is above 0 sound. Not for the pedal zone.</p>
+  </div>
+</div>
+<table><tr><th>Footage</th><th>16'</th><th>5 1/3'</th><th>8'</th><th>4'</th><th>2 2/3'</th><th>2'</th><th>1 3/5'</th><th>1 1/3'</th><th>1'</th></tr>
+<tr><td>Semitones</td><td>−12</td><td>+7</td><td>0</td><td>+12</td><td>+19</td><td>+24</td><td>+28</td><td>+31</td><td>+36</td></tr></table>
+
+<h3>CHORD: one key, one chord</h3>
+<div class="fig">
+  <img src="img/screen-chord.png" alt="Chord screen">
+  <div class="cap">
+    <p>Hold a chord of up to eight notes (on the FM-1 or on the zone's channel) and press <span class="k">LFO</span> (<span class="d">CAPT</span>): <span class="d">CHORD NOTES 4</span>. With <span class="k">ENV</span> on, every single note then plays that chord shape from its own root, on the organ and on all the zone's channels. <span class="k">EDIT</span> (<span class="d">CLR</span>) clears it. The keyboard shows the chord over its lowest note; here C minor 7.</p>
+  </div>
+</div>
+
+<h3>YST: the Yamaha SEQTRAK</h3>
+<div class="fig">
+  <img src="img/screen-yst.png" alt="YST screen">
+  <div class="cap">
+    <p>Connect a SEQTRAK with a USB-C cable: it is the host, the FM-1 its keyboard. YST is off from the factory; <span class="k">ENV</span> switches it on (the setup keeps it, as the other modules). Then OrGigs asks the SEQTRAK what its 11 tracks hold (<span class="d">SEQTRAK CONNECTED</span>, <span class="d">TRACKS READ</span>), and again whenever the cable is plugged in. After loading another project on the SEQTRAK, press <span class="k">LFO</span> (<span class="d">RFSH</span>) to read it again. In between OrGigs asks nothing, but it follows what the SEQTRAK sends when you play it: its sounds, its knobs, a drum track turned into a synth track (OS 2.0). The tracks sit on channels 1–11: <span class="d">KCK SNR CLP HH1 HH2 PC1 PC2</span> (drums), <span class="d">SY1 SY2</span>, <span class="d">DX</span>, <span class="d">SMP</span> (sampler); the clone grid, the mixer and the zone screen show these names.</p>
+    <p><span class="k">SELECT</span> chooses the track, and the zone you edit (the manual) now plays it: its MIDI out channel follows. Whether the organ sounds along is the zone's <span class="d">INT</span> switch. <span class="k">PRESETS</span> steps through the sounds the track can load (the drum, synth, DX or sampler list, 2424 in all, by name). <span class="k">KNOB 1–4</span>: cutoff, resonance, attack, decay; <span class="k">SEL</span> + <span class="k">KNOB 1–4</span>: volume, pan, reverb and delay send. <span class="k">ARP</span> mutes the track, <span class="k">SEQ</span> switches a synth or DX track between mono, poly and chord. A value shows <span class="d">--</span> until it has been turned once, here or on the SEQTRAK.</p>
+  </div>
+</div>
+<div class="note"><p>While the SEQTRAK is connected, everything it sends on channels 1–11 (its knobs, sound changes, the notes of its keys and patterns) and its clock belong to YST: none of it plays the organ or goes back out. The zones listen on channels 1–3 from the factory, and they would send the SEQTRAK's own notes straight back to it, doubled notes that hang.</p>
+<p>If the SEQTRAK does not answer, the screen says so and counts the questions that could not be sent and those that got no answer; <span class="k">LFO</span> tries again. Close the SEQTRAK app (Bluetooth) while you play it from OrGigs: the SEQTRAK may answer the app instead. OrGigs never waits for the SEQTRAK: whatever it does, the keys and the organ keep playing.</p></div>
+
+<h2>The FM-1's own keys</h2>
+<p>By default (<span class="d">K:FL</span>, follow) the FM-1's keys play the zone of the manual chosen with <span class="k">SELECT</span>, ignoring its range, and go out on its channels like any note. Set <span class="k">SEL</span> + <span class="k">ARP</span> to <span class="d">K:ZN</span> and they play by the zone ranges instead, like an external keyboard. The keys have no velocity: they always send the zone's fixed velocity (scaled by expression with <span class="d">EXPR</span>).</p>
+
+<h3>Example: a split with bass on the FM-1</h3>
+<ol>
+  <li>On the zone screen, choose <span class="d">LOWER</span> with <span class="k">SELECT</span>, press <span class="k">SEQ</span> (<span class="d">LRN</span>) and play F3 and B3.</li>
+  <li>Choose <span class="d">UPPER</span>, learn C4 and G5.</li>
+  <li><span class="k">SEL</span> + <span class="k">ARP</span>: <span class="d">K:ZN</span>, and <span class="k">SEL</span> + <span class="k">SEQ</span>: <span class="d">AUTO</span>. The left hand plays the lower manual and its lowest note the pedal.</li>
+  <li>Hold <span class="k">SAVE</span> and press a setup key to keep it.</li>
+</ol>
+
+<h2>MIDI in: what else comes in</h2>
+<table class="wrap"><tr><th style="width:27%">Message</th><th>Effect</th></tr>
+<tr><td>CC 12–20</td><td>Drawbars 1–9 of the zone's manual (0–127 → 0–8); pedal: CC 12–15</td></tr>
+<tr><td>CC 1</td><td>Mod strip: rotary slow / fast (<span class="d">BEND ROTARY</span>: slow / brake / fast), or the bellows on the reed models</td></tr>
+<tr><td>CC 11</td><td>Expression (volume swell)</td></tr>
+<tr><td>Pitch bend</td><td>Pitch strip: bends the pitch ±2 semitones (organs with <span class="d">BEND ROTARY</span>: rotary kick / tutti)</td></tr>
+<tr><td>CC 64</td><td>Sustain: the notes of that channel keep sounding until the pedal lifts</td></tr>
+<tr><td>CC 120 / 123, 121</td><td>All notes off on that channel; 121 (reset controllers) lifts the sustain</td></tr></table>
+<p>Each is also sent on to the zone's channels (CC unless filtered). A nine-fader MIDI controller on CC 12–20 makes a real set of drawbars.</p>
+
+<h2>MIDI rate</h2>
+<p><span class="k">SEL</span> + <span class="k">EDIT</span> on the zone screen chooses <span class="d">USB-FAST</span> (normal) or <span class="d">TRS-SAFE</span>. Choose TRS-SAFE when the FM-1's output reaches a 5-pin DIN cable through a MIDI host: messages are then paced to what the cable can carry, so nothing is lost in big chords or with the cloner.</p>
+</section>
+
+<!-- ============ 11 ============ -->
+<section>
+<h1><span class="num">11</span>Installing, updating, going back</h1>
+<p class="lead">OrGigs is installed over USB from a web page, the OrGigs installer: the <b>Install</b> button on OrGigs's card on The Firmware Hub (<code>thefirmwarehub.com</code>) leads there. It runs in Chrome or Edge on a computer; nothing else needs to be installed.</p>
+
+<h2>Install or update</h2>
+<ol>
+  <li>Connect the FM-1 with a USB <b>data</b> cable (not a charge-only cable). Close other programs that use its MIDI port (DAWs, other browser tabs with Web MIDI).</li>
+  <li>Open the installer and press <b>Install</b>. Allow MIDI access, with SysEx, when the browser asks.</li>
+  <li>The page finds the FM-1, picks its package and checks it, switches the FM-1 to update mode, writes the firmware and restarts it. It ends with <code>Done. OrGigs is installed.</code></li>
+</ol>
+<p>Your setups and presets are kept; when a new version changes their format, it takes over what it can (chapter 8). Coming from another firmware, OrGigs starts with its factory settings. If the page finds an older M-VAVE firmware or another model, it says so and writes nothing.</p>
+<div class="note warn"><p><b>During installation</b> don't unplug the FM-1. If the write is cut off anyway, plug it in again and press <b>Install</b>: it goes on where it stopped.</p></div>
+
+<h2>Without a browser</h2>
+<p>OrGigs's source also has an installer script, <code>tools/fm1_install.py</code> (Python 3.12 with <code>mido</code> and <code>python-rtmidi</code>). In the source folder, <code>py -3.12 tools\fm1_install.py --info</code> only reads and shows the running firmware, for example <code>FM-1_970 [running]</code>; <code>py -3.12 tools\fm1_install.py orgigs-1.0.fwsc</code> installs a package.</p>
+
+<h2>Going back to the original firmware</h2>
+<ul>
+  <li>Use <b>The Firmware Hub</b> at <code>thefirmwarehub.com</code> to install the factory firmware (or any other) again.</li>
+  <li>If the FM-1 doesn't start normally, hold <span class="k">OCT−</span> while switching it on. It starts in USB rescue mode, ready for the installer or the Firmware Hub.</li>
+</ul>
+<p>Installing custom firmware is at your own risk.</p>
+</section>
+
+<!-- ============ 12 ============ -->
+<section>
+<h1><span class="num">12</span>The browser simulator</h1>
+<p class="lead">The same OrGigs code also runs in Chrome or Edge, with the FM-1 panel drawn on screen. Use it to explore sounds or prepare setups without the hardware.</p>
+<pre>cd ~/orgigs/orgigs-fm1
+sim/serve.sh            # then open http://localhost:8099</pre>
+<ul>
+  <li>Click <b>Start audio</b>, then play with the mouse or the computer keyboard (<code>Z</code>…<code>/</code> and <code>Q</code>…<code>U</code>, piano layout). <kbd>Shift</kbd> is <span class="k">SEL</span>.</li>
+  <li>Turn knobs with the mouse wheel or by dragging.</li>
+  <li>The two touch strips are drawn as sliders.</li>
+  <li><b>Enable Web MIDI</b> to play from a MIDI keyboard and to send the zones' output to a synth or DAW. The log shows every outgoing message.</li>
+</ul>
+<div class="note"><p>Setups and presets made in the simulator stay in the simulator; they aren't transferred to the FM-1.</p></div>
+</section>
+
+<!-- ============ 13 ============ -->
+<section>
+<h1><span class="num">13</span>Specifications and limits</h1>
+<table class="wrap"><tr><th style="width:30%">Item</th><th>Value</th></tr>
+<tr><td>Tone generation</td><td>84 free-running generators, C1–B7; full polyphony, no voice stealing</td></tr>
+<tr><td>Waveforms</td><td>8 wavetables, each in 4 band-limited versions (no aliasing up to B7)</td></tr>
+<tr><td>Models</td><td>8, in 3 departments</td></tr>
+<tr><td>Manuals</td><td>Upper 9 drawbars, Lower 9 drawbars, Pedal 4 stops</td></tr>
+<tr><td>Keyboard</td><td>27 keys (F3–G5), octave −2…+3</td></tr>
+<tr><td>Effects</td><td>Per manual: drive / limiter / cassotto, scanner vibrato &amp; chorus or tremulant, rotary on/off, delay and reverb sends. Shared: percussion, two-rotor rotary, stereo delay up to 1 s, 4 reverbs up to 7.5 s</td></tr>
+<tr><td>Audio</td><td>44.1 kHz stereo, 256-sample blocks (5.8 ms)</td></tr>
+<tr><td>Memory</td><td>16 performance setups; a drawbar list of 75 registrations + 16 user slots, a pedal list of 24 + 8; kept across power-off</td></tr>
+<tr><td>MIDI mixer</td><td>16 channel volumes (CC 7), per setup</td></tr>
+<tr><td>MIDI</td><td>USB MIDI in and out; 3 zones with channel, range, transpose, velocity, filters; cloner, 9-channel harmonic mapper, chord memory per zone; up to 48 incoming notes held at once</td></tr>
+<tr><td>Firmware package</td><td>FM-1_970</td></tr></table>
+
+<h2>Known limits</h2>
+<ul>
+  <li><b>Touch strips</b> aren't read by this firmware. Use MIDI CC 1 and pitch bend from an external controller instead.</li>
+  <li><b>MIDI in and out are USB only</b>, over the one USB port. The FM-1 platform has no TRS-MIDI output and no Bluetooth MIDI. For DIN gear use a MIDI host with <span class="d">TRS-SAFE</span>.</li>
+  <li><b>The FM-1's keys aren't velocity sensitive.</b> They send the zone's fixed velocity; notes coming in keep theirs.</li>
+</ul>
+</section>
+
+<!-- ============ A ============ -->
+<section>
+<h1><span class="num">A</span>MIDI implementation chart</h1>
+<table class="wrap"><tr><th style="width:26%">Function</th><th style="width:37%">Received</th><th>Transmitted</th></tr>
+<tr><td>Channels</td><td>Each zone's in channel (factory 1 upper, 2 lower, 3 pedal); others dropped or passed through (THRU)</td><td>Each zone's out channel, plus its clone and harmonic channels</td></tr>
+<tr><td>Note on / off</td><td>Yes, within each zone's key range</td><td>Yes. Note-off as note-on velocity 0 in TRS-SAFE</td></tr>
+<tr><td>Velocity</td><td>Passed on (organ sound ignores it)</td><td>Through, fixed 1–127, or scaled by expression; per drawbar in the harmonic mapper</td></tr>
+<tr><td>Pitch bend</td><td>Bend ±2 semitones, or rotary kick / tutti (<span class="d">BEND ROTARY</span>)</td><td>Passed on to the zone's channels</td></tr>
+<tr><td>CC 1 Modulation</td><td>Rotary speed / bellows</td><td>Passed on unless filtered</td></tr>
+<tr><td>CC 7 Volume</td><td>—</td><td>Harmonic mapper with <span class="d">CC7</span>; passed on unless filtered</td></tr>
+<tr><td>CC 11 Expression</td><td>Expression</td><td>Harmonic mapper with <span class="d">CC11</span>; passed on unless filtered</td></tr>
+<tr><td>CC 12–20</td><td>Drawbars 1–9 of the zone's manual (pedal: CC 12–15)</td><td>Passed on unless filtered</td></tr>
+<tr><td>CC 64 / 120 / 121 / 123</td><td>64: sustain. 120, 123: all notes off on that channel. 121: sustain lifted</td><td>Passed on; on all 16 channels at panic (<span class="k">SEL</span> + <span class="k">HOME</span>)</td></tr>
+<tr><td>Aftertouch</td><td>—</td><td>Passed on unless CC is filtered</td></tr>
+<tr><td>Program change</td><td>—</td><td>Passed on unless filtered</td></tr>
+<tr><td>Clock, start, stop</td><td>—</td><td>Passed on with THRU</td></tr>
+<tr><td>Running status</td><td>Yes</td><td>In TRS-SAFE</td></tr></table>
+</section>
+
+<!-- ============ B ============ -->
+<section>
+<h1><span class="num">B</span>Troubleshooting</h1>
+<table class="wrap"><tr><th style="width:34%">Problem</th><th>Solution</th></tr>
+<tr><td>No sound</td><td>Turn up <span class="k">MASTER</span>. Check that some drawbars of the manual you're playing are above 0. In the clone and harmonic screens the keys are switches; press <span class="k">HOME</span>. On the zone screen check <span class="d">INT</span> (lit = the zone sounds).</td></tr>
+<tr><td>An external keyboard plays nothing</td><td>Check the zone's in channel and key range on the zone screen, and that the MIDI host routes the keyboard to the FM-1.</td></tr>
+<tr><td>Some keys of the external keyboard are silent</td><td>They're outside the zone's range. Widen it with <span class="k">KNOB 2</span> / <span class="k">SEL</span> + <span class="k">KNOB 2</span> or learn it (<span class="d">LRN</span>).</td></tr>
+<tr><td>The sound is very different from before</td><td>Another setup, model or drawbar preset is active. Check the top bar; hold <span class="k">SEL</span> to see which setup key is lit.</td></tr>
+<tr><td>No percussion</td><td>Percussion only works on the Tonewheel Organ model, on the upper manual, and only on detached (non-legato) playing.</td></tr>
+<tr><td>No rotary effect</td><td>Pipe and reed models bypass the rotary. Press <span class="k">SEL</span> + <span class="k">REC</span> to turn it on.</td></tr>
+<tr><td>A synth receives nothing</td><td>Check the zone's out channel (not <span class="d">OFF</span>) and the filters. In the harmonic mapper only footages that are switched on and whose drawbar is above 0 send.</td></tr>
+<tr><td>Notes repeat without end, or the MIDI host's lights flicker</td><td>A MIDI loop: the FM-1's output is routed back into the FM-1. Remove that route in the MIDI host or DAW.</td></tr>
+<tr><td>Notes missing on a DIN synth via a MIDI host</td><td>Set <span class="d">TRS-SAFE</span> with <span class="k">SEL</span> + <span class="k">EDIT</span> on the zone screen.</td></tr>
+<tr><td>Settings were lost after switching off</td><td>OrGigs saves 2 s after the last change, and only while nothing sounds. Release all keys for a moment before switching off.</td></tr>
+<tr><td>The installer reports <code>FM-1 not found</code></td><td>Use a USB data cable, close other programs that use the FM-1's MIDI port, and try again.</td></tr>
+<tr><td>A note keeps sounding (stuck note)</td><td>Hold <span class="k">SEL</span> and press <span class="k">HOME</span> (<span class="d">PANIC ALL NOTES OFF</span>). Everything stops at once, the reverb and delay tails included, and all 16 MIDI channels get <i>all notes off</i>.</td></tr>
+<tr><td>Crackles under heavy playing</td><td>Press <span class="k">SEL</span> to see the processor load (<span class="d">DSP 10%</span>). If it is near 100, lower the reverb or rotary use, or play fewer manuals at full registration.</td></tr></table>
+</section>
+
+</body>
+</html>

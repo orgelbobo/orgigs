@@ -1,0 +1,17 @@
+{
+  "what": "It's an organ. Three manuals with 84 free-running tone generators and no voice stealing, eight models from tonewheel and combo organs to pipe organs and free reeds, drawbars, percussion, rotary, drive, delay and reverb, 16 performance setups, three MIDI zones and Yamaha SEQTRAK control.",
+  "author": "Bobo",
+  "kinds": [
+    "other"
+  ],
+  "play": "https://orgelbobo.github.io/orgigs/try/",
+  "cheat": "https://orgelbobo.github.io/orgigs/docs/OrGigs_FM-1_At_a_glance.pdf",
+  "image": "docs/hub/card-fm1.png",
+  "color": "#E68700",
+  "sounds": "none – all synthesised",
+  "smk37": {
+    "image": "docs/hub/card-elite.png",
+    "install": "https://orgelbobo.github.io/orgigs/install/",
+    "guide": "https://orgelbobo.github.io/orgigs/docs/OrGigs_Elite_Manual.pdf"
+  }
+}

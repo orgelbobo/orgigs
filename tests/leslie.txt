@@ -1,0 +1,8 @@
+# rotary: a held chord (tonewheel setup 1), slow; fast at 4 s; slow at 9 s; brake at 14 s
+300 keys 0x1091
+500 shot
+4000 btn 13
+4100 shot
+9000 btn 13
+14000 btn 12
+18000 end

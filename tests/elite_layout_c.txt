@@ -1,0 +1,38 @@
+# The Elite's layout C KNOBS + 16 PADS (BOARD=smk37 tests/run_host.sh tests/elite_layout_c.txt; checked by tests/elite_test.py).
+# Buttons: 0 KNOB BANK 8 SCALE. Pads 0..7 top row, 8..15 bottom row: 9-11 the manual, 12 the coupler, 13 FCCI,
+# 14 FCCO, 15 MIDI OUT, 16 INTERNAL SOUND.
+# --- SCALE + KNOB BANK three times: A -> B1 -> B2 -> C
+100 down 8
+150 btn 0
+200 btn 0
+250 btn 0
+300 up 8
+500 shot
+# --- a key goes out (C4 on channel 1)
+600 keys 0x1000
+700 keys 0
+# --- pad 15: MIDI OUT off; the key no longer goes out; again: on
+800 pad 14 100
+850 pad 14 0
+900 shot
+1000 keys 0x1000
+1100 keys 0
+1200 pad 14 100
+1250 pad 14 0
+1300 keys 0x1000
+1400 keys 0
+# --- pad 10: the lower manual; pad 12: the coupler on
+1500 pad 9 100
+1550 pad 9 0
+1600 pad 11 100
+1650 pad 11 0
+1800 shot
+# --- pads 13, 14, 16: the lower zone's FCCI on, FCCO on, the internal sound off
+1900 pad 12 100
+1950 pad 12 0
+2000 pad 13 100
+2050 pad 13 0
+2100 pad 15 100
+2150 pad 15 0
+2300 shot
+2400 end

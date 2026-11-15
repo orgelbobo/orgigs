@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OrGigs FM-1 at a glance</title>
+<style>
+/* Two A4 pages, printed by build_pdf.sh cheat-fm1; the same look as the manual (amber on dark for the screen's words) */
+@page { size: A4; margin: 11mm 12mm 12mm 12mm;
+  @bottom-left { content: "OrGigs FM-1 at a glance · the full manual: OrGigs_FM-1_Manual.pdf"; font: 7pt "Segoe UI", Arial, sans-serif; color: #888; }
+  @bottom-right { content: counter(page) " / 2"; font: 7.5pt "Segoe UI", Arial, sans-serif; color: #555; } }
+:root { --ink: #1d1d22; --muted: #5b5b66; --line: #d9d6cf; --amber: #f2a51d; --amber-soft: #fff4dd; --dark: #121214; --tint: #f6f4ef; }
+* { -webkit-print-color-adjust: exact; print-color-adjust: exact; box-sizing: border-box; }
+html, body { margin: 0; background: #fff; color: var(--ink); }
+body { font: 8.4pt/1.38 "Segoe UI", "Helvetica Neue", Arial, sans-serif; max-width: 186mm; margin: 0 auto; padding: 0 4mm; }
+@media print { body { padding: 0; } }
+h1, h2 { font-family: Georgia, "Times New Roman", serif; font-weight: normal; margin: 0; }
+h2 { font-size: 11.5pt; margin: 3.2mm 0 1.2mm; break-after: avoid; }
+h2 .n { color: var(--amber); margin-right: 1.6mm; }
+p { margin: 0 0 1.4mm; }
+b { font-weight: 600; }
+.k { display: inline-block; font: 600 7pt/1 "Consolas", "Courier New", monospace; border: 0.5pt solid #9a978f; border-bottom-width: 1.2pt;
+  border-radius: 2.5px; padding: 1pt 2.6pt; background: #fbfaf7; white-space: nowrap; }
+.d { font: 7.4pt "Consolas", "Courier New", monospace; background: var(--dark); color: var(--amber); padding: 0.4pt 2.4pt; border-radius: 2px; white-space: nowrap; }
+table { width: 100%; border-collapse: collapse; margin: 0.6mm 0 1.6mm; }
+th { text-align: left; font-weight: 600; font-size: 6.8pt; text-transform: uppercase; letter-spacing: .05em; color: var(--muted);
+  border-bottom: 1pt solid var(--ink); padding: 0.8mm 1.6mm 0.7mm 0; }
+td { border-bottom: 0.4pt solid var(--line); padding: 0.85mm 1.6mm 0.85mm 0; vertical-align: top; }
+tr { break-inside: avoid; }
+td:first-child { white-space: nowrap; }
+
+/* the head */
+.head { background: var(--dark); color: #eee; border-radius: 2mm; padding: 3.2mm 4.5mm; display: flex; gap: 4mm; align-items: center; }
+.head .bars { display: flex; gap: 1.1mm; height: 11mm; align-items: flex-start; flex: none; }
+.head .bars i { width: 2.2mm; border-radius: 0 0 0.6mm 0.6mm; display: block; }
+.head h1 { font-size: 19pt; color: #fff; line-height: 1.05; }
+.head h1 span { color: var(--amber); }
+.head p { margin: 0.8mm 0 0; color: #cfcac0; font-size: 8.3pt; }
+.head .id { margin-left: auto; text-align: right; font: 7.2pt/1.5 "Consolas", monospace; color: #8d8a84; flex: none; }
+
+.glance td:first-child { font-weight: 600; width: 22mm; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+.two > div { min-width: 0; }
+
+/* the panel: twelve buttons in two rows of six, as on the FM-1 */
+.panel { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1.2mm; margin: 0.6mm 0 1.6mm; }
+.btn { border: 0.6pt solid #9a978f; border-bottom-width: 1.4pt; border-radius: 1.4mm; padding: 1.1mm 1.4mm 1.2mm; background: #fbfaf7; break-inside: avoid; }
+.btn b { display: block; font: 700 8pt/1.1 "Consolas", monospace; margin-bottom: 0.5mm; }
+.btn span { display: block; font-size: 7pt; line-height: 1.28; }
+.btn em { display: block; font-style: normal; font-size: 6.6pt; line-height: 1.25; color: var(--muted); margin-top: 0.6mm; border-top: 0.4pt dashed var(--line); padding-top: 0.5mm; }
+.legend { font-size: 6.8pt; color: var(--muted); margin: -0.6mm 0 1.4mm; }
+
+.combo td:first-child { width: 31mm; }
+.note { background: var(--amber-soft); border-left: 2pt solid var(--amber); padding: 1.6mm 2.6mm; margin: 1mm 0 1.6mm; break-inside: avoid; }
+.page2 { break-before: page; }
+.shot { display: flex; gap: 3.5mm; align-items: flex-start; break-inside: avoid; }
+.shot img { width: 38mm; height: 38mm; image-rendering: pixelated; border-radius: 1.4mm; box-shadow: 0 0 0 0.5pt #000; flex: none; }
+.shot ol { margin: 0; padding-left: 4mm; }
+.shot li { margin-bottom: 0.5mm; }
+.tag { display: inline-block; font: 600 6.8pt "Consolas", monospace; background: var(--dark); color: var(--amber); padding: 0.4pt 2.4pt; border-radius: 2px; }
+.setups { columns: 2; column-gap: 4mm; margin: 0.6mm 0 1.6mm; padding: 0; list-style: none; }
+.setups li { break-inside: avoid; padding: 0.35mm 0; border-bottom: 0.4pt solid var(--line); }
+.setups b { display: inline-block; width: 5mm; color: var(--amber); font-family: Georgia, serif; }
+.tm { font-size: 6.4pt; color: var(--muted); margin-top: 2mm; }
+@media (max-width: 640px) { .two { grid-template-columns: 1fr; } .panel { grid-template-columns: repeat(3, 1fr); } .head { flex-wrap: wrap; } .head .id { margin-left: 0; text-align: left; } }
+</style>
+</head>
+<body>
+
+<!-- ============ PAGE 1 ============ -->
+<header class="head">
+  <div class="bars" aria-hidden="true">
+    <i style="height:100%;background:#8b4a26"></i><i style="height:100%;background:#8b4a26"></i><i style="height:100%;background:#efe9da"></i>
+    <i style="height:58%;background:#efe9da"></i><i style="height:30%;background:#55555c"></i><i style="height:72%;background:#efe9da"></i>
+    <i style="height:20%;background:#55555c"></i><i style="height:44%;background:#55555c"></i><i style="height:86%;background:#f2a51d"></i>
+  </div>
+  <div>
+    <h1>OrGigs <span>FM-1</span> at a glance</h1>
+    <p>A three-manual organ and a MIDI router for the M-VAVE FM-1.</p>
+  </div>
+  <div class="id">package FM-1_970<br>GPL-3.0-only</div>
+</header>
+
+<table class="glance">
+<tr><td>Sound</td><td>84 free-running tone generators (C1–B7): every key sounds, no voice stealing. 8 models in 3 departments: tonewheel and three combo organs, baroque and cathedral pipe organs, musette and bandoneon reeds</td></tr>
+<tr><td>Manuals</td><td>Upper (9 drawbars), Lower (9 drawbars), Pedal (4 stops). Coupler II/I, split and auto-pedal by MIDI zones</td></tr>
+<tr><td>Effects</td><td>Per manual: drive, scanner vibrato / chorus or tremulant, rotary on / off, delay and reverb sends. Shared: percussion, two-rotor rotary, stereo ping-pong delay (to 1 s), 4 reverbs (spring, stage, hall, cathedral)</td></tr>
+<tr><td>Memory</td><td>16 performance setups (the whole instrument, one per white key); a drawbar list of 75 registrations + 16 user slots; all kept after power-off; backup over USB</td></tr>
+<tr><td>MIDI</td><td>3 zones (in / out channel, key range, transpose, velocity, filters), cloner, 9-channel harmonic mapper, chord memory, a 16-channel mixer (CC 7), Yamaha SEQTRAK control (YST)</td></tr>
+</table>
+
+<h2><span class="n">1</span>Three rules on every screen</h2>
+<table>
+<tr><td><span class="k">SELECT</span></td><td>the manual (and its MIDI zone): <span class="d">UPPER</span> <span class="d">LOWER</span> <span class="d">PEDAL</span></td>
+    <td><span class="k">ALGORITHM</span></td><td>the model 1–8</td></tr>
+<tr><td><span class="k">PRESETS</span></td><td>the drawbar list of that manual</td>
+    <td><span class="k">MASTER</span></td><td>the output volume</td></tr>
+</table>
+<p><b>SEL is the knobs' push.</b> The FM-1's knobs can't be pressed, so a held <span class="k">SEL</span> gives every knob and most buttons a second job.</p>
+
+<h2><span class="n">2</span>The buttons on the drawbar screen</h2>
+<div class="panel">
+  <div class="btn"><b>FX</b><span>the FX screen; again: back</span></div>
+  <div class="btn"><b>SEL</b><span>held: white keys recall the setups; shows the DSP load</span></div>
+  <div class="btn"><b>ENV</b><span>knobs = drawbars 1–4</span></div>
+  <div class="btn"><b>LFO</b><span>knobs = drawbars 5–8</span></div>
+  <div class="btn"><b>EDIT</b><span>knobs = drawbars 1, 3, 4, 9</span></div>
+  <div class="btn"><b>GLO</b><span>the MIDI zones; again: the next screen</span><em>SEL: the panel lights</em></div>
+  <div class="btn"><b>HOME</b><span>the MIDI mixer; again: back</span><em>SEL: panic, all notes off</em></div>
+  <div class="btn"><b>SAVE</b><span>tap: drawbars to a user slot. Hold + white key: store the setup</span></div>
+  <div class="btn"><b>ARP</b><span>vibrato / chorus on / off (tremulant on pipe, reed)</span></div>
+  <div class="btn"><b>SEQ</b><span>coupler II/I on / off</span></div>
+  <div class="btn"><b>PLAY</b><span>rotary brake</span></div>
+  <div class="btn"><b>REC</b><span>rotary slow ↔ fast</span><em>SEL: the manual through the rotary or past it</em></div>
+</div>
+<p class="legend">Top row and bottom row as on the panel. Below the dashed line: with <span class="k">SEL</span> held. <span class="k">OCT−</span> <span class="k">OCT+</span>: the keys' octave, −2 … +3.</p>
+
+<div class="two">
+<div>
+<h2><span class="n">3</span>Handy combinations</h2>
+<table class="combo">
+<tr><td><span class="k">SEL</span> + white key</td><td>recall performance setup 1–16 (F3 to G5)</td></tr>
+<tr><td><span class="k">SAVE</span> held + white key</td><td>store the whole instrument there</td></tr>
+<tr><td><span class="k">SEL</span> + <span class="k">HOME</span></td><td>panic: all notes off, inside and on all 16 channels</td></tr>
+<tr><td><span class="k">SEL</span> + <span class="k">GLO</span></td><td>panel lights: keys and buttons OFF / DIM / FULL; <span class="k">SEQ</span> there: backup</td></tr>
+<tr><td><span class="k">SEL</span> + <span class="k">KNOB 1–4</span></td><td>the screen's second row (shared values on FX)</td></tr>
+<tr><td>any key or button</td><td>skips the welcome screen</td></tr>
+</table>
+</div>
+<div>
+<h2><span class="n">4</span>The FX screen <span class="k">FX</span></h2>
+<table>
+<tr><th>Knob</th><th>Turn: the manual's</th><th>SEL + turn: shared</th></tr>
+<tr><td>KNOB 1</td><td>drive</td><td>percussion / chiff / detune</td></tr>
+<tr><td>KNOB 2</td><td>vibrato &amp; chorus or tremulant</td><td>delay feedback</td></tr>
+<tr><td>KNOB 3</td><td>delay send</td><td>delay time 20–1000 ms</td></tr>
+<tr><td>KNOB 4</td><td>reverb send</td><td>reverb room</td></tr>
+</table>
+<p>A row per manual; <span class="k">ENV</span> <span class="k">LFO</span> <span class="k">ARP</span> choose upper, lower, pedal. <span class="k">SEQ</span>: the manual through the rotary or past it.</p>
+</div>
+</div>
+
+<div class="note"><b>The mixer</b> (<span class="k">HOME</span> on the drawbars): 16 knobs, one per MIDI channel, send CC 7 at once. <span class="k">ENV</span> <span class="k">LFO</span> <span class="k">ARP</span> <span class="k">SEQ</span> choose the row of four channels. Each setup keeps its own volumes.</div>
+
+<!-- ============ PAGE 2 ============ -->
+<section class="page2">
+<h2 style="margin-top:0"><span class="n">5</span>Reading the drawbar screen</h2>
+<div class="shot">
+  <img src="img/screen-b3.png" alt="The drawbar screen: model 1 WHEEL, the upper manual, drawbars 888000000">
+  <ol>
+    <li><b>Top bar:</b> model number and short name (<span class="d">1 WHEEL</span>), the manual (<span class="d">UPPER</span>), the drawbars the knobs hold (<span class="d">DB1-4</span>), the preset (<span class="d">P1</span>; <span class="d">P1*</span> = changed since).</li>
+    <li><b>Drawbars</b> 0–8, coloured by family. Amber marks: the four the knobs move now.</li>
+    <li><b>Mini-bars:</b> the other two manuals, <span class="d">II/I</span> when coupled, the setup (<span class="d">S1</span>). A change shows its name and value here.</li>
+    <li><b>Tabs:</b> green vibrato (<span class="d">V1</span>…<span class="d">C3</span>) or tremulant; red percussion (<span class="d">2F</span>…<span class="d">3S</span>) or the coupler; yellow <span class="d">ROT</span>: <span class="d">SLOW</span> <span class="d">FAST</span> <span class="d">BRK</span> or <span class="d">OFF</span>.</li>
+    <li><b>Knobs:</b> drive <span class="d">DRV</span>, delay send <span class="d">DLY</span>, reverb send named by its room (<span class="d">SPR</span> <span class="d">STG</span> <span class="d">HAL</span> <span class="d">CAT</span>).</li>
+  </ol>
+</div>
+
+<div class="two">
+<div>
+<h2><span class="n">6</span>The eight models <span class="k">ALGORITHM</span></h2>
+<table>
+<tr><td>1 <span class="tag">WHEEL</span></td><td>Tonewheel Organ: key click, percussion on the upper manual</td></tr>
+<tr><td>2 <span class="tag">BRIT</span></td><td>Brit Combo: bright divider tone</td></tr>
+<tr><td>3 <span class="tag">ITALO</span></td><td>Italo Combo: sixties saw / pulse bite</td></tr>
+<tr><td>4 <span class="tag">TOKYO</span></td><td>Tokyo Combo: rich transistor tone</td></tr>
+<tr><td>5 <span class="tag">BAROQ</span></td><td>Baroque Organ: principals, flutes, reeds, chiff</td></tr>
+<tr><td>6 <span class="tag">CATH</span></td><td>Cathedral Organ: grand speech, sagging wind</td></tr>
+<tr><td>7 <span class="tag">MUSET</span></td><td>Paris Musette: wet three-reed accordion</td></tr>
+<tr><td>8 <span class="tag">BANDO</span></td><td>Tango Bandoneon: tighter, darker reeds</td></tr>
+</table>
+<p>Changing the model keeps the effects and the drawbars; <span class="k">PRESETS</span> picks a registration.</p>
+</div>
+<div>
+<h2><span class="n">7</span>The 16 factory setups <span class="k">SEL</span> + key</h2>
+<ul class="setups">
+  <li><b>1</b>Tonewheel jazz</li><li><b>2</b>Cathedral</li><li><b>3</b>Paris musette</li><li><b>4</b>Brit Combo</li>
+  <li><b>5</b>Tonewheel rock</li><li><b>6</b>Italo Combo</li><li><b>7</b>Baroque organ</li><li><b>8</b>Tango bandoneon</li>
+  <li><b>9</b>British hard rock</li><li><b>10</b>Gospel</li><li><b>11</b>Baroque rock ballad</li><li><b>12</b>60s transistor combo</li>
+  <li><b>13</b>Reggae</li><li><b>14</b>Cathedral trumpet</li><li><b>15</b>Musette master</li><li><b>16</b>Psychedelic space pad</li>
+</ul>
+<p>The white keys F3 … G5 are setups 1–16, left to right.</p>
+</div>
+</div>
+
+<h2><span class="n">8</span>MIDI zones <span class="k">GLO</span></h2>
+<p>Each manual has a zone: it listens on a MIDI channel (factory 1 upper, 2 lower, 3 pedal), takes the notes in its key range, plays its manual and sends them on to your synths. <span class="k">GLO</span> steps through five screens, <span class="k">SELECT</span> chooses the zone, <span class="k">HOME</span> goes back.</p>
+<table>
+<tr><th>Screen</th><th>Knobs</th><th>Buttons</th></tr>
+<tr><td><span class="d">ZONE</span></td><td>in channel · lowest key · transpose · fixed velocity<br><i>SEL:</i> out channel · highest key · octave · BEND</td><td><span class="k">ENV</span> VEL · <span class="k">LFO</span> CC filter · <span class="k">EDIT</span> PC filter · <span class="k">ARP</span> INT sound · <span class="k">SEQ</span> learn the range<br><i>SEL:</i> EXPR · THRU · USB/TRS · K:FL/K:ZN · AUTO pedal</td></tr>
+<tr><td><span class="d">CLONE</span></td><td>channel · its octave</td><td><span class="k">ENV</span> on; keys 1–16 switch channels 1–16</td></tr>
+<tr><td><span class="d">HARMONIC</span></td><td>first channel · VEL or CC7/CC11</td><td><span class="k">ENV</span> on; keys 1–9 switch the nine footages</td></tr>
+<tr><td><span class="d">CHORD</span></td><td>—</td><td>hold a chord, <span class="k">LFO</span> captures it, <span class="k">ENV</span> on, <span class="k">EDIT</span> clears</td></tr>
+<tr><td><span class="d">YST</span></td><td>the SEQTRAK track's cutoff, resonance, attack, decay</td><td><span class="k">ENV</span> on; <span class="k">SELECT</span> the track, <span class="k">PRESETS</span> its sound, <span class="k">LFO</span> read again</td></tr>
+</table>
+<div class="note"><b>Avoid MIDI loops:</b> never route the FM-1's output back into the FM-1. For a 5-pin DIN synth behind a MIDI host, switch the zone screen's <span class="k">SEL</span> + <span class="k">EDIT</span> to <span class="d">TRS-SAFE</span>.</div>
+
+<p class="cap">OrGigs is at heart a firmware for the M-VAVE SMK-37 Elite, and this is its compact edition. The full version adds an insert effect, master EQ and compressor, your own rotary cabinets, a full mixer and five pad layouts. Check it out.</p>
+<p class="tm">All product names are trademarks of their owners and are used only to identify compatible devices. OrGigs is not affiliated with them.</p>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,30 @@
+# tonewheel, 8' only, no rotary, no vibrato, no reverb: A4 (key 16) must be 440 Hz
+10 enc 2 -8
+10 enc 3 -8
+20 down 3
+30 btn 13
+80 up 3
+100 btn 2
+110 enc 3 -6
+120 enc 5 -10
+200 keys 0x10000
+1400 keys 0
+# bandoneon (model 8): A4 again; the reeds sit at +-6 cents (centre rank alone first)
+1500 enc 1 7
+1600 btn 4
+1610 enc 2 -8
+1610 enc 3 -8
+1610 enc 4 8
+1610 enc 5 -8
+1620 btn 5
+1630 enc 2 -8
+1630 enc 3 -8
+1630 enc 4 -8
+1630 enc 5 -8
+1640 btn 6
+1650 enc 5 -8
+1750 btn 2
+1760 enc 5 -10
+1800 keys 0x10000
+3000 keys 0
+3500 end

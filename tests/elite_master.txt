@@ -1,0 +1,35 @@
+# The Elite's MASTER page: EQ and compressor on the sum (BOARD=smk37 tests/run_host.sh tests/elite_master.txt).
+# Buttons: 6 ARP 8 SCALE 14 FX. FX: pad 4 the upper's rotary off, K4 its reverb send 0. ARP twice from FX (past WHEELS): MASTER.
+1000 btn 14
+1100 pad 3 100
+1110 pad 3 0
+1120 enc 3 -40
+1200 btn 6
+1250 btn 6
+# --- a chord, flat
+1500 keys 0x91000
+2300 keys 0
+# --- pad 1: EQ on; K1 low +12 dB, K4 high -12 dB: the chord darker and fuller
+2400 pad 0 100
+2410 pad 0 0
+2420 enc 0 12
+2430 enc 3 -12
+2500 keys 0x91000
+3300 keys 0
+# --- pad 1 again: EQ off; pad 2: compressor on, K5 threshold -40 dB, K6 ratio 20:1: the chord quieter
+3400 pad 0 100
+3410 pad 0 0
+3420 pad 1 100
+3430 pad 1 0
+3440 enc 4 -22
+3450 enc 5 16
+3500 keys 0x91000
+4200 shot
+4300 keys 0
+# --- SCALE + K3: make-up +12 dB: louder again
+4400 down 8
+4410 enc 2 12
+4420 up 8
+4500 keys 0x91000
+5300 keys 0
+5500 end

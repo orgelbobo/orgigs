@@ -1,0 +1,62 @@
+# The Elite's bank buttons, HOME, the splash, pads 6 / 7 / 8 held, the faders' pickup (BOARD=smk37 tests/run_host.sh
+# tests/elite_banks.txt; tests/elite_test.py). Buttons: 0 KNOB BANK 1 FADER BANK 2 < 3 >. Setup 1: tonewheel, layout A.
+# --- layout A; FADER BANK: B1 (the splash), B2, C, D, A again
+500 shot
+600 btn 1
+800 shot
+900 btn 1
+1000 btn 1
+1100 btn 1
+1200 btn 1
+1400 shot
+# --- KNOB BANK: the lower manual; < + > held, K2 +2: model 3; K3 +1: layout B1 at once, the pads show it (not the cloner)
+1500 btn 0
+1700 down 2
+1720 down 3
+1800 enc 1 2
+1900 enc 2 1
+2000 shot
+2100 up 2
+2120 up 3
+# --- HOME: KNOB BANK + FADER BANK: the upper manual, model 1, P1, the coupler off, layout A
+2300 down 0
+2320 down 1
+2400 shot
+2450 up 0
+2460 up 1
+2900 shot
+# --- FADER BANK: B1 again, for pads 7 and 8
+2920 down 1
+2940 up 1
+# --- B1: pad 7 held, K7 +3 (the delay time), K8 +2 (the send): on, no toggle on letting go; tapped: off
+3000 pad 6 100
+3050 enc 6 3
+3100 enc 7 2
+3150 pad 6 0
+3300 shot
+3400 pad 6 100
+3450 pad 6 0
+3600 shot
+# --- pad 6 held, K6 +5: the drive up, no toggle on letting go; tapped: off; tapped again: on
+3610 pad 5 100
+3620 enc 5 5
+3630 pad 5 0
+3640 shot
+3650 pad 5 100
+3660 pad 5 0
+3670 shot
+3680 pad 5 100
+3690 pad 5 0
+# --- pad 8 held, K8: no effect on, nothing toggles; tapped: the effect on
+3700 pad 7 100
+3750 enc 7 2
+3800 pad 7 0
+3900 shot
+4000 pad 7 100
+4050 pad 7 0
+4200 shot
+# --- fader 3 the MIDI out's sum: at 60 nothing (it picks up at 127); up to 127, then 40: CC 7 = 100 x 40 / 127
+4300 fader 2 60
+4400 fader 2 127
+4500 fader 2 40
+4700 end

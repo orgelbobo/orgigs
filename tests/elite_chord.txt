@@ -1,0 +1,42 @@
+# The Elite's chord memory in PERFORMANCE (BOARD=smk37 tests/run_host.sh tests/elite_chord.txt; tests/elite_test.py).
+# Buttons: 2 < 3 > 7 NOTE RPT 9 CHORD. Keys: bit 12 = C4, 14 = D4, 16 = E4, 19 = G4.
+300 shot
+# --- hold CHORD, play C E G (let go of the keys first), let go of CHORD: C4 plays C E G, D4 plays D F# A
+1000 down 9
+1100 keys 0x91000
+1200 keys 0
+1300 up 9
+1400 keys 0x1000
+1500 keys 0
+1600 keys 0x4000
+1700 keys 0
+# --- a tap on CHORD: off (C4 alone); again: on with the chord kept
+1800 btn 9
+1900 keys 0x1000
+2000 keys 0
+2100 btn 9
+2200 keys 0x1000
+2300 keys 0
+# --- a new chord over the old one: C E (held while letting go of CHORD)
+2400 down 9
+2500 keys 0x11000
+2600 up 9
+2700 keys 0
+2800 keys 0x1000
+2900 keys 0
+# --- NOTE RPT: the vibrato
+3000 btn 7
+3100 shot
+# --- > alone: the next drawbar preset on letting go; < and > held together: K1 the next one, K2 the model, no step
+3300 shot
+3400 btn 3
+3500 shot
+3600 down 2
+3650 down 3
+3700 enc 0 1
+3750 shot
+3800 enc 1 1
+3850 up 2
+3900 up 3
+4000 shot
+4100 end

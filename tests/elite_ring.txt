@@ -1,0 +1,18 @@
+# The insert effect RING MOD (BOARD=smk37 tests/run_host.sh tests/elite_ring.txt; tests/elite_test.py).
+# Buttons: 12 PATCH 14 FX. FX: pad 4 the upper's rotary off, K4 its reverb send 0 (left = right without it).
+1000 btn 14
+1100 pad 3 100
+1110 pad 3 0
+1120 enc 3 -40
+# --- a chord, dry (2 s)
+1500 keys 0x91000
+3500 keys 0
+# --- EFFECT: pad 6 RING MOD (440 Hz, mix 50 %); the chord again
+3600 btn 12
+3700 btn 12
+3800 pad 5 100
+3810 pad 5 0
+3900 shot
+4000 keys 0x91000
+6000 keys 0
+6200 end

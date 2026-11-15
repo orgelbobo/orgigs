@@ -1,0 +1,57 @@
+# The Elite's layout B DRAWBARS + PADS (BOARD=smk37 tests/run_host.sh tests/elite_layout.txt; checked by tests/elite_test.py).
+# Buttons: 0 KNOB BANK 8 SCALE 11 BT. Pads 0..7 top row, 8..15 bottom row. Setup 1: tonewheel, 888000000, 3rd perc, C3.
+# Top pads: 1 VIB, 2 PERC, 3 PERC 2F..3S (held + K1: SOFT), 4 LES slow/fast, 5 LES stop, 6 DRV, 7 DLY, 8 EFFECT.
+# --- SCALE + KNOB BANK: layout B
+100 down 8
+150 btn 0
+200 up 8
+500 shot
+# --- pad 2: PERC off; pad 3: the next (while off); pad 2: on again
+600 pad 1 100
+650 pad 1 0
+700 shot
+800 pad 2 100
+850 pad 2 0
+900 pad 1 100
+950 pad 1 0
+1000 shot
+# --- pad 3 held + K1 left: SOFT (no step); pad 9: drawbar 1 in, pad 12: drawbar 4 out; pad 4: rotary fast
+1100 pad 2 100
+1120 enc 0 -1
+1150 pad 2 0
+1200 pad 8 100
+1250 pad 8 0
+1260 pad 11 100
+1270 pad 11 0
+1300 pad 3 100
+1350 pad 3 0
+# --- pad 1 held, K1 down: vibrato C3 -> C2 (stays on); then tapped: off; pad 8: the effect on; pad 6: drive off
+1400 pad 0 100
+1450 enc 0 -1
+1500 pad 0 0
+1600 shot
+1700 pad 0 100
+1750 pad 0 0
+1800 pad 7 100
+1850 pad 7 0
+1860 pad 5 100
+1870 pad 5 0
+1900 shot
+# --- BT + pad 2: setup 2 keeps B, SOFT; SCALE + KNOB BANK four times: B2, C, D, A; SCALE + pad 2: B again
+2000 down 11
+2050 pad 1 100
+2060 pad 1 0
+2100 up 11
+2200 down 8
+2210 btn 0
+2260 btn 0
+2310 btn 0
+2360 btn 0
+2420 up 8
+2500 shot
+2600 down 8
+2650 pad 1 100
+2660 pad 1 0
+2700 up 8
+3000 shot
+3100 end

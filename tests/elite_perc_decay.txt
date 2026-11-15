@@ -1,0 +1,54 @@
+# The tonewheel percussion's decay: pad 3 held + K3 (BOARD=smk37 tests/run_host.sh tests/elite_perc_decay.txt; tests/elite_test.py).
+# Buttons: 0 KNOB BANK 6 ARP 8 SCALE. Pads 0..15. Encoders 0..7 = K1..K8. Setup 1: tonewheel, PERC 3F on.
+# --- layout A: the top pads pull drawbars 1-8 to 0, ARP drawbar 9: only the percussion sounds
+100 pad 0 100
+110 pad 0 0
+120 pad 1 100
+130 pad 1 0
+140 pad 2 100
+150 pad 2 0
+160 pad 3 100
+170 pad 3 0
+180 pad 4 100
+190 pad 4 0
+200 pad 5 100
+210 pad 5 0
+220 pad 6 100
+230 pad 6 0
+240 pad 7 100
+250 pad 7 0
+260 btn 6
+# --- a key held 2 s: the classic fast decay (200 ms)
+1000 keys 0x1000
+3000 keys 0
+# --- SCALE + KNOB BANK: layout B; pad 3 held, K3 all the way up: HOLD (the PERC does not step on letting go)
+3200 down 8
+3250 btn 0
+3300 up 8
+3400 pad 2 100
+3500 enc 2 60
+3600 pad 2 0
+3700 shot
+# --- the same key: the percussion holds
+4000 keys 0x1000
+6000 keys 0
+# --- pad 3 tapped: 3RD SLOW, its own decay (the classic ~1 s)
+6200 pad 2 100
+6250 pad 2 0
+6500 keys 0x1000
+8500 keys 0
+# --- pad 3 tapped five times: 4F 4S 2F 2S 3F: 3RD FAST still holds
+8600 pad 2 100
+8650 pad 2 0
+8700 pad 2 100
+8750 pad 2 0
+8800 pad 2 100
+8850 pad 2 0
+8900 pad 2 100
+8950 pad 2 0
+9000 pad 2 100
+9050 pad 2 0
+9100 shot
+9500 keys 0x1000
+11500 keys 0
+12000 end

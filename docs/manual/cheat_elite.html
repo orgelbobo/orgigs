@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OrGigs Elite at a glance</title>
+<style>
+/* Two A4 pages, printed by build_pdf.sh cheat-elite; the same look as cheat_fm1.html and the manual */
+@page { size: A4; margin: 11mm 12mm 12mm 12mm;
+  @bottom-left { content: "OrGigs Elite at a glance · the full manual: OrGigs_Elite_Manual.pdf"; font: 7pt "Segoe UI", Arial, sans-serif; color: #888; }
+  @bottom-right { content: counter(page) " / 2"; font: 7.5pt "Segoe UI", Arial, sans-serif; color: #555; } }
+:root { --ink: #1d1d22; --muted: #5b5b66; --line: #d9d6cf; --amber: #f2a51d; --amber-soft: #fff4dd; --dark: #121214; --tint: #f6f4ef; }
+* { -webkit-print-color-adjust: exact; print-color-adjust: exact; box-sizing: border-box; }
+html, body { margin: 0; background: #fff; color: var(--ink); }
+body { font: 8.1pt/1.34 "Segoe UI", "Helvetica Neue", Arial, sans-serif; max-width: 186mm; margin: 0 auto; padding: 0 4mm; }
+@media print { body { padding: 0; } }
+h1, h2 { font-family: Georgia, "Times New Roman", serif; font-weight: normal; margin: 0; }
+h2 { font-size: 11pt; margin: 2.6mm 0 1mm; break-after: avoid; }
+h2 .n { color: var(--amber); margin-right: 1.6mm; }
+p { margin: 0 0 1.2mm; }
+b { font-weight: 600; }
+.k { display: inline-block; font: 600 6.8pt/1 "Consolas", "Courier New", monospace; border: 0.5pt solid #9a978f; border-bottom-width: 1.2pt;
+  border-radius: 2.5px; padding: 1pt 2.4pt; background: #fbfaf7; white-space: nowrap; }
+.d { font: 7.2pt "Consolas", "Courier New", monospace; background: var(--dark); color: var(--amber); padding: 0.4pt 2.4pt; border-radius: 2px; white-space: nowrap; }
+table { width: 100%; border-collapse: collapse; margin: 0.5mm 0 1.4mm; }
+th { text-align: left; font-weight: 600; font-size: 6.6pt; text-transform: uppercase; letter-spacing: .05em; color: var(--muted);
+  border-bottom: 1pt solid var(--ink); padding: 0.7mm 1.5mm 0.6mm 0; }
+td { border-bottom: 0.4pt solid var(--line); padding: 0.7mm 1.5mm 0.7mm 0; vertical-align: top; }
+tr { break-inside: avoid; }
+td:first-child { white-space: nowrap; }
+
+.head { background: var(--dark); color: #eee; border-radius: 2mm; padding: 3mm 4.5mm; display: flex; gap: 4mm; align-items: center; }
+.head .bars { display: flex; gap: 1.1mm; height: 11mm; align-items: flex-start; flex: none; }
+.head .bars i { width: 2.2mm; border-radius: 0 0 0.6mm 0.6mm; display: block; }
+.head h1 { font-size: 19pt; color: #fff; line-height: 1.05; }
+.head h1 span { color: var(--amber); }
+.head p { margin: 0.8mm 0 0; color: #cfcac0; font-size: 8.2pt; }
+.head .id { margin-left: auto; text-align: right; font: 7.2pt/1.5 "Consolas", monospace; color: #8d8a84; flex: none; }
+
+.glance td:first-child { font-weight: 600; width: 20mm; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+.two > div { min-width: 0; }
+.rules td:first-child { width: 33mm; }
+
+/* the pads: two rows of eight, coloured as on the Elite */
+.pads { display: grid; grid-template-columns: repeat(8, 1fr); gap: 0.9mm; margin: 0.6mm 0 0.6mm; }
+.pads div { border-radius: 1.2mm; padding: 1mm 0.4mm; text-align: center; font-size: 6.4pt; line-height: 1.12; font-weight: 600; color: #fff; min-height: 6.4mm;
+  display: flex; flex-direction: column; justify-content: center; }
+.pads div small { font-weight: 400; font-size: 5.8pt; opacity: .9; }
+.g { background: #34b254; } .r { background: #d6382a; } .y { background: #f4c424; color: #1d1d22 !important; } .a { background: #ffb030; color: #1d1d22 !important; }
+.bl { background: #1e5ad6; } .pu { background: #9a2cf0; } .gr { background: #8f8f96; } .o { background: #ff6e00; } .w { background: #e8f4ff; color: #1d1d22 !important; border: .2mm solid #b9c4cc; }
+.cap { font-size: 6.8pt; color: var(--muted); margin: 0 0 1.4mm; }
+.note { background: var(--amber-soft); border-left: 2pt solid var(--amber); padding: 1.4mm 2.6mm; margin: 1mm 0 1.4mm; break-inside: avoid; }
+.page2 { break-before: page; }
+.tm { font-size: 6.4pt; color: var(--muted); margin-top: 1.6mm; }
+@media (max-width: 640px) { .two { grid-template-columns: 1fr; } .pads { grid-template-columns: repeat(4, 1fr); } .head { flex-wrap: wrap; } .head .id { margin-left: 0; text-align: left; } }
+</style>
+</head>
+<body>
+
+<!-- ============ PAGE 1 ============ -->
+<header class="head">
+  <div class="bars" aria-hidden="true">
+    <i style="height:100%;background:#8b4a26"></i><i style="height:100%;background:#8b4a26"></i><i style="height:100%;background:#efe9da"></i>
+    <i style="height:58%;background:#efe9da"></i><i style="height:30%;background:#55555c"></i><i style="height:72%;background:#efe9da"></i>
+    <i style="height:20%;background:#55555c"></i><i style="height:44%;background:#55555c"></i><i style="height:86%;background:#f2a51d"></i>
+  </div>
+  <div>
+    <h1>OrGigs <span>Elite</span> at a glance</h1>
+    <p>A three-manual organ, effects rack, MIDI router and SEQTRAK remote for the M-VAVE SMK-37 Elite.</p>
+  </div>
+  <div class="id">package SMK-37 Elite_970<br>GPL-3.0-only</div>
+</header>
+
+<table class="glance">
+<tr><td>Sound</td><td>84 free-running tone generators, no voice stealing; 8 models: tonewheel, three combo organs, baroque and cathedral pipe organs, musette and bandoneon reeds</td></tr>
+<tr><td>Playing</td><td>3 manuals (9 + 9 drawbars, 4 pedal stops) on 8 knobs, fader 1 and 16 pads; 5 pad layouts; coupler; sustain pedal; chord memory; wheels with their own targets</td></tr>
+<tr><td>Effects</td><td>Per manual: drive, vibrato / chorus or tremulant, rotary on / off, delay and reverb sends. Shared: two-rotor rotary (4 cabinets, 2 your own), delay, 4 reverbs, an insert slot (chorus, wah-wah, auto-wah, flanger, phaser, ring mod, amp), master EQ and compressor</td></tr>
+<tr><td>Memory</td><td>16 performance setups (one per pad), a drawbar list of 75 registrations + 16 user slots; kept after power-off; backup over USB</td></tr>
+<tr><td>MIDI</td><td>3 zones, cloner, harmonic mapper, chord memory; a 16-channel mixer (volume, pan, reverb, delay, mute, solo); the Yamaha SEQTRAK's 11 tracks on the pads (YST)</td></tr>
+</table>
+
+<h2><span class="n">1</span>Rules that hold everywhere</h2>
+<table class="rules">
+<tr><td>Keys</td><td>only play, on every screen (C3–C6, with velocity); <span class="k">OCT−</span> <span class="k">OCT+</span> −2 … +3</td></tr>
+<tr><td><span class="k">SCALE</span></td><td>the shift button; pressed it shows DSP load, battery and the pedal reading</td></tr>
+<tr><td><span class="k">KNOB BANK</span></td><td>the next manual: UPPER → LOWER → PEDAL (when you let go)</td></tr>
+<tr><td><span class="k">KNOB BANK</span> + <span class="k">FADER BANK</span></td><td><b>HOME:</b> upper manual, model 1, P1, coupler off, layout A</td></tr>
+<tr><td><span class="k">FX</span> · <span class="k">GLOBE</span> · <span class="k">PARA</span></td><td>the FX pages · the MIDI screens · the mixer; again: back to the drawbars</td></tr>
+<tr><td><span class="k">ARP</span> / <span class="k">PATCH</span></td><td>on the FX and MIDI screens: the previous / next page</td></tr>
+<tr><td><span class="k">PLAY</span> · <span class="k">REC</span></td><td>rotary brake · slow ↔ fast (<span class="k">SCALE</span> + <span class="k">REC</span>: the manual through the rotary or past it)</td></tr>
+<tr><td><span class="k">SCALE</span> + pad · <span class="k">BT</span> + pad</td><td>recall · store performance setup 1–16</td></tr>
+<tr><td><span class="k">SCALE</span> + <span class="k">PATCH</span></td><td>panic: all notes off, inside and on all 16 channels</td></tr>
+<tr><td><span class="k">SCALE</span> + <span class="k">GLOBE</span></td><td>the panel lights and the backup</td></tr>
+</table>
+
+<div class="two">
+<div>
+<h2><span class="n">2</span>On the drawbar screen</h2>
+<table>
+<tr><td><span class="k">&lt;</span> <span class="k">&gt;</span></td><td>the drawbar list (<span class="k">SCALE</span>: the model)</td></tr>
+<tr><td><span class="k">&lt;</span>+<span class="k">&gt;</span> held</td><td>K1 the list, K2 the model, K3 the layout, K4 · K5 the SEQTRAK sound</td></tr>
+<tr><td><span class="k">FADER BANK</span></td><td>the next layout A → B1 → B2 → C → D</td></tr>
+<tr><td><span class="k">ARP</span> / <span class="k">PATCH</span></td><td>drawbar 9 in / out</td></tr>
+<tr><td><span class="k">NOTE RPT</span></td><td>vibrato / chorus (tremulant) on / off</td></tr>
+<tr><td><span class="k">CHORD</span></td><td>hold, play a chord, let go: every key plays it. Tap: off / on</td></tr>
+<tr><td><span class="k">SEQ</span></td><td>the coupler: OFF → UM+LM → UM+PM → LM+PM → all</td></tr>
+<tr><td><span class="k">BT</span></td><td>tap: the drawbars to a user slot</td></tr>
+</table>
+</div>
+<div>
+<h2><span class="n">3</span>Faders and wheels</h2>
+<table>
+<tr><td>Fader 1</td><td>drawbar 9 (up = in)</td></tr>
+<tr><td>Fader 2</td><td>reverb send of the manual</td></tr>
+<tr><td>Fader 3</td><td>the MIDI out's sum (scales every channel's CC 7)</td></tr>
+<tr><td>Fader 4</td><td>volume, everywhere</td></tr>
+<tr><td>Mod wheel</td><td>rotary slow / fast (reeds: bellows; WAH-WAH: its pedal)</td></tr>
+<tr><td>Pitch wheel</td><td>bend ±2 semitones (or rotary kick / tutti)</td></tr>
+<tr><td>Sustain</td><td>holds the keys, also over MIDI (CC 64)</td></tr>
+</table>
+<p class="cap">Faders 1–3 pick up: after a change elsewhere they act once they reach the value (<span class="d">FADER UP TO 64</span>). The FX page <span class="d">WHEELS</span> gives the wheels other targets.</p>
+</div>
+</div>
+
+<h2><span class="n">4</span>The five pad layouts <span class="k">FADER BANK</span></h2>
+<table>
+<tr><th>Layout</th><th>Top pads 1–8</th><th>Bottom pads 9–16</th></tr>
+<tr><td><span class="d">PERF A</span> Full drawbars</td><td>drawbar 1–8 all the way in</td><td>drawbar 1–8 all the way out</td></tr>
+<tr><td><span class="d">PERF B1</span> Drawbars + live</td><td>the live switches</td><td>each drawbar out, or in when it is out</td></tr>
+<tr><td><span class="d">PERF B2</span> Drawbars + MIDI</td><td>manual, coupler, zone switches (C's bottom row)</td><td>as B1</td></tr>
+<tr><td><span class="d">PERF C</span> Knobs + 16 pads</td><td>the live switches</td><td>manual, coupler, zone switches (below)</td></tr>
+<tr><td><span class="d">PERF D</span> Sound design</td><td>the live switches</td><td>FX pages on the knobs, the manual (below)</td></tr>
+</table>
+
+<p><b>The live switches</b> (B1, C, D, top row). Bright = on, dim = off.</p>
+<div class="pads">
+  <div class="g">1 VIB<small>held: K1 type</small></div>
+  <div class="r">2 PERC<small>other models: coupler</small></div>
+  <div class="r">3 2F…3S<small>held: K1 soft, K3 decay</small></div>
+  <div class="y">4 ROTARY<small>slow ↔ fast</small></div>
+  <div class="y">5 STOP<small>rotary brake</small></div>
+  <div class="r">6 DRIVE<small>held: K6 amount</small></div>
+  <div class="y">7 DELAY<small>held: K7 time, K8 send</small></div>
+  <div class="a">8 EFFECT<small>held: K8 mix</small></div>
+</div>
+<p class="cap">Pads 1, 3, 6, 7 and 8 switch when you let go, so holding them for a knob does not switch them.</p>
+
+<!-- ============ PAGE 2 ============ -->
+<section class="page2">
+<h2 style="margin-top:0">Layouts C and D: the bottom row</h2>
+<div class="two">
+<div>
+<p><b>Layout C, bottom row</b></p>
+<div class="pads" style="grid-template-columns:repeat(4,1fr)">
+  <div class="bl">9 UPPER</div><div class="bl">10 LOWER</div><div class="bl">11 PEDAL</div><div class="pu">12 COUPLER<small>held + 9–11: manuals</small></div>
+  <div class="gr">13 FCCI</div><div class="gr">14 FCCO</div><div class="gr">15 MIDI OUT</div><div class="gr">16 INT</div>
+</div>
+</div>
+<div>
+<p><b>Layout D, bottom row</b></p>
+<div class="pads" style="grid-template-columns:repeat(4,1fr)">
+  <div class="gr">9 FX</div><div class="gr">10 ROTARY</div><div class="gr">11 EFFECT</div><div class="gr">12 MASTER</div>
+  <div class="gr">13 MIXER</div><div class="gr">14 UPPER</div><div class="gr">15 LOWER</div><div class="gr">16 PEDAL</div>
+</div>
+</div>
+</div>
+<p class="cap">D: a page's pad puts its eight values on K1–K8 while the top row keeps its switches; the pad again goes back.</p>
+<h2><span class="n">5</span>The FX pages <span class="k">FX</span>, then <span class="k">ARP</span> / <span class="k">PATCH</span></h2>
+<table>
+<tr><th>Page</th><th>Pads</th><th>Knobs</th></tr>
+<tr><td><span class="d">FX</span></td><td>1–3 the manual, 4 through the rotary or past it</td><td>K1 drive · K2 vibrato / tremulant · K3 delay send · K4 reverb send (the manual's)<br>K5 percussion / chiff / detune · K6 delay feedback · K7 delay time · K8 reverb room (shared)</td></tr>
+<tr><td><span class="d">ROTARY</span></td><td>1–4 the cabinet: CLASSIC, COMPACT, USER 1, USER 2; <span class="k">BT</span> + 3 / 4 copies into a USER</td><td>horn and drum speeds and rise, crossover, balance; <span class="k">SCALE</span>: Doppler, AM, width</td></tr>
+<tr><td><span class="d">EFFECT</span></td><td>1–7 CHORUS, WAH-WAH, AUTO-WAH, FLANGER, PHASER, RING MOD, AMP (again: off); 9–11 the manual</td><td>the effect's eight values, each effect keeps its own</td></tr>
+<tr><td><span class="d">MASTER</span></td><td>1 EQ on / off, 2 compressor on / off</td><td>K1 · K2 · K4 EQ low · mid · high, K3 mid frequency; K5–K8 threshold, ratio, attack, release</td></tr>
+<tr><td><span class="d">WHEELS</span></td><td>—</td><td>K1 what the mod wheel moves, K5 the pitch wheel, K3 the CC of the YST action pad</td></tr>
+</table>
+<p class="cap">Signal path, per manual: drive → vibrato → [insert effect] → rotary or past it, with delay and reverb sends; then all together → [EQ → compressor] → swell → volume.</p>
+
+<div class="two">
+<div>
+<h2><span class="n">6</span>The mixer <span class="k">PARA</span></h2>
+<table>
+<tr><td>K1–K8</td><td>eight channels; <span class="k">KNOB BANK</span>: 1–8 ↔ 9–16</td></tr>
+<tr><td><span class="k">&lt;</span> <span class="k">&gt;</span></td><td>what they set: VOL, PAN, REVERB, DELAY</td></tr>
+<tr><td>Pads 1–8</td><td>mute (red)</td></tr>
+<tr><td>Pads 9–16</td><td>solo (dark blue)</td></tr>
+</table>
+<p class="cap">The volumes belong to the setup; the rest is sent as you set it.</p>
+</div>
+<div>
+<h2><span class="n">7</span>MIDI zones <span class="k">GLOBE</span></h2>
+<p><span class="d">ZONE</span> → <span class="d">CLONE</span> → <span class="d">YST</span> → <span class="d">HARMONIC</span> → <span class="d">CHORD</span>, turned with <span class="k">PATCH</span> / <span class="k">ARP</span>. <span class="k">KNOB BANK</span> chooses the zone, <span class="k">CHORD</span> switches the screen's module.</p>
+<table>
+<tr><td><span class="d">ZONE</span> knobs</td><td>K1 in ch · K2 out ch · K3 / K4 lowest / highest key · K5 transpose · K6 octave · K7 fixed velocity · K8 BEND</td></tr>
+<tr><td><span class="d">ZONE</span> pads</td><td>1 VEL · 2 FCCO · 3 PCF · 4 INT · 5 LRN · 6 EXP · 7 THR · 8 TRS · 9 KZN · 10 AUT · 11 FCCI · 12 MOUT</td></tr>
+</table>
+</div>
+</div>
+
+<h2><span class="n">8</span>YST: the Yamaha SEQTRAK</h2>
+<p>Connect the SEQTRAK with a USB-C cable (it hosts and powers the Elite), go to the <span class="d">YST</span> screen, <span class="k">CHORD</span> switches it on. <span class="k">NOTE RPT</span> reads the tracks again after a project change.</p>
+<div class="pads">
+  <div class="o">1 KCK</div><div class="o">2 SNR</div><div class="o">3 CLP</div><div class="o">4 HH1</div>
+  <div class="o">5 HH2</div><div class="o">6 PC1</div><div class="o">7 PC2</div><div class="bl">8 SY1</div>
+  <div class="bl">9 SY2</div><div class="pu">10 DX</div><div class="gr">11 SMP</div><div class="r" style="background:#ff28a0">12 ACTION</div>
+  <div class="w">13 STOP</div><div class="g">14 PLAY<small>/ PAUSE</small></div><div class="r">15 REC<small>(no function)</small></div><div class="a">16 BROWSER</div>
+</div>
+<table>
+<tr><td>Pads 1–11</td><td>choose the track (the SEQTRAK follows, and the other way round); <span class="k">SCALE</span> + pad: mute</td></tr>
+<tr><td>Pad 12</td><td>the action pad: held, it pulls a SEQTRAK effect up, the harder you strike the faster</td></tr>
+<tr><td><span class="k">&lt;</span> <span class="k">&gt;</span> · pad 16</td><td>the previous / next sound · the sound browser (K1 category, K2 sound, loads when the knob rests)</td></tr>
+<tr><td>K1–K8</td><td>cutoff, resonance, attack, decay, volume, pan, reverb, delay of the track; <span class="k">SCALE</span> + K1–K4: the DX track's FM</td></tr>
+<tr><td>Faders 1–3</td><td>the SEQTRAK's touch sliders: FX LEVEL, HIGH PASS, REPEATER</td></tr>
+<tr><td><span class="k">SEQ</span> · <span class="k">KNOB BANK</span></td><td>synth track mono / poly / chord · the manual that plays the track</td></tr>
+</table>
+<p class="cap">From anywhere: hold <span class="k">&lt;</span> + <span class="k">&gt;</span> and turn K4 (category) or K5 (sound) of the track the manual plays.</p>
+
+<div class="note"><b>Avoid MIDI loops:</b> never route the Elite's output back into the Elite. For a 5-pin DIN synth behind a MIDI host, switch pad 8 (<span class="d">TRS</span>) on the zone screen.</div>
+
+<p class="cap">OrGigs is designed around the Elite. A compact edition runs on the M-VAVE FM-1: the same organ, effects and MIDI zones on four knobs and twelve buttons. Both read the same backups.</p>
+<p class="tm">All product names are trademarks of their owners and are used only to identify compatible devices. OrGigs is not affiliated with them.</p>
+</section>
+
+</body>
+</html>

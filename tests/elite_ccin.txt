@@ -1,0 +1,17 @@
+# The zone's FILTER CC IN (BOARD=smk37 tests/run_host.sh tests/elite_ccin.txt; checked by tests/elite_test.py).
+# Buttons: 10 GLOBE. Pads 0..15 (ZONE: pad 11 = FILTER CC IN). The upper zone listens and sends on channel 1.
+# --- filter off: a note on channel 1, sustain down, note off: it holds; sustain up: off
+1000 midi 0x90 60 100
+1100 midi 0xB0 64 127
+1200 midi 0x80 60 0
+1300 midi 0xB0 64 0
+# --- GLOBE: ZONE; pad 11: FILTER CC IN on; the same: the note ends at its note off (the sustain only goes out)
+1500 btn 10
+1600 pad 10 100
+1650 pad 10 0
+1700 shot
+2000 midi 0x90 60 100
+2100 midi 0xB0 64 127
+2200 midi 0x80 60 0
+2300 midi 0xB0 64 0
+2500 end

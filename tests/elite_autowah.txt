@@ -1,0 +1,23 @@
+# The insert effect AUTO-WAH (BOARD=smk37 tests/run_host.sh tests/elite_autowah.txt; tests/elite_test.py).
+# Buttons: 12 PATCH 14 FX. FX: pad 4 the upper's rotary off, K4 its reverb send 0.
+1000 btn 14
+1100 pad 3 100
+1110 pad 3 0
+1120 enc 3 -40
+# --- EFFECT: pad 3 AUTO-WAH; a chord (sensitivity 60 %: it opens)
+1200 btn 12
+1300 btn 12
+1400 pad 2 100
+1410 pad 2 0
+1500 shot
+2000 keys 0x91000
+2400 keys 0
+# --- K1 down to 0: no sensitivity, it stays at LOW (dark)
+2500 enc 0 -20
+3000 keys 0x91000
+3400 keys 0
+# --- K2 up: an LFO at 2 Hz sweeps it
+3500 enc 1 40
+4000 keys 0x91000
+5000 keys 0
+5200 end

@@ -1,0 +1,123 @@
+# Screens for the Elite manual (docs/manual/img/elite-*): BOARD=smk37 tests/run_host.sh tests/elite_manual_shots.txt
+# Keys: bit 0 = C3. Buttons: 0 KNOB BANK 1 FADER BANK 2 < 3 > 6 ARP 7 NOTE RPT 8 SCALE 9 CHORD 10 GLOBE 11 BT
+# 12 PATCH 13 PARA 14 FX. Encoders 0..7 = K1..K8. Pads 0..7 top row, 8..15 bottom row.
+# --- setup 1 (tonewheel jazz), a chord, the message gone
+100 keys 0x91000
+2000 shot
+2100 keys 0
+# --- FX: the upper manual's strip and the shared effects
+2200 btn 14
+4000 shot
+# --- PATCH: ROTARY, pad 3: USER 1
+4100 btn 12
+4200 pad 2 100
+4250 pad 2 0
+6000 shot
+# --- PATCH: EFFECT, pad 5: PHASER on the upper manual
+6100 btn 12
+6200 pad 4 100
+6250 pad 4 0
+8000 shot
+# --- PATCH: MASTER, pads 1 and 2: EQ and compressor on; K1 +3 dB, K4 +2 dB; a loud chord: the cut shows
+8100 btn 12
+8200 pad 0 100
+8250 pad 0 0
+8300 pad 1 100
+8350 pad 1 0
+8400 enc 0 3
+8450 enc 3 2
+8500 keys 0x91091
+10000 shot
+10100 keys 0
+# --- back (FX); PARA: the mixer, K2 channel 2's volume down, pad 3 mutes channel 3, pad 13 solos channel 5
+10200 pad 0 100
+10250 pad 0 0
+10300 pad 1 100
+10350 pad 1 0
+10400 btn 14
+10500 btn 13
+10600 enc 1 -10
+10700 pad 2 100
+10750 pad 2 0
+10800 pad 12 100
+10850 pad 12 0
+12500 shot
+# --- pads 13 and 3 again: solo and mute off; PARA: back; SCALE + GLOBE: the lights
+12600 pad 12 100
+12650 pad 12 0
+12700 pad 2 100
+12750 pad 2 0
+12900 btn 13
+13000 down 8
+13050 btn 10
+13100 up 8
+15000 shot
+# --- PATCH: back; GLOBE: ZONE. Lower zone C1..E3 (KNOB BANK), upper F3 and up; pad 10: auto-pedal
+15100 btn 12
+15200 btn 10
+15300 btn 0
+15400 enc 3 -75
+15500 btn 0
+15600 btn 0
+15700 enc 2 53
+15800 pad 9 100
+15850 pad 9 0
+17500 shot
+# --- PATCH: CLONE. CHORD: on; pad 5: channel 5, K1 +1 octave; pad 6: channel 6
+17600 btn 12
+17700 btn 9
+17800 pad 4 100
+17850 pad 4 0
+17900 enc 0 1
+18000 pad 5 100
+18050 pad 5 0
+19800 shot
+# --- PATCH twice (past YST): HARMONIC. CHORD: on, K1 +4: channels 5-13
+19900 btn 12
+20000 btn 12
+20100 btn 9
+20200 enc 0 4
+22000 shot
+# --- PATCH: CHORD. Hold C minor 7 (C4 Eb4 G4 Bb4), pad 1 takes it, CHORD: on
+22100 btn 12
+22200 keys 0x489000
+22300 pad 0 100
+22350 pad 0 0
+22400 keys 0
+22500 btn 9
+24000 shot
+# --- ARP twice: YST. CHORD: YST on, the SEQTRAK answers (as tests/yst_elite.txt)
+24100 btn 6
+24200 btn 6
+25000 btn 9
+25010 sysex 43107F1C0C01103C02
+25020 sysex 43107F1C0C011033066F
+25030 sysex 43107F1C0C01113C02
+25040 sysex 43107F1C0C0111330704
+25050 sysex 43107F1C0C01123C02
+25060 sysex 43107F1C0C0112330B5B
+25070 sysex 43107F1C0C01133C01
+25080 sysex 43107F1C0C0113330077
+25090 sysex 43107F1C0C01143C01
+25100 sysex 43107F1C0C011433022B
+25110 sysex 43107F1C0C01153C01
+25120 sysex 43107F1C0C0115330341
+25130 sysex 43107F1C0C01163C01
+25140 sysex 43107F1C0C0116330373
+25150 sysex 43107F1C0C01173C02
+25160 sysex 43107F1C0C0117330659
+25170 sysex 43107F1C0C01183C02
+25180 sysex 43107F1C0C0118330767
+25190 sysex 43107F1C0C01193C04
+25200 sysex 43107F1C0C0119330F0C
+25210 sysex 43107F1C0C011A3C05
+# --- pad 8: track 8 (SY1, a synth track)
+25300 pad 7 100
+25350 pad 7 0
+27000 shot
+# --- pad 16: the sound browser; K1 +1: the next category
+27100 pad 15 100
+27150 pad 15 0
+27200 enc 0 1
+29000 shot
+29100 end

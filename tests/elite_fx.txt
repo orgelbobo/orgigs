@@ -1,0 +1,32 @@
+# The Elite's FX area (BOARD=smk37 tests/run_host.sh tests/elite_fx.txt; checked by tests/elite_test.py).
+# Buttons: 6 ARP 8 SCALE 11 BT 12 PATCH 14 FX. Encoders 0..7 = K1..K8. Pads 0..15.
+# --- FX: K1 the upper's drive, K8 the reverb space; pad 2: the lower manual, K4 its reverb send
+1000 btn 14
+1100 enc 0 3
+1200 enc 7 1
+1300 pad 1 100
+1350 pad 1 0
+1400 enc 3 2
+1500 shot
+# --- PATCH: ROTARY (the CLASSIC, fixed: K1 changes nothing); pad 3: USER 1, K1 +2: its horn slow 0.60 -> 0.64
+1600 btn 12
+1700 shot
+1800 enc 0 2
+1900 pad 2 100
+1950 pad 2 0
+2000 enc 0 2
+2100 down 8
+2150 enc 0 -3
+2200 up 8
+2300 shot
+# --- pad 2: the 145; BT + pad 4: copied to USER 2 (and chosen); ARP: back to FX
+2400 pad 1 100
+2450 pad 1 0
+2500 down 11
+2550 pad 3 100
+2600 pad 3 0
+2650 up 11
+2700 shot
+2800 btn 6
+2900 shot
+3000 end

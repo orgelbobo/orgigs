@@ -1,0 +1,11 @@
+# The delay's echoes after a short note (BOARD=smk37 tests/run_host.sh tests/elite_delay.txt; tests/elite_test.py).
+# FX: K3 the upper's delay send up, pad 4 its rotary off, K4 its reverb send 0; then a note shorter than the delay time (328 ms).
+1000 btn 14
+1100 enc 2 40
+1150 pad 3 100
+1160 pad 3 0
+1170 enc 3 -40
+1200 btn 14
+2000 keys 0x1000
+2150 keys 0
+6000 end

@@ -1,0 +1,44 @@
+# The Elite's coupler, layout C pad 12 (BOARD=smk37 tests/run_host.sh tests/elite_coupler.txt; tests/elite_test.py).
+# Pad 12 tapped: the coupler on / off; pad 12 held + pad 9-11: that manual in / out of it.
+# Buttons: 0 KNOB BANK 8 SCALE. The zones send on channel 1 (upper), 2 (lower), 3 (pedal). Keys: 0x1000 = C4 (60).
+# --- layout C (A B1 B2 C); pad 12: on (UM+LM); a key plays channels 1 and 2
+100 down 8
+150 btn 0
+200 btn 0
+250 btn 0
+300 up 8
+500 pad 11 100
+550 pad 11 0
+600 keys 0x1000
+700 keys 0
+# --- pad 12 held + pad 10 (LM out) + pad 11 (PM in): UM+PM; a chord C4 E4: the upper both, the pedal the lowest
+750 pad 11 100
+760 pad 9 100
+770 pad 9 0
+780 pad 10 100
+790 pad 10 0
+850 pad 11 0
+900 keys 0x11000
+1000 keys 0
+# --- a note coming in on channel 1: the upper only (the coupler is the panel's keys')
+1100 midi 0x90 60 100
+1200 midi 0x80 60 0
+1300 shot
+# --- pad 12: off; a key plays channel 1 only
+1400 pad 11 100
+1450 pad 11 0
+1500 keys 0x1000
+1600 keys 0
+# --- pad 12 held: UM, PM marked (purple); + pad 10: LM in too (still off)
+1700 pad 11 100
+1800 shot
+1820 pad 9 100
+1830 pad 9 0
+1850 pad 11 0
+1900 shot
+# --- pad 12: on (UM+LM+PM)
+1950 pad 11 100
+1960 pad 11 0
+2000 keys 0x1000
+2100 keys 0
+2200 end

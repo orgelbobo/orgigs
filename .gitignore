@@ -1,0 +1,6 @@
+build/
+__pycache__/
+.DS_Store
+
+# the welcome head's drawing: the author's own, kept local (tools/gen_head_lines.py reads it)
+assets/gigstart2.jpg

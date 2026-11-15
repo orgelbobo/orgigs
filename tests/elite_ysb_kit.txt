@@ -1,0 +1,50 @@
+# A DRUM KIT track in the browser: nothing loads (BOARD=smk37 tests/run_host.sh tests/elite_ysb_kit.txt). Track 1 is a kit
+# track (type 03). Buttons: 1 FADER BANK 2 < 3 >. Encoders 1 = K2, 4 = K5. The SEQTRAK answers as in tests/elite_ysb.txt.
+# --- the faders sit somewhere; GLOBE, PATCH twice: the YST screen (off); CHORD: YST on (3000), it reads the tracks
+2800 fader 0 10
+2800 fader 3 100
+2820 btn 10
+2860 btn 12
+2900 btn 12
+3000 btn 9
+# --- OrGigs asks, one question at a time, the type and sound of every track (not the sampler's sound: it
+#     never answers that); the SEQTRAK answers each 10 ms later. Tracks 1-3 are synth tracks.
+3010 sysex 43107F1C0C01103C03
+3020 sysex 43107F1C0C011033066F
+3030 sysex 43107F1C0C01113C02
+3040 sysex 43107F1C0C0111330704
+3050 sysex 43107F1C0C01123C02
+3060 sysex 43107F1C0C0112330B5B
+3070 sysex 43107F1C0C01133C01
+3080 sysex 43107F1C0C0113330077
+3090 sysex 43107F1C0C01143C01
+3100 sysex 43107F1C0C011433022B
+3110 sysex 43107F1C0C01153C01
+3120 sysex 43107F1C0C0115330341
+3130 sysex 43107F1C0C01163C01
+3140 sysex 43107F1C0C0116330373
+3150 sysex 43107F1C0C01173C02
+3160 sysex 43107F1C0C0117330659
+3170 sysex 43107F1C0C01183C02
+3180 sysex 43107F1C0C0118330767
+3190 sysex 43107F1C0C01193C04
+3200 sysex 43107F1C0C0119330F0C
+3210 sysex 43107F1C0C011A3C05
+# --- FADER BANK: PERFORMANCE; GLOBE: YST again (its screen)
+3300 btn 1
+3400 btn 10
+3450 shot
+# --- pad 16: the browser, the kit screen; K2: nothing loads
+3500 pad 15 100
+3600 enc 1 1
+3900 shot
+# --- > (on letting go): no next sound
+4000 btn 3
+# --- pad 16: closed; < + > held, K5 +1, let go: nothing loads
+4200 pad 15 100
+4300 down 2
+4350 down 3
+4400 enc 4 1
+4600 up 2
+4600 up 3
+4900 end

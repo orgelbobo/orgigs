@@ -1,0 +1,19 @@
+# The insert effect PHASER (BOARD=smk37 tests/run_host.sh tests/elite_phaser.txt; tests/elite_test.py).
+# Buttons: 12 PATCH 14 FX. FX: pad 4 the upper's rotary off, K4 its reverb send 0 (left = right without it).
+1000 btn 14
+1100 pad 3 100
+1110 pad 3 0
+1120 enc 3 -40
+# --- a chord, dry (2 s)
+1500 keys 0x91000
+3500 keys 0
+# --- EFFECT: pad 5 PHASER; K1 the rate up to 1 Hz; the chord again
+3600 btn 12
+3700 btn 12
+3800 pad 4 100
+3810 pad 4 0
+3820 enc 0 12
+3900 shot
+4000 keys 0x91000
+6000 keys 0
+6200 end

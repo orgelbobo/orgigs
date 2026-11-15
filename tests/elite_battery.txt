@@ -1,0 +1,16 @@
+# The Elite's battery (BOARD=smk37 tests/run_host.sh tests/elite_battery.txt: look at the shots).
+# T batt RAW: the divider's raw ADC value (635: a nearly full cell, ~4.10 V). Button 8 SCALE.
+100 batt 635
+1500 shot
+# --- SCALE: the load and the battery
+1600 down 8
+1700 shot
+1750 up 8
+# --- the cell runs low (540, ~3.48 V, ~6 %): the symbol red, BATTERY LOW
+3500 batt 540
+4600 shot
+6000 shot
+# --- FX page: the right-hand text moves left of the symbol
+6100 btn 14
+6300 shot
+6500 end

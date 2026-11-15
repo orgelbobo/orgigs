@@ -1,0 +1,36 @@
+# The Elite's wheels: FX page WHEELS (BOARD=smk37 tests/run_host.sh tests/elite_wheels.txt; tests/elite_test.py).
+# Buttons: 6 ARP 14 FX. Encoders 0 = K1 (the mod wheel's target), 4 = K5 (the bend wheel's). Wheels: 0 pitch, 1 mod,
+# raw 0..1023 (512: the pitch wheel's rest). Setup 1: tonewheel, 888000000 (16' 5 1/3' 8'). Keys: 0x1000 = C4 (60).
+# --- FX, ARP: WHEELS; K5 three steps: ROTARY, PITCH, SHIFT 1 (+-1 octave)
+1000 btn 14
+1100 btn 6
+1200 enc 4 1
+1250 enc 4 1
+1300 enc 4 1
+1400 shot
+# --- C4 held: plain, then the bend wheel all the way up: an octave higher
+1600 keys 0x1000
+2600 wheel 0 1023
+3600 wheel 0 512
+# --- K5 two steps: SHIFT 3; the wheel up: three octaves higher; down: three lower
+3700 enc 4 1
+3750 enc 4 1
+4600 wheel 0 1023
+5600 wheel 0 0
+6600 wheel 0 512
+7400 shot
+7500 keys 0
+# --- K1 two steps: ROTARY, DRIVE (no pitch on the mod wheel); the mod wheel up: the drive to 127; down: back
+7600 enc 0 1
+7650 enc 0 1
+7700 wheel 1 0
+7900 shot
+8000 wheel 1 1023
+8200 shot
+# --- K5 back to AUTO (round): the pitch-bend range 2 again out
+8300 enc 4 -1
+8350 enc 4 -1
+8400 enc 4 -1
+8450 enc 4 -1
+8500 enc 4 -1
+8600 end

@@ -1,0 +1,13 @@
+# The Elite's sustain pedal (BOARD=smk37 tests/run_host.sh tests/elite_sustain.txt; checked by tests/elite_test.py).
+# The jack rests at 0 at power-on (1500 ms: its kind read); 1023 = pressed.
+# --- C4 played, pedal down (CC 64 127), C4 let go: it holds; E4 played and let go; pedal up: both off, CC 64 0
+2000 keys 0x1000
+2100 pedal 1023
+2200 keys 0
+2300 keys 0x10000
+2400 keys 0
+2500 pedal 0
+# --- a key let go without the pedal goes off at once
+2700 keys 0x1000
+2800 keys 0
+3000 end

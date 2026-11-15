@@ -1,0 +1,107 @@
+# OrGigs FM-1 host demo (tests/run_host.sh). Key bit k = F3 + k: C4 = 7, E4 = 11, G4 = 14, C5 = 19.
+# Buttons: 0 OCT- 1 OCT+ 2 FX 3 SEL 4 ENV 5 LFO 6 EDIT 7 GLO 8 HOME 9 SAVE 10 ARP 11 SEQ 12 PLAY 13 REC
+# Encoders: 0 SELECT 1 ALGORITHM 2..5 KNOB1..4 6 PRESETS
+# --- setup 1: tonewheel jazz, 3rd percussion, C3 chorus, rotary slow -> fast -> slow (REC)
+100 keys 0x4880
+600 shot
+900 btn 13
+1500 shot
+2200 keys 0
+2300 btn 13
+# --- drawbar presets: PRESETS turns through the tonewheel upper presets, LFO = drawbars 5-8, EDIT = 1 3 4 + 9
+2400 enc 6 3
+2500 shot
+2600 btn 5
+2650 enc 5 4
+2700 shot
+2800 btn 6
+2850 enc 5 6
+2900 shot
+# --- tap SAVE: the drawbars into the current preset (the * goes)
+3000 btn 9
+3100 shot
+# --- the FX screen: drive up, SEL + KNOB4 = reverb space
+3300 btn 2
+3400 enc 2 20
+3500 shot
+3550 down 3
+3600 enc 5 1
+3650 shot
+3700 up 3
+# --- setup 2 (SEL + G3): cathedral plenum; a 10-note chord over MIDI ch 1 + pedal on ch 3, all sent on
+3800 btn 8
+3850 down 3
+3900 keys 0x4
+3950 keys 0
+3960 shot
+4000 up 3
+4100 midi 0x90 48 100
+4100 midi 0x90 52 90
+4100 midi 0x90 55 80
+4100 midi 0x90 60 70
+4100 midi 0x90 64 100
+4100 midi 0x90 67 100
+4100 midi 0x92 36 100
+4800 shot
+6000 midi 0xB0 123 0
+6000 midi 0x82 36 0
+# --- incoming CC: ch 2 CC 12..20 sets the lower drawbars (an external 9-fader box)
+6100 midi 0xB1 12 127
+6100 midi 0xB1 16 64
+# --- the MIDI zones: ZONE screen of the upper zone; out channel 4, transpose +12, range C3..C5
+6200 btn 7
+6300 down 3
+6310 enc 2 3
+6320 enc 4 1
+6330 up 3
+6340 enc 4 12
+6350 enc 3 48
+6360 down 3
+6370 enc 3 -43
+6380 up 3
+6400 shot
+6500 midi 0x90 60 77
+6600 midi 0x80 60 0
+6700 midi 0x90 30 77
+6800 midi 0x80 30 0
+# --- SEL: the global switches (FM-1 keys by zone, auto-pedal)
+6900 down 3
+6950 shot
+7000 up 3
+# --- CLONE screen: keys 6 and 8 clone onto ch 6 and ch 8, ch 8 an octave down
+7100 btn 7
+7200 btn 4
+7300 keys 0x20
+7350 keys 0
+7400 keys 0x80
+7450 keys 0
+7500 enc 3 -1
+7600 shot
+# --- HARMONIC screen: on, base channel 9
+7700 btn 7
+7800 btn 4
+7900 enc 2 5
+8000 shot
+# --- CHORD screen: on, hold C E G on the panel, capture
+8100 btn 7
+8200 btn 4
+8300 keys 0x4880
+8400 btn 5
+8500 keys 0
+8600 shot
+# --- play the upper zone now: a chord on one key, cloned, transposed, sent on
+8700 btn 8
+8800 midi 0x90 60 100
+8900 shot
+9500 midi 0x80 60 0
+# --- store everything into setup 8 (SAVE held + F4), then back to setup 1
+9600 down 9
+9650 keys 0x1000
+9700 keys 0
+9750 up 9
+9800 down 3
+9850 keys 0x1
+9900 keys 0
+9950 up 3
+10000 shot
+11500 end

@@ -1,0 +1,24 @@
+# The insert effect WAH, the mod wheel its pedal (BOARD=smk37 tests/run_host.sh tests/elite_wah.txt; elite_test.py).
+# Buttons: 12 PATCH 14 FX. FX: pad 4 the upper's rotary off, K4 its reverb send 0. Wheel 1 = mod (0..1023).
+1000 btn 14
+1100 pad 3 100
+1110 pad 3 0
+1120 enc 3 -40
+1600 wheel 1 1023
+# --- a chord, dry
+2000 keys 0x91000
+2400 keys 0
+# --- EFFECT: pad 2 WAH; the wheel down (heel): the chord dark
+2600 btn 12
+2700 btn 12
+2800 pad 1 100
+2810 pad 1 0
+2900 shot
+3000 wheel 1 1015
+3100 keys 0x91000
+3500 keys 0
+# --- the wheel up (toe): bright
+3700 wheel 1 0
+3800 keys 0x91000
+4200 keys 0
+4400 end

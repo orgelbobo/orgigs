@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OrGigs FM-1 Simulator</title>
+<style>
+  :root {
+    --bg: #15161a; --panel: #1f2026; --panel2: #2a2b33; --line: #3a3b45; --txt: #e6e6ea; --mut: #8c8d99;
+    --acc: #ffb030; --on: #28c878; --led: #ff4a3a; --key: #ecebe4; --keyb: #18181c;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--txt); font: 14px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 1180px; margin: 0 auto; padding: 16px; }
+  header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px; margin-bottom: 12px; }
+  header h1 { font-size: 20px; margin: 0; letter-spacing: .04em; }
+  header .sub { color: var(--mut); }
+  #start { margin-left: auto; background: var(--acc); color: #000; border: 0; border-radius: 6px; padding: 8px 14px; font-weight: 600; cursor: pointer; }
+  #start.running { background: var(--on); }
+  .device { background: linear-gradient(#24252c, #1b1c21); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+  .top { display: grid; grid-template-columns: auto auto 1fr auto; gap: 16px; align-items: start; }
+  .strip { width: 46px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .strip label { font-size: 11px; color: var(--mut); text-align: center; }
+  .strip input[type=range] { writing-mode: vertical-lr; direction: rtl; height: 300px; width: 32px; accent-color: var(--acc); }
+  .screenwrap { background: #000; padding: 10px; border-radius: 8px; border: 1px solid var(--line); }
+  canvas#lcd { display: block; width: 360px; height: 360px; image-rendering: pixelated; }
+  .controls { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+  .encs { display: grid; grid-template-columns: repeat(4, minmax(70px, 1fr)); gap: 10px; }
+  .encs.small { grid-template-columns: repeat(3, minmax(70px, 1fr)); }
+  .enc { display: flex; flex-direction: column; align-items: center; gap: 4px; user-select: none; }
+  .knob { width: 56px; height: 56px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #555 0, #2b2b31 60%, #1d1d22 100%);
+          border: 2px solid #44454f; position: relative; cursor: ns-resize; touch-action: none; }
+  .knob::after { content: ""; position: absolute; left: 50%; top: 5px; width: 3px; height: 15px; margin-left: -1.5px; background: var(--acc); border-radius: 2px;
+                 transform-origin: 50% 23px; transform: rotate(var(--rot, 0deg)); }
+  .enc .name { font-size: 11px; color: var(--mut); letter-spacing: .05em; }
+  .enc .fn { font-size: 12px; color: var(--acc); text-align: center; min-height: 2.6em; line-height: 1.3; }
+  .enc .steps { display: flex; gap: 4px; }
+  .enc .steps button { background: var(--panel2); color: var(--txt); border: 1px solid var(--line); border-radius: 4px; width: 26px; height: 22px; cursor: pointer; padding: 0; }
+  .btns { display: grid; grid-template-columns: repeat(7, minmax(58px, 1fr)); gap: 8px; }
+  .btn { background: var(--panel2); border: 1px solid var(--line); border-radius: 6px; padding: 6px 4px; text-align: center; cursor: pointer; user-select: none; touch-action: none; position: relative; }
+  .btn:active, .btn.down { background: #3a3b46; }
+  .btn .lbl { font-weight: 600; font-size: 12px; }
+  .btn .fn { font-size: 10px; color: var(--mut); line-height: 1.2; min-height: 2.4em; }
+  .btn .led { position: absolute; top: 5px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: #3b2321; }
+  .btn .led.on { background: var(--led); box-shadow: 0 0 6px var(--led); }
+  .master { display: flex; align-items: center; gap: 8px; color: var(--mut); font-size: 12px; }
+  .master input { flex: 1; accent-color: var(--acc); }
+  .meters { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; font-size: 12px; }
+  .meter { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; }
+  .meter b { display: block; font-size: 16px; color: var(--txt); font-variant-numeric: tabular-nums; }
+  .meter span { color: var(--mut); }
+  .bar { height: 4px; background: #333; border-radius: 2px; margin-top: 4px; overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 0; background: var(--on); }
+  .kbwrap { margin-top: 16px; overflow-x: auto; }
+  .kb { position: relative; height: 150px; min-width: 760px; user-select: none; touch-action: none; }
+  .wk, .bk { position: absolute; top: 0; border-radius: 0 0 5px 5px; cursor: pointer; }
+  .wk { height: 150px; background: var(--key); border: 1px solid #999; }
+  .bk { height: 92px; background: var(--keyb); border: 1px solid #000; z-index: 2; }
+  .wk.down { background: #ffd38a; } .bk.down { background: #a0702a; }
+  .wk .kled, .bk .kled { position: absolute; bottom: 8px; left: 50%; width: 8px; height: 8px; margin-left: -4px; border-radius: 50%; background: transparent; }
+  .kled.on { background: var(--on) !important; box-shadow: 0 0 6px var(--on); }
+  .kled.dim { background: #5a4a20 !important; }
+  .wk .kl { position: absolute; bottom: 22px; width: 100%; text-align: center; font-size: 10px; color: #777; }
+  .bk .kl { position: absolute; bottom: 22px; width: 100%; text-align: center; font-size: 10px; color: #888; }
+  .row2 { display: grid; grid-template-columns: 1.1fr 1fr; gap: 16px; margin-top: 16px; }
+  section.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; min-width: 0; }
+  section.card h2 { font-size: 14px; margin: 0 0 8px; letter-spacing: .04em; color: var(--acc); }
+  .midiio { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .midiio select, .midiio button { background: var(--panel2); color: var(--txt); border: 1px solid var(--line); border-radius: 5px; padding: 4px 6px; max-width: 100%; }
+  #log { font: 12px/1.45 ui-monospace, Menlo, Consolas, monospace; height: 220px; overflow: auto; background: #111216; border-radius: 6px; padding: 6px 8px; white-space: pre; }
+  #log .ch { display: inline-block; min-width: 3.2em; color: #000; border-radius: 3px; padding: 0 4px; margin-right: 6px; text-align: center; }
+  table.help { width: 100%; border-collapse: collapse; font-size: 12px; }
+  table.help td { padding: 3px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  table.help td:first-child { color: var(--acc); white-space: nowrap; font-weight: 600; }
+  .note { color: var(--mut); font-size: 12px; margin-top: 8px; }
+  kbd { background: var(--panel2); border: 1px solid var(--line); border-radius: 3px; padding: 0 4px; font-size: 11px; }
+  @media (max-width: 980px) {
+    .top { grid-template-columns: auto 1fr; }
+    .controls { grid-column: 1 / -1; }
+    .row2 { grid-template-columns: 1fr; }
+    .btns { grid-template-columns: repeat(4, 1fr); }
+  }
+  @media (max-width: 560px) {
+    canvas#lcd { width: 240px; height: 240px; }
+    .strip input[type=range] { height: 220px; }
+    .encs { grid-template-columns: repeat(2, 1fr); }
+    .meters { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>ORGIGS FM-1</h1>
+    <span class="sub">3-manual organ, pipe organ &amp; free-reed workstation with three MIDI zones — WebAssembly simulator of the firmware</span>
+    <button id="start">Start audio</button>
+  </header>
+
+  <div class="device">
+    <div class="top">
+      <div class="strip">
+        <label>MOD<br>strip</label>
+        <input id="mod" type="range" min="0" max="127" value="0" aria-label="Mod strip">
+        <label id="modv">0</label>
+      </div>
+      <div class="screenwrap"><canvas id="lcd" width="240" height="240"></canvas></div>
+      <div class="controls">
+        <div class="encs" id="knobs"></div>
+        <div class="encs small" id="encs"></div>
+        <div class="master">MASTER <input id="master" type="range" min="0" max="100" value="70"></div>
+      </div>
+      <div class="strip">
+        <label>PITCH<br>strip</label>
+        <input id="pitch" type="range" min="-8192" max="8191" value="0" aria-label="Pitch strip">
+        <label id="pitchv">0</label>
+      </div>
+    </div>
+    <div class="btns" id="btns" style="margin-top:14px"></div>
+    <div class="kbwrap"><div class="kb" id="kb"></div></div>
+  </div>
+
+  <div class="meters" style="margin-top:12px">
+    <div class="meter"><span>DSP load (this PC)</span><b id="m-load">–</b><div class="bar"><i id="m-loadbar"></i></div></div>
+    <div class="meter"><span>Output peak</span><b id="m-out">–</b><div class="bar"><i id="m-outbar"></i></div></div>
+    <div class="meter"><span>Keys held / generator layers</span><b id="m-gen">–</b></div>
+    <div class="meter"><span>Output peak</span><b id="m-peak">–</b><div class="bar"><i id="m-peakbar"></i></div></div>
+    <div class="meter"><span>MIDI out channels</span><b id="m-ch">–</b></div>
+  </div>
+
+  <div class="row2">
+    <section class="card">
+      <h2>MIDI</h2>
+      <div class="midiio">
+        <button id="midiOn">Enable Web MIDI</button>
+        <label>In <select id="midiIn"><option value="">—</option></select></label>
+        <label>Out <select id="midiOut"><option value="">—</option></select></label>
+        <button id="clearLog">Clear log</button>
+      </div>
+      <div id="log"></div>
+      <p class="note">Incoming (default zones): ch 1 → upper, ch 2 → lower, ch 3 → pedal, each sent on to its out channel; CC 12–20 drawbars of the zone's manual (pedal: CC 12–15), CC 1 mod strip, CC 11 expression, CC 64 sustain, pitch bend (zone screen, SEL + KNOB 4: bend the pitch or rotary kick/tutti).</p>
+    </section>
+    <section class="card">
+      <h2>Controls</h2>
+      <table class="help">
+        <tr><td>KNOB 1–4</td><td>the four parameters of the screen; hold <b>SEL</b> (or <kbd>Shift</kbd>) for the second row</td></tr>
+        <tr><td>ENV / LFO / EDIT</td><td>drawbars 1–4 / 5–8 / 1, 3, 4 and 9 — in the MIDI zones: the screen's switches</td></tr>
+        <tr><td>FX</td><td>the effects: a row per manual (ENV/LFO/ARP = UM/LM/PM): drive, vibrato or tremulant, delay send, reverb send; SEQ: the manual through the rotary; SEL + knobs: percussion/chiff/detune, delay feedback and time, the room. FX again: back</td></tr>
+        <tr><td>GLO</td><td>the MIDI zones: ZONE → CLONE → HARMONIC → CHORD; HOME leaves</td></tr>
+        <tr><td>SELECT / ALGO</td><td>manual (zone) UPPER/LOWER/PEDAL / model 1–8, in every screen</td></tr>
+        <tr><td>PRESETS</td><td>the drawbar list (vintage 1–36, pipe, free reed, then USER 1–16; the pedal its own list); tap SAVE to store the drawbars into a USER slot</td></tr>
+        <tr><td>HOME</td><td>on the drawbars: the MIDI mixer, 16 channels, CC 7 (ENV/LFO/ARP/SEQ = rows); again: back</td></tr>
+        <tr><td>SEL + GLO</td><td>the lights of keys and buttons: OFF / DIM / FULL, and the dim level</td></tr>
+        <tr><td>Setups</td><td>hold SEL + one of the 16 white keys (F3…G5): recall a performance setup; hold SAVE + the key: store it</td></tr>
+        <tr><td>ARP / SEQ</td><td>vibrato (tremulant) of the manual on/off / coupler II/I</td></tr>
+        <tr><td>PLAY / REC</td><td>Rotary brake / rotary slow↔fast (SEL + REC: the manual through the rotary or not)</td></tr>
+        <tr><td>OCT− OCT+</td><td>octave of the FM-1's keys</td></tr>
+        <tr><td>Keyboard</td><td><kbd>Z</kbd>…<kbd>/</kbd> = F3…A4, <kbd>Q</kbd>…<kbd>U</kbd> = A4…G5 (piano layout), mouse and touch</td></tr>
+        <tr><td>Strips</td><td>MOD: rotary slow / fast (organs; BEND ROTARY: slow / brake / fast), bellows (reeds). PITCH: bend ±2 semitones (organs with BEND ROTARY: up = rotary kick, down = tutti); always sent out</td></tr>
+      </table>
+      <p class="note">The FM-1 platform has no reachable touch strips: on the device their jobs come in as MIDI CC 1 and pitch bend. MIDI out is USB only.</p>
+    </section>
+  </div>
+</main>
+<script src="orgigs_sim.js"></script>
+<script src="sim.js"></script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+# Screens for the manual (docs/manual/img): tests/run_host.sh tests/manual_shots.txt
+# --- tonewheel play view: setup 1, a chord, the message gone
+100 keys 0x4880
+2000 shot
+2100 keys 0
+# --- the FX screen
+2200 btn 2
+4000 shot
+4100 btn 2
+# --- setup 2 cathedral, just recalled
+4200 down 3
+4250 keys 0x4
+4300 keys 0
+4350 up 3
+4500 shot
+# --- setup 3 musette, the message gone
+4600 down 3
+4650 keys 0x10
+4700 keys 0
+4750 up 3
+6500 shot
+# --- back to setup 1; the zones: lower zone C1..E3, upper F3..C8, pedal by auto-pedal
+6600 down 3
+6650 keys 0x1
+6700 keys 0
+6750 up 3
+6800 btn 7
+6850 enc 0 1
+6900 enc 3 24
+6950 down 3
+7000 enc 3 -75
+7050 up 3
+7100 enc 0 -1
+7150 enc 3 53
+7200 enc 2 0
+7300 down 3
+7350 btn 11
+7400 up 3
+9000 shot
+# --- the clone screen: upper zone to ch 5 (+1 octave) and ch 6
+9100 btn 7
+9200 btn 4
+9300 keys 0x10
+9350 keys 0
+9400 enc 3 1
+9500 keys 0x20
+9550 keys 0
+11000 shot
+# --- the harmonic screen: on, channels from 8
+11100 btn 7
+11200 btn 4
+11300 enc 2 4
+13000 shot
+# --- the chord screen: C minor 7 captured
+13100 btn 7
+13200 btn 4
+13300 keys 0x4480
+13350 keys 0x24480
+13400 btn 5
+13500 keys 0
+15200 shot
+# --- the MIDI mixer: back to the drawbars, HOME; row 1, the lower and pedal channels down a little
+15300 btn 8
+15400 btn 8
+15500 enc 3 -12
+15550 enc 4 -20
+17200 shot
+# --- the lights: SEL + GLO, keys DIM, buttons DIM, level 5
+17300 btn 8
+17400 down 3
+17450 btn 7
+17500 up 3
+17600 enc 2 1
+17650 enc 3 1
+17700 enc 4 1
+19400 shot
+19500 end

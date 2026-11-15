@@ -1,0 +1,24 @@
+# The Elite's insert effect: CHORUS (BOARD=smk37 tests/run_host.sh tests/elite_chorus.txt; tests/elite_test.py).
+# Buttons: 12 PATCH 14 FX. FX: pad 4 the upper's rotary off, K4 its reverb send 0 (so left = right without chorus).
+1000 btn 14
+1100 pad 3 100
+1110 pad 3 0
+1120 enc 3 -40
+# --- a note, dry
+1500 keys 0x91000
+1900 keys 0
+# --- PATCH twice: EFFECT; pad 1: CHORUS (on the upper); K4 the mix +2 (60 %)
+2200 btn 12
+2300 btn 12
+2400 pad 0 100
+2410 pad 0 0
+2500 enc 3 2
+2600 shot
+# --- the note again, with the chorus
+3000 keys 0x91000
+3400 keys 0
+# --- pad 1 again: off
+3600 pad 0 100
+3610 pad 0 0
+3700 shot
+3800 end

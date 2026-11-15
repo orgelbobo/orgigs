@@ -1,0 +1,24 @@
+# The Elite's mixer (BOARD=smk37 tests/run_host.sh tests/elite_mix.txt; checked by tests/elite_test.py).
+# Buttons: 0 KNOB BANK 3 > 13 PARA. Encoders 0..7 = K1..K8. Pads 0..7 top (mute), 8..15 bottom (solo).
+# --- PARA: the mixer; K1 +3: channel 1's volume 100 -> 106
+1000 btn 13
+1100 enc 0 3
+# --- pad 1: channel 1 muted (volume 0); K1 while muted: kept, nothing sent; pad 1 again: back (108)
+1200 pad 0 100
+1250 pad 0 0
+1300 enc 0 1
+1400 pad 0 100
+1450 pad 0 0
+# --- pad 10: channel 2 solo: all the others silenced; again: back
+1500 pad 9 100
+1550 pad 9 0
+1600 shot
+1700 pad 9 100
+1750 pad 9 0
+# --- >: PAN; K2 +1: channel 2 pan 66; KNOB BANK: channels 9-16, K1: channel 9
+1800 btn 3
+1900 enc 1 1
+2000 btn 0
+2100 enc 0 1
+2200 shot
+2300 end

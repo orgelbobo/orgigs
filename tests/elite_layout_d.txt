@@ -1,0 +1,31 @@
+# The Elite's layout D SOUND DESIGN (BOARD=smk37 tests/run_host.sh tests/elite_layout_d.txt; checked by tests/elite_test.py).
+# Buttons: 0 KNOB BANK 8 SCALE. Pads 0..7 top row, 8..15 bottom row: 9-13 FX ROTARY EFFECT MASTER MIXER, 14-16 the manual.
+# --- SCALE + KNOB BANK four times: A -> B1 -> B2 -> C -> D
+100 down 8
+150 btn 0
+200 btn 0
+250 btn 0
+300 btn 0
+350 up 8
+500 shot
+# --- pad 9: the FX page; K1 +10: the upper's drive; pad 2: PERC still on the top row (off)
+600 pad 8 100
+650 pad 8 0
+700 enc 0 10
+800 pad 1 100
+850 pad 1 0
+1000 shot
+# --- pad 10: ROTARY; pad 15: the lower manual; pad 13: the mixer
+1100 pad 9 100
+1150 pad 9 0
+1200 pad 14 100
+1250 pad 14 0
+1500 shot
+1600 pad 12 100
+1650 pad 12 0
+1800 shot
+# --- pad 13 again: back to the drawbars
+1900 pad 12 100
+1950 pad 12 0
+2100 shot
+2200 end

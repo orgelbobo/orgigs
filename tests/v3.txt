@@ -1,0 +1,47 @@
+# OrGigs v3 features (tests/run_host.sh tests/v3.txt)
+# Buttons: 0 OCT- 1 OCT+ 2 FX 3 SEL 4 ENV 5 LFO 6 EDIT 7 GLO 8 HOME 9 SAVE 10 ARP 11 SEQ 12 PLAY 13 REC
+# Encoders: 0 SELECT 1 ALGORITHM 2..5 KNOB1..4 6 PRESETS
+100 keys 0x4880
+300 shot
+# --- FX grid: upper row, drive up; LFO = lower row, reverb send up; SEQ = its rotary off
+400 btn 2
+500 enc 2 10
+600 shot
+700 btn 5
+800 enc 5 8
+900 btn 11
+1000 shot
+1100 down 3
+1200 shot
+1300 up 3
+1400 btn 2
+# --- HOME on the drawbars: the mixer; ARP = row 3, KNOB2 down
+1500 btn 8
+1600 btn 10
+1700 enc 3 -10
+1800 shot
+1900 btn 8
+2000 shot
+# --- SEL + GLO: the lights, keys DIM, buttons FULL
+2100 down 3
+2150 btn 7
+2200 up 3
+2300 enc 2 1
+2350 enc 3 2
+2400 shot
+2500 btn 8
+# --- setup 12 (white key 12 = bit 21), PRESETS through the list, SAVE into a user slot
+2600 keys 0
+2700 down 3
+2750 keys 0x200000
+2800 up 3
+2850 keys 0
+2900 shot
+3000 enc 6 5
+3100 shot
+3200 enc 3 1
+3300 btn 9
+3400 shot
+3500 enc 6 200
+3600 shot
+4000 end

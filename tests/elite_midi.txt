@@ -1,0 +1,40 @@
+# The Elite's MIDI area (BOARD=smk37 tests/run_host.sh tests/elite_midi.txt; checked by tests/elite_test.py).
+# Buttons: 6 ARP 9 CHORD 10 GLOBE 12 PATCH 13 PARA. Encoders 0..7 = K1..K8. Pads 0..15. Keys: bit 12 = C4.
+300 shot
+# --- GLOBE: ZONE; K2 the out channel +1 (2); a key plays channel 2; pad 4 (INT): the internal sound off
+1000 btn 10
+1100 enc 1 1
+1200 keys 0x1000
+1300 keys 0
+1400 pad 3 100
+1450 pad 3 0
+1500 shot
+# --- K2 back to channel 1, pad 4 again (internal on)
+1600 enc 1 -1
+1700 pad 3 100
+1750 pad 3 0
+# --- ARP: back, around to CHORD; CHORD: on; hold C4 E4 G4, pad 1 captures it; then C4 alone plays the chord
+2000 btn 6
+2100 shot
+2200 btn 9
+2300 keys 0x91000
+2400 pad 0 100
+2450 pad 0 0
+2500 keys 0
+2600 shot
+2700 keys 0x1000
+2800 keys 0
+# --- pad 2 clears it; CHORD off
+2900 pad 1 100
+2950 pad 1 0
+3000 btn 9
+# --- PATCH: ZONE again (around); GLOBE: back to the drawbars
+3100 btn 12
+3200 shot
+3300 btn 10
+3400 shot
+# --- PARA on a MIDI screen opens the mixer
+3500 btn 10
+3600 btn 13
+3700 shot
+3800 end

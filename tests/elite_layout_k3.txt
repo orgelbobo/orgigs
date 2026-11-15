@@ -1,0 +1,31 @@
+# The Elite's layouts by < + > held and K3; the pads: the cloner's channels while held, the layout once K1..K3 turned
+# (BOARD=smk37 tests/run_host.sh tests/elite_layout_k3.txt; checked by tests/elite_test.py). Buttons: 2 < 3 >.
+# Encoders 0..7 = K1..K8. Pads 0..15.
+80 shot
+# --- < + > held: the pads show the cloner (pad 1 white: the upper's own channel); pad 5: clone to 5; K3 +3: A -> C,
+#     at once: the pads show C
+100 down 2
+150 down 3
+300 pad 4 100
+350 pad 4 0
+400 shot
+420 enc 2 3
+440 shot
+450 up 2
+500 up 3
+700 shot
+# --- again, K3 -4: back to A, no further (A and D the ends); let go: no step in the drawbar list
+800 down 2
+850 down 3
+900 enc 2 -4
+950 up 2
+1000 up 3
+1200 shot
+# --- K3 +9: to D, no further
+1300 down 2
+1350 down 3
+1400 enc 2 9
+1450 up 2
+1500 up 3
+1700 shot
+1800 end

@@ -1,0 +1,59 @@
+# OrGigs on the SMK-37 Elite (BOARD=smk37 tests/run_host.sh tests/elite.txt): bank PERFORMANCE.
+# Keys: bit 0 = C3 .. bit 36 = C6. Buttons: 0 KNOB BANK 1 FADER BANK 2 < 3 > 4 OCT- 5 OCT+ 6 ARP 7 NOTE REPEAT
+# 8 SCALE 9 CHORD 10 GLOBE 11 BT 12 PATCH 13 PARA 14 FX 15 SEQ 16 PLAY 17 REC. Encoders 0..7 = K1..K8.
+# Pads 0..7 top row (drawbar to 0), 8..15 bottom row (to 8). Faders 0..3, wheels 0 pitch 1 mod.
+# --- setup 1 (tonewheel 888000000): the pads show it
+300 shot
+# --- all 37 keys with velocity: C3, C4, C6
+400 vel 90
+500 keys 0x1000001001
+800 keys 0
+# --- pads: drawbar 1 to 0 (top), drawbar 4 to 8 (bottom), drawbar 8 to 8; K6 (drawbar 6) +3
+1000 pad 0 100
+1050 pad 0 0
+1100 pad 11 100
+1150 pad 11 0
+1200 pad 15 100
+1250 pad 15 0
+1300 enc 5 3
+1400 shot
+# --- fader 1 down = drawbar 9 to 8 (up: 0, as a drawbar is pulled); ARP = drawbar 9 to 0, PATCH = to 8
+2000 fader 0 127
+2100 fader 0 0
+2200 shot
+2300 btn 6
+2400 shot
+2500 btn 12
+# --- fader 2 drive, fader 3 reverb send
+2600 fader 1 64
+2700 fader 2 100
+# --- KNOB BANK: the lower manual; > the next drawbar preset; SCALE + >: the next model; NOTE RPT the vibrato
+3000 btn 0
+3100 btn 3
+3300 shot
+3400 down 8
+3450 btn 3
+3500 up 8
+3600 btn 7
+3700 shot
+# --- PARA: the mixer, PARA again: back
+4000 btn 13
+4100 shot
+4200 btn 13
+# --- the wheels: mod up = rotary fast; pitch bent up
+4300 wheel 0 512
+4400 wheel 1 1023
+4500 wheel 1 23
+4600 wheel 0 900
+4700 shot
+4800 wheel 0 512
+# --- the lights screen (SCALE + GLOBE): KNOB1 (K5) the pads' scheme, KNOB4 (K8) their brightness
+5000 down 8
+5050 btn 10
+5100 up 8
+5200 enc 4 1
+5300 shot
+5400 enc 7 -4
+5500 shot
+5600 btn 12
+5700 end

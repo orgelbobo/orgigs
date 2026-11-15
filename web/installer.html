@@ -1,0 +1,171 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: GPL-3.0-only
+     OrGigs's web installer. The update protocol (fm1pkg.js, fm1ota.js, inlined below by tools/make_site.py) is
+     Felucca's: Copyright (C) 2026 Leo Kuroshita (@kurogedelic), Hügelton Instruments, as Skiff (illuminus5) carries it;
+     this page after Skiff's index_pkg.html -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OrGigs Installer</title>
+<style>
+  :root { --bg: #f6f5f2; --panel: #fff; --fg: #1d1b18; --dim: #6b655c; --line: #dcd7ce; --acc: #b86a00; --warn: #a8461d; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --bg: #12110f; --panel: #1b1a17; --fg: #ece8e1; --dim: #a39b8f; --line: #34302a; --acc: #e68700; --warn: #ef8a5d; }
+  }
+  :root[data-theme="dark"] { --bg: #12110f; --panel: #1b1a17; --fg: #ece8e1; --dim: #a39b8f; --line: #34302a; --acc: #e68700; --warn: #ef8a5d; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 560px; margin: 0 auto; padding: 40px 16px 64px; }
+  h1 { font-size: 28px; margin: 0 0 4px; }
+  h1 span { color: var(--acc); }
+  h2 { font-size: 17px; margin: 28px 0 8px; }
+  p, li { margin: 0 0 10px; }
+  ul { padding-left: 20px; margin: 0 0 10px; }
+  .small { color: var(--dim); font-size: 14px; }
+  .box { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 16px; margin: 20px 0; }
+  .warn { border-left: 4px solid var(--warn); }
+  button { font: inherit; font-weight: 600; background: var(--acc); color: #fff; border: 0; border-radius: 4px; padding: 10px 24px; cursor: pointer; }
+  button:disabled { opacity: .35; cursor: default; }
+  #status { margin-top: 14px; min-height: 1.6em; font-weight: 600; }
+  progress { width: 100%; height: 6px; margin-top: 12px; accent-color: var(--acc); }
+  details { margin-top: 12px; color: var(--dim); font-size: 13px; }
+  pre { white-space: pre-wrap; margin: 6px 0 0; font-size: 12px; }
+  a { color: var(--acc); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Or<span>Gigs</span> Installer</h1>
+  <p class="small" id="ver"></p>
+
+  <p>Installs OrGigs on an <b>M-VAVE SMK-37 Elite</b> or an <b>M-VAVE FM-1</b> over USB, right from this page. The page
+    finds out which of the two is connected and picks its package.</p>
+
+  <div class="box">
+    <button id="go" disabled>Install</button>
+    <progress id="bar" max="100" value="0"></progress>
+    <div id="status"></div>
+    <details><summary>Details</summary><pre id="log"></pre></details>
+  </div>
+
+  <h2>Before you start</h2>
+  <ul>
+    <li>Use <b>Chrome or Edge</b> on a computer (they speak Web MIDI) and allow MIDI access with <b>SysEx</b> when asked.</li>
+    <li>Connect <b>only the keyboard you install on</b>, with a USB <b>data</b> cable. Close other programs that use its
+      MIDI port (DAWs, M-VAVE's app, other browser tabs).</li>
+    <li>Updating OrGigs keeps your setups and settings. Coming from another firmware, OrGigs starts with its factory
+      settings.</li>
+    <li>Don't unplug the keyboard while it installs. If the write is cut off, plug it in again and press Install: it
+      goes on where it stopped.</li>
+  </ul>
+
+  <div class="box warn">
+    <p><b>SMK-37 Elite:</b> it needs M-VAVE's own firmware V016 (or a custom firmware) before the first install; update an
+      older one with M-VAVE's updater first. The stock firmware, or another custom one, clears OrGigs's settings when it
+      starts: make a backup first (manual, chapter 7). OrGigs never touches the Elite's Bluetooth pairing or its key and
+      pad calibration.</p>
+    <p style="margin:0">The SMK-37 Pro and MKE-P37 are the same keyboard under other names, but OrGigs is tested only on the Elite.</p>
+  </div>
+
+  <h2>Going back</h2>
+  <ul>
+    <li>Install the stock firmware with M-VAVE's updater, or any other firmware from
+      <a href="https://thefirmwarehub.com" target="_blank" rel="noopener">The Firmware Hub</a>.</li>
+    <li>If the keyboard doesn't start normally, hold <b>OCT−</b> while switching it on: it starts in USB rescue mode,
+      ready for an installer.</li>
+  </ul>
+
+  <p class="small" style="margin-top:28px">Installing custom firmware is at your own risk. OrGigs is free software under the GPL-3.0; the
+    update protocol is Felucca's (Leo Kuroshita, Hügelton Instruments), as Skiff (illuminus5) carries it.
+    <a href="../">OrGigs home</a> · <a href="../firmware/LICENSING.md">licences</a></p>
+</main>
+<script>
+/*LIB*/
+const $ = (id) => document.getElementById(id);
+const meta = /*META*/;
+const images = new Map();               // product -> logical image, loaded on first use
+const TEXT = {
+  nomidi: "This browser has no Web MIDI: use Chrome or Edge on a computer.",
+  denied: "MIDI access was refused. Allow MIDI (with SysEx) for this page and try again.",
+  notfound: "No FM-1 or SMK-37 found. Check the USB data cable and close other programs that use its MIDI port.",
+  nopkg: "There is no OrGigs package for this device. It reports: ",
+  needV016: "This SMK-37 runs M-VAVE firmware older than V016. Update it with M-VAVE's updater first. It reports: ",
+  model: "This package is for another model: ",
+  loadfail: "The package could not be loaded: ",
+  badpkg: "The package on this site is damaged: ",
+  start: "Checking the package on the device ...",
+  verify: "Checking the package on the device ...",
+  loader: "Switching to update mode ...",
+  write: "Writing ... don't unplug.",
+  dropped: "The connection dropped. Plug the keyboard in again: it goes on by itself.",
+  resume: "Writing again, try ",
+  reboot: "Restarting ...",
+  done: "Done. OrGigs is installed.",
+  stopped: "The device stopped. Plug it in again and press Install to go on.",
+  lost: "The device was disconnected. Plug it in again and press Install to go on.",
+  noloader: "The update mode did not appear. Plug the keyboard in again and press Install: it stays in update mode until it is finished.",
+  noreturn: "The keyboard did not come back. Switch it off and on.",
+  mismatch: "Installed, but the keyboard reports another firmware: ",
+  error: "Error: ",
+  leave: "OrGigs is being installed. Leave the page anyway?",
+};
+const say = (k, arg = "") => { $("status").textContent = (TEXT[k] || "") + arg; };
+const log = (t) => { $("log").textContent += t + "\n"; };
+let writing = false;
+const lock = (on) => { writing = on; $("go").disabled = on || !navigator.requestMIDIAccess; };
+window.addEventListener("beforeunload", (e) => { if (writing) { e.preventDefault(); e.returnValue = TEXT.leave; } });
+
+$("ver").textContent = `Version ${meta.version} · packages: ${meta.packages.map((p) => p.product).join(", ")}`;
+if (!navigator.requestMIDIAccess) say("nomidi");
+else $("go").disabled = false;
+
+async function imageFor(entry) {
+  if (images.has(entry.product)) return images.get(entry.product);
+  const r = await fetch(entry.pkg);
+  if (!r.ok) throw Object.assign(new Error(`${entry.pkg}: HTTP ${r.status}`), { code: "loadfail", detail: `HTTP ${r.status}` });
+  const pkg = new Uint8Array(await r.arrayBuffer());
+  if (productOf(pkg) !== entry.product) throw Object.assign(new Error(entry.product), { code: "badpkg", detail: entry.product });
+  const image = logicalImage(pkg);
+  images.set(entry.product, image);
+  return image;
+}
+
+// the bar: the running firmware's check takes the first 5 %, the loader's write the rest
+const step = (k, a) => {
+  log(`${k} ${a ?? ""}`);
+  if (k === "verify") $("bar").value = Math.min(5, a * 5 / 80);
+  if (k === "write") $("bar").value = 5 + a * 0.95;
+  if (k === "done") $("bar").value = 100;
+  if (k === "resume") say(k, `${a}`);
+  else say(k);
+};
+
+$("go").addEventListener("click", async () => {
+  if (writing) return;
+  lock(true);
+  $("bar").value = 0;
+  let midi;
+  try { midi = await navigator.requestMIDIAccess({ sysex: true }); }
+  catch (e) { say("denied"); lock(false); return; }
+  try {
+    const up = new Updater(midi, log);
+    const dev = await up.find();
+    if (!dev) { say("notfound"); return; }
+    dev.link.close();
+    log(`found ${dev.id.text} on ${dev.name}`);
+    const entry = packageFor(meta.packages, dev.id.model);
+    if (!entry) { say("nopkg", dev.id.text); return; }
+    if (!IS_OTA(dev.id) && needsStockUpdate(dev.id)) { say("needV016", dev.id.text); return; }
+    const image = await imageFor(entry);
+    if (IS_OTA(dev.id)) { say((await up.resume(image, step, entry.product)) ? "done" : "stopped"); return; }
+    if (dev.id.text !== entry.product && !confirm(`${dev.id.text} is connected. Install OrGigs (${entry.product}) on it?`)) { say(""); return; }
+    await up.install(image, entry.product, step);
+  } catch (e) {
+    if (e && e.code && TEXT[e.code]) say(e.code, e.detail || "");
+    else say("error", e && e.message);
+    log(String(e && e.stack || e));
+  } finally { lock(false); }
+});
+</script>
+</body>
+</html>

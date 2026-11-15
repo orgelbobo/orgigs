@@ -1,0 +1,26 @@
+# The insert effect AMP (BOARD=smk37 tests/run_host.sh tests/elite_amp.txt; tests/elite_test.py).
+# Buttons: 12 PATCH 14 FX. FX: pad 4 the upper's rotary off, K4 its reverb send 0 (left = right without it).
+1000 btn 14
+1100 pad 3 100
+1110 pad 3 0
+1120 enc 3 -40
+# --- a chord, dry (2 s)
+1500 keys 0x91000
+3500 keys 0
+# --- EFFECT: pad 7 AMP (CRUNCH, gain 40 %, 2x12, level 50 %); the chord again
+3600 btn 12
+3700 btn 12
+3800 pad 6 100
+3810 pad 6 0
+3900 shot
+4000 keys 0x91000
+6000 keys 0
+# --- K2 the gain to 100 %: the chord again (heavy)
+6100 enc 1 30
+6500 keys 0x91000
+7500 keys 0
+# --- K1 to FUZZ (the gain still 100 %)
+7600 enc 0 2
+8000 keys 0x91000
+9000 keys 0
+9200 end

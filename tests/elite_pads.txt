@@ -1,0 +1,43 @@
+# The Elite's keys only play; setups, cloner and harmonic are on the pads (BOARD=smk37 tests/run_host.sh
+# tests/elite_pads.txt; checked by tests/elite_test.py). Buttons: 8 SCALE 10 GLOBE 11 BT. Pads 0..15.
+# --- the drawbars as they are (setup 1)
+300 shot
+# --- BT held: the pads show the setups (red); BT + pad 4: store setup 4
+1000 down 11
+1100 shot
+1200 pad 3 100
+1250 pad 3 0
+1300 up 11
+# --- pad 1 pulls drawbar 1 to 0
+1500 pad 0 100
+1550 pad 0 0
+1600 shot
+# --- SCALE held: the pads show the setups (amber), the keys still play; SCALE + pad 4: recall setup 4
+2000 down 8
+2100 shot
+2200 keys 0x1000
+2300 keys 0
+2400 pad 3 100
+2450 pad 3 0
+2500 up 8
+2600 shot
+# --- GLOBE: MIDI, PATCH: the next screen, the cloner; CHORD: on; pad 3: clone to channel 3; a key plays channel 1 and 3
+3000 btn 10
+3100 btn 12
+3150 btn 9
+3200 pad 2 100
+3250 pad 2 0
+3300 shot
+3400 keys 0x1000
+3500 keys 0
+# --- PATCH twice (YST, then harmonic); pads 1 and 3: drawbars 1 and 3 no longer sent (all are, at first; the keys still play)
+4000 btn 12
+4050 btn 12
+4100 pad 0 100
+4150 pad 0 0
+4200 pad 2 100
+4250 pad 2 0
+4300 shot
+4400 keys 0x1000
+4500 keys 0
+4600 end
