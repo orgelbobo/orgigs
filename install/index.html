@@ -50,7 +50,11 @@
 
   <h2>Before you start</h2>
   <ul>
-    <li>Use <b>Chrome or Edge</b> on a computer (they speak Web MIDI) and allow MIDI access with <b>SysEx</b> when asked.</li>
+    <li>Use <b>Chrome, Edge or Firefox</b> on a computer (they speak Web MIDI) and allow MIDI access with <b>SysEx</b> when
+      asked (Firefox asks to add a site permission for it).</li>
+    <li><b>Windows, first install over M-VAVE's own firmware: use Firefox.</b> Chrome and Edge freeze when the keyboard
+      switches to update mode (a bug of theirs on Windows with the stock firmware's three MIDI ports). Updating OrGigs
+      works in all three.</li>
     <li>Connect <b>only the keyboard you install on</b>, with a USB <b>data</b> cable. Close other programs that use its
       MIDI port (DAWs, M-VAVE's app, other browser tabs).</li>
     <li>Updating OrGigs keeps your setups and settings. Coming from another firmware, OrGigs starts with its factory
@@ -558,8 +562,16 @@ class Link {
     }
     return this.q.shift() || null;
   }
-  close() { this.input.onmidimessage = null; }
+  // (OrGigs) the ports closed too, not only the handler: they are let go before the device leaves
+  close() {
+    this.input.onmidimessage = null;
+    for (const p of [this.input, this.output]) if (typeof p.close === "function") p.close().catch(() => {});
+  }
 }
+
+// (OrGigs) a port's open() that never ends (seen on Windows 11's MIDI service with ports that appeared
+// after the access was granted) gives up after ms
+const openWithin = (port, ms) => Promise.race([port.open(), new Promise((_, no) => setTimeout(() => no(new Error("open timeout")), ms))]);
 
 async function handshake(link, tries = 3) {
   link.drain();
@@ -586,6 +598,10 @@ class Updater {
     this.resumeMax = opts.resumeMax ?? 5;
     this.loaderWaitMs = opts.loaderWaitMs ?? 30000;   // ((2.2) how long the update loader may take to appear)
     this.seen = new Set();                            // ((2.2, #83) the MIDI inputs a wait saw: said when nothing came)
+    // (OrGigs) opts.refresh: async () => a new MIDIAccess, asked for before each look of a wait. On Windows 11's
+    // MIDI service a device that comes back after a restart (the update mode, the new firmware) cannot be
+    // opened through the access granted before it left; a new access can
+    this.refresh = opts.refresh || null;
   }
 
   // every in/out pair with the same port name that answers the handshake
@@ -597,7 +613,7 @@ class Updater {
       if (!/fm-1|smk|elite|mke-p37|starry|felucca|ota|composite|sinco|usb-midi/i.test(input.name || "")) continue;   // never probe other gear
       const output = outs.find((o) => o.name === input.name && o.state !== "disconnected");
       if (!output) continue;
-      try { await input.open(); await output.open(); } catch (_) { continue; }
+      try { await openWithin(input, 5000); await openWithin(output, 5000); } catch (_) { continue; }   // (OrGigs) within
       const link = new Link(input, output);
       const id = await handshake(link, 2);
       if (id && (!filter || filter(id))) return { link, id, name: input.name };
@@ -610,6 +626,10 @@ class Updater {
     const end = Date.now() + ms;
     this.seen = new Set();
     while (Date.now() < end) {
+      if (this.refresh) {                               // (OrGigs) a new access, the old one kept if it fails
+        try { this.access = await Promise.race([this.refresh(), sleep(10000).then(() => { throw new Error("timeout"); })]); }
+        catch (_) {}
+      }
       const dev = await this.find(filter);
       if (dev) return dev;
       await sleep(1000);
@@ -735,10 +755,11 @@ class Updater {
 }
 
 const $ = (id) => document.getElementById(id);
-const meta = {"version": "1.0", "packages": [{"product": "SMK-37 Elite_970", "pkg": "../firmware/orgigs-1.0-smk37-elite.fwsc"}, {"product": "FM-1_970", "pkg": "../firmware/orgigs-1.0.fwsc"}]};
+const meta = {"version": "1.0.1", "packages": [{"product": "SMK-37 Elite_970", "pkg": "../firmware/orgigs-1.0.1-smk37-elite.fwsc"}, {"product": "FM-1_970", "pkg": "../firmware/orgigs-1.0.1.fwsc"}]};
 const images = new Map();               // product -> logical image, loaded on first use
 const TEXT = {
-  nomidi: "This browser has no Web MIDI: use Chrome or Edge on a computer.",
+  nomidi: "This browser has no Web MIDI: use Chrome, Edge or Firefox on a computer.",
+  winChrome: "Use Firefox for this install: on Windows, Chrome and Edge freeze when M-VAVE's firmware switches to update mode.",
   denied: "MIDI access was refused. Allow MIDI (with SysEx) for this page and try again.",
   notfound: "No FM-1 or SMK-37 found. Check the USB data cable and close other programs that use its MIDI port.",
   nopkg: "There is no OrGigs package for this device. It reports: ",
@@ -762,6 +783,10 @@ const TEXT = {
   error: "Error: ",
   leave: "OrGigs is being installed. Leave the page anyway?",
 };
+// Chrome and Edge on Windows freeze for good when a USB-MIDI device with several ports leaves (the SMK-37's stock
+// firmware has three; the update loader and OrGigs one): the first install from it goes through Firefox there
+const WIN_CHROMIUM = /Windows/.test(navigator.userAgent || "") && /Chrome\//.test(navigator.userAgent || "") && !/Firefox\//.test(navigator.userAgent || "");
+const stockSmk = (id) => !IS_OTA(id) && SMK_MODELS.includes(id.model) && id.version > 0 && id.version < 100;
 const say = (k, arg = "") => { $("status").textContent = (TEXT[k] || "") + arg; };
 const log = (t) => { $("log").textContent += t + "\n"; };
 let writing = false;
@@ -801,7 +826,7 @@ $("go").addEventListener("click", async () => {
   try { midi = await navigator.requestMIDIAccess({ sysex: true }); }
   catch (e) { say("denied"); lock(false); return; }
   try {
-    const up = new Updater(midi, log);
+    const up = new Updater(midi, log, { refresh: () => navigator.requestMIDIAccess({ sysex: true }) });
     const dev = await up.find();
     if (!dev) { say("notfound"); return; }
     dev.link.close();
@@ -811,6 +836,8 @@ $("go").addEventListener("click", async () => {
     if (!IS_OTA(dev.id) && needsStockUpdate(dev.id)) { say("needV016", dev.id.text); return; }
     const image = await imageFor(entry);
     if (IS_OTA(dev.id)) { say((await up.resume(image, step, entry.product)) ? "done" : "stopped"); return; }
+    if (WIN_CHROMIUM && stockSmk(dev.id) && !confirm(`${dev.id.text} (M-VAVE's firmware) is connected. On Windows, Chrome and Edge `
+        + "freeze when it switches to update mode: use Firefox for this install. Try here anyway?")) { say("winChrome"); return; }
     if (dev.id.text !== entry.product && !confirm(`${dev.id.text} is connected. Install OrGigs (${entry.product}) on it?`)) { say(""); return; }
     await up.install(image, entry.product, step);
   } catch (e) {
