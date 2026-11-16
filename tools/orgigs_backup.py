@@ -319,7 +319,8 @@ def main(argv=None, out=sys.stdout, link=None):
         if code != 1:
             print(f"not loaded: {STATES.get(code, 'no answer')}", file=out)
             return 1
-        print("OrGigs asks: press SAVE to load it, any other button keeps what is there", file=out)
+        key = "BT" if dev and dev.id.model != "FM-1" else "SAVE"   # (the FM-1's SAVE is printed BT on the SMK-37)
+        print(f"OrGigs asks on its screen: press {key} to load it, any other button keeps what is there", file=out)
         code, undo = wait_state(link, DELAY["ask"], Joiner())
         if undo is not None:
             stem = a.load[:-4] if a.load.lower().endswith(".syx") else a.load

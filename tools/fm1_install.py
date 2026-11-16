@@ -384,7 +384,7 @@ class Updater:
         dev.link.close()
         if not finished:
             raise InstallError("lost" if lost else "stopped",
-                               f"the FM-1 {'was disconnected' if lost else 'stopped answering'} after "
+                               f"the keyboard {'was disconnected' if lost else 'stopped answering'} after "
                                f"{served} requests; nothing was written")
         step("loader")
         time.sleep(DELAY["loader"])
@@ -445,7 +445,7 @@ class Updater:
             raise InstallError("model", f"the device is {dev.id.text}, the package is for {product}")
         if dev.id.loader and not OWN_LOADER_RE.fullmatch(dev.id.text):
             dev.link.close()           # another firmware's loader: its image layout may differ
-            raise InstallError("foreign", f"the FM-1 is in the update mode of another firmware ({dev.id.text}): "
+            raise InstallError("foreign", f"the keyboard is in the update mode of another firmware ({dev.id.text}): "
                                           "finish that update with its own updater (M-UPGRADE), then install again")
         ota = dev if dev.id.loader else self.check(dev, image, step)
         self.write(ota, image, step)
@@ -541,7 +541,7 @@ class Progress:
         else:
             self.end()
             msg = {"start": f"starting the update on {a}", "loader": "switching to update mode",
-                   "reboot": "restarting", "done": f"done: the FM-1 runs {a}", "uboot": "sending the UBOOT key"}[k]
+                   "reboot": "restarting", "done": f"done: the keyboard runs {a}", "uboot": "sending the UBOOT key"}[k]
             print(msg, file=self.out, flush=True)
 
     def put(self, s):

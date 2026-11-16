@@ -904,7 +904,9 @@ Elite (USB MIDI out) ──▶ MIDI host ──▶ synth, sequencer (USB or 5-pi
 <!-- ============ 13 ============ -->
 <section>
 <h1><span class="num">13</span>Installing, updating, going back</h1>
-<p class="lead">OrGigs is installed over USB from a web page, the OrGigs installer: the <b>Install</b> button on OrGigs's card on The Firmware Hub (<code>thefirmwarehub.com</code>) leads there. It runs in Chrome or Edge on a computer; nothing else needs to be installed.</p>
+<p class="lead">OrGigs is installed over USB from a web page, the OrGigs installer: the <b>Install</b> button on OrGigs's card on The Firmware Hub (<code>thefirmwarehub.com</code>) leads there. It runs in Chrome, Edge or Firefox on a computer; nothing else needs to be installed.</p>
+
+<div class="note warn"><p><b>Windows, first install over M-VAVE's firmware: use Firefox.</b> Chrome and Edge freeze on Windows when the Elite switches from its stock firmware to update mode (a bug of theirs with the stock firmware's three MIDI ports); the page warns about it. Updates of OrGigs work in all three browsers. Firefox asks to add a site permission for MIDI: allow it.</p></div>
 
 <div class="note warn"><p><b>Plug in only the Elite</b> while installing. The FM-1 and the SMK-37 use the same update path; with both plugged in, the installer may pick the wrong one. The Elite needs M-VAVE's firmware V016 (or a custom one) before the first install.</p></div>
 
@@ -918,7 +920,7 @@ Elite (USB MIDI out) ──▶ MIDI host ──▶ synth, sequencer (USB or 5-pi
 <div class="note warn"><p><b>During installation</b> don't unplug the Elite. If the write is cut off anyway, plug it in again and press <b>Install</b>: it goes on where it stopped.</p></div>
 
 <h2>Without a browser</h2>
-<p>OrGigs's source also has an installer script, <code>tools/fm1_install.py</code> (Python 3.12 with <code>mido</code> and <code>python-rtmidi</code>). In the source folder, <code>py -3.12 tools\fm1_install.py --info</code> only reads and shows the running firmware, for example <code>SMK-37 Elite_970 [running]</code>; <code>py -3.12 tools\fm1_install.py orgigs-1.0-smk37-elite.fwsc</code> installs a package.</p>
+<p>OrGigs's source also has an installer script, <code>tools/fm1_install.py</code> (Python 3.12 with <code>mido</code> and <code>python-rtmidi</code>). In the source folder, <code>py -3.12 tools\fm1_install.py --info</code> only reads and shows the running firmware, for example <code>SMK-37 Elite_970 [running]</code>; <code>py -3.12 tools\fm1_install.py orgigs-1.0.1-smk37-elite.fwsc</code> installs a package.</p>
 
 <h2>Going back to the original firmware</h2>
 <ul>

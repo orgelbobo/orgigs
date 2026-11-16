@@ -145,8 +145,16 @@ class Link {
     }
     return this.q.shift() || null;
   }
-  close() { this.input.onmidimessage = null; }
+  // (OrGigs) the ports closed too, not only the handler: they are let go before the device leaves
+  close() {
+    this.input.onmidimessage = null;
+    for (const p of [this.input, this.output]) if (typeof p.close === "function") p.close().catch(() => {});
+  }
 }
+
+// (OrGigs) a port's open() that never ends (seen on Windows 11's MIDI service with ports that appeared
+// after the access was granted) gives up after ms
+const openWithin = (port, ms) => Promise.race([port.open(), new Promise((_, no) => setTimeout(() => no(new Error("open timeout")), ms))]);
 
 async function handshake(link, tries = 3) {
   link.drain();
@@ -173,6 +181,10 @@ export class Updater {
     this.resumeMax = opts.resumeMax ?? 5;
     this.loaderWaitMs = opts.loaderWaitMs ?? 30000;   // ((2.2) how long the update loader may take to appear)
     this.seen = new Set();                            // ((2.2, #83) the MIDI inputs a wait saw: said when nothing came)
+    // (OrGigs) opts.refresh: async () => a new MIDIAccess, asked for before each look of a wait. On Windows 11's
+    // MIDI service a device that comes back after a restart (the update mode, the new firmware) cannot be
+    // opened through the access granted before it left; a new access can
+    this.refresh = opts.refresh || null;
   }
 
   // every in/out pair with the same port name that answers the handshake
@@ -184,7 +196,7 @@ export class Updater {
       if (!/fm-1|smk|elite|mke-p37|starry|felucca|ota|composite|sinco|usb-midi/i.test(input.name || "")) continue;   // never probe other gear
       const output = outs.find((o) => o.name === input.name && o.state !== "disconnected");
       if (!output) continue;
-      try { await input.open(); await output.open(); } catch (_) { continue; }
+      try { await openWithin(input, 5000); await openWithin(output, 5000); } catch (_) { continue; }   // (OrGigs) within
       const link = new Link(input, output);
       const id = await handshake(link, 2);
       if (id && (!filter || filter(id))) return { link, id, name: input.name };
@@ -197,6 +209,10 @@ export class Updater {
     const end = Date.now() + ms;
     this.seen = new Set();
     while (Date.now() < end) {
+      if (this.refresh) {                               // (OrGigs) a new access, the old one kept if it fails
+        try { this.access = await Promise.race([this.refresh(), sleep(10000).then(() => { throw new Error("timeout"); })]); }
+        catch (_) {}
+      }
       const dev = await this.find(filter);
       if (dev) return dev;
       await sleep(1000);

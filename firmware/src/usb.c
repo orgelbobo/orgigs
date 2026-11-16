@@ -272,6 +272,15 @@ static const uint8_t STR1[] = {42, 3, 'H', 0, 0xFC, 0, 'g', 0, 'e', 0, 'l', 0, '
 #ifdef FELUCCA_LOADER
 static const uint8_t STR2[] = {30, 3, 'F', 0, 'e', 0, 'l', 0, 'u', 0, 'c', 0, 'c', 0, 'a', 0, ' ', 0, 'U', 0, 'p', 0,
                                'd', 0, 'a', 0, 't', 0, 'e', 0};
+#elif defined BOARD_SMK37 && BOARD_SMK37
+/* (OrGigs) the SMK-37 under its model's name ("OrGigs SMK-37 Elite"): the Firmware Hub's SMK-37 page finds a
+ * keyboard by its port name (smk, mke, p37, ...), and "Felucca" is not one of them. Filled on the first request. */
+#ifndef SMK_MODEL
+#define SMK_MODEL "SMK-37 Pro"
+#endif
+#define STR2_TEXT "OrGigs " SMK_MODEL
+static uint8_t STR2[2 + 2 * (sizeof STR2_TEXT - 1)];
+#define STR2_FILL 1
 #else
 static const uint8_t STR2[] = {16, 3, 'F', 0, 'e', 0, 'l', 0, 'u', 0, 'c', 0, 'c', 0, 'a', 0};
 #endif
@@ -308,6 +317,14 @@ static int get_desc(uint32_t wvalue, const uint8_t **d, uint16_t *l)
             *l = sizeof STR1;
             return 1;
         case 2:
+#ifdef STR2_FILL
+            if (!STR2[0]) {
+                STR2[0] = sizeof STR2;
+                STR2[1] = 3;
+                for (unsigned i = 0; i < sizeof STR2_TEXT - 1; i++)
+                    STR2[2 + 2 * i] = (uint8_t)STR2_TEXT[i];
+            }
+#endif
             *d = STR2;
             *l = sizeof STR2;
             return 1;

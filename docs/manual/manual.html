@@ -614,7 +614,7 @@ FM-1 (USB MIDI out) ──▶ MIDI host ──▶ synth, sequencer (USB or 5-pin
 <!-- ============ 11 ============ -->
 <section>
 <h1><span class="num">11</span>Installing, updating, going back</h1>
-<p class="lead">OrGigs is installed over USB from a web page, the OrGigs installer: the <b>Install</b> button on OrGigs's card on The Firmware Hub (<code>thefirmwarehub.com</code>) leads there. It runs in Chrome or Edge on a computer; nothing else needs to be installed.</p>
+<p class="lead">OrGigs is installed over USB from a web page, the OrGigs installer: the <b>Install</b> button on OrGigs's card on The Firmware Hub (<code>thefirmwarehub.com</code>) leads there. It runs in Chrome, Edge or Firefox on a computer; nothing else needs to be installed.</p>
 
 <h2>Install or update</h2>
 <ol>
@@ -626,7 +626,7 @@ FM-1 (USB MIDI out) ──▶ MIDI host ──▶ synth, sequencer (USB or 5-pin
 <div class="note warn"><p><b>During installation</b> don't unplug the FM-1. If the write is cut off anyway, plug it in again and press <b>Install</b>: it goes on where it stopped.</p></div>
 
 <h2>Without a browser</h2>
-<p>OrGigs's source also has an installer script, <code>tools/fm1_install.py</code> (Python 3.12 with <code>mido</code> and <code>python-rtmidi</code>). In the source folder, <code>py -3.12 tools\fm1_install.py --info</code> only reads and shows the running firmware, for example <code>FM-1_970 [running]</code>; <code>py -3.12 tools\fm1_install.py orgigs-1.0.fwsc</code> installs a package.</p>
+<p>OrGigs's source also has an installer script, <code>tools/fm1_install.py</code> (Python 3.12 with <code>mido</code> and <code>python-rtmidi</code>). In the source folder, <code>py -3.12 tools\fm1_install.py --info</code> only reads and shows the running firmware, for example <code>FM-1_970 [running]</code>; <code>py -3.12 tools\fm1_install.py orgigs-1.0.1.fwsc</code> installs a package.</p>
 
 <h2>Going back to the original firmware</h2>
 <ul>

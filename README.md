@@ -8,7 +8,7 @@ source, GPL-3.0.
 
 | | SMK-37 Elite | FM-1 |
 | --- | --- | --- |
-| Install (Chrome or Edge, over USB) | [orgelbobo.github.io/orgigs/install](https://orgelbobo.github.io/orgigs/install/) | the same page, or [The Firmware Hub](https://thefirmwarehub.com) |
+| Install (Chrome, Edge or Firefox, over USB; Windows, first install on the Elite: Firefox) | [orgelbobo.github.io/orgigs/install](https://orgelbobo.github.io/orgigs/install/) | the same page, or [The Firmware Hub](https://thefirmwarehub.com) |
 | Manual | [PDF](docs/manual/OrGigs_Elite_Manual.pdf) | [PDF](docs/manual/OrGigs_FM-1_Manual.pdf) |
 | At a glance | [PDF](docs/manual/OrGigs_Elite_At_a_glance.pdf) | [PDF](docs/manual/OrGigs_FM-1_At_a_glance.pdf) |
 | Try it in the browser | | [orgelbobo.github.io/orgigs/try](https://orgelbobo.github.io/orgigs/try/) |

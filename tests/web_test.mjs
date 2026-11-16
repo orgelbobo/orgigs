@@ -20,21 +20,29 @@ const script = html.slice(html.lastIndexOf("<script>") + 8, html.lastIndexOf("</
 // a keyboard on Web MIDI: its identity on the handshake, then "device asks, host answers" reads of the image
 class FakeKeyboard {
   constructor(identity, port, after) {
-    this.after = after; this.bad = 0; this.served = 0; this.image = null;
+    this.after = after; this.bad = 0; this.served = 0; this.image = null; this.gen = 0;
     this.access = { inputs: new Map(), outputs: new Map() };
     this.boot(identity, port);
   }
   boot(identity, port) {
     this.identity = identity; this.waiting = null; this.queue = [];
     for (const m of [this.access.inputs, this.access.outputs]) { for (const p of m.values()) p.state = "disconnected"; m.clear(); }
-    const id = Math.random().toString(36).slice(2);
-    this.input = { id: "i" + id, name: port, state: "connected", onmidimessage: null, open: async () => {} };
-    this.output = { id: "o" + id, name: port, state: "connected", open: async () => {}, send: (d) => {
+    const id = Math.random().toString(36).slice(2), gen = ++this.gen;
+    this.input = { id: "i" + id, gen, name: port, state: "connected", onmidimessage: null, open: async () => {} };
+    this.output = { id: "o" + id, gen, name: port, state: "connected", open: async () => {}, send: (d) => {
       if (this.output.state !== "connected") throw new Error("InvalidStateError");
       setTimeout(() => this.rx(Array.from(d)), 1);
     } };
     this.access.inputs.set(this.input.id, this.input);
     this.access.outputs.set(this.output.id, this.output);
+  }
+  // a MIDIAccess as Windows 11's MIDI service gives it: ports that appear after it was granted are listed, but
+  // their open() never ends; a new access (requestMIDIAccess again) opens them
+  snapshot() {
+    const at = this.gen, dev = this;
+    const wrap = (p) => p.gen > at ? Object.assign(Object.create(p), { open: () => new Promise(() => {}) }) : p;
+    return { inputs: { values: () => [...dev.access.inputs.values()].map(wrap) },
+             outputs: { values: () => [...dev.access.outputs.values()].map(wrap) } };
   }
   tx(b) { const i = this.input; setTimeout(() => { if (i.state === "connected" && i.onmidimessage) i.onmidimessage({ data: Uint8Array.from(b) }); }, 1); }
   rx(d) {
@@ -74,7 +82,7 @@ class FakeKeyboard {
 }
 
 // the page in a sandbox: its elements, Web MIDI (the fake keyboard), fetch from build/site, confirm: yes
-async function run(identity, port, after, { midi = true } = {}) {
+async function run(identity, port, after, { midi = true, stale = false, ua = "", yes = true } = {}) {
   const els = {};
   const el = (id) => els[id] || (els[id] = { id, textContent: "", value: 0, disabled: true, listeners: {},
     addEventListener(t, f) { this.listeners[t] = f; } });
@@ -83,8 +91,8 @@ async function run(identity, port, after, { midi = true } = {}) {
   const ctx = {
     document: { getElementById: el }, window: { addEventListener() {} }, console, setTimeout, clearTimeout, TextEncoder,
     Uint8Array, Promise, Error, Object, JSON, Math, Date, Map, Set, Array, String, parseInt,
-    navigator: midi ? { requestMIDIAccess: async () => dev.access } : {},
-    confirm: (q) => { asked.push(q); return true; },
+    navigator: midi ? { userAgent: ua, requestMIDIAccess: async () => stale ? dev.snapshot() : dev.access } : { userAgent: ua },
+    confirm: (q) => { asked.push(q); return yes; },
     crypto: globalThis.crypto,
     fetch: async (url) => {
       const data = readFileSync(join(SITE, "install", url));
@@ -106,6 +114,18 @@ ok(/^Done/.test(elite.els.status.textContent) && elite.dev.bad === 0 && elite.de
   `a stock Elite (V016): installed, every read answered right (${elite.dev.served} reads)`);
 ok(elite.asked.length === 1 && /SMK-37 Elite_016/.test(elite.asked[0]) && /SMK-37 Elite_970/.test(elite.asked[0]),
   "it asks before installing over another firmware");
+const win11 = await run("SMK-37 Elite_016", "SMK-37 Elite Midi", "SMK-37 Elite_970", { stale: true });
+ok(/^Done/.test(win11.els.status.textContent) && win11.dev.bad === 0,
+  "Windows 11: the update mode and the new firmware found through a new MIDI access");
+const WIN_CHROME = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36";
+const WIN_FIREFOX = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0";
+const wc = await run("SMK-37 Elite_016", "SMK-37 Elite Midi", "SMK-37 Elite_970", { ua: WIN_CHROME, yes: false });
+ok(/Use Firefox/.test(wc.els.status.textContent) && wc.dev.served === 0 && /Firefox/.test(wc.asked[0] || ""),
+  "Chrome on Windows, stock Elite: points to Firefox, nothing written when declined");
+const wcu = await run("SMK-37 Elite_970", "OrGigs SMK-37 Elite", "SMK-37 Elite_970", { ua: WIN_CHROME });
+ok(/^Done/.test(wcu.els.status.textContent) && wcu.asked.length === 0, "Chrome on Windows, OrGigs update: no warning");
+const wf = await run("SMK-37 Elite_016", "SMK-37 Elite Midi", "SMK-37 Elite_970", { ua: WIN_FIREFOX, stale: true });
+ok(/^Done/.test(wf.els.status.textContent) && wf.asked.length === 1, "Firefox on Windows, stock Elite: installed (one question)");
 const upd = await run("SMK-37 Elite_970", "SMK-37 Elite", "SMK-37 Elite_970");
 ok(/^Done/.test(upd.els.status.textContent) && upd.asked.length === 0, "an Elite running OrGigs: updated without asking");
 const fm1 = await run("FM-1_015", "FM-1", "FM-1_970");

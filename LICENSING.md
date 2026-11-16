@@ -15,7 +15,7 @@ complete source under the same licence too.
 | From OberVave: the storage (blobs, slots), `LCD_IDLE`, the SMK-37 wiring of `platform.c`, `store.h`, the pad event queue in `smk_input.h`, `tests/smk_flash_test.c`, `tests/run_tests.sh`, the CI workflow | Copyright (C) 2026 zvenson |
 | Dinghy's app `dinghy.c` (not in OrGigs), the wiring `platform.c`, the host mode, Dinghy's docs | zvenson |
 | OrGigs: `firmware/src/orgigs.c`, `firmware/core/`, `firmware/board/`, `sim/`, `tests/host.c` and the scripts, `tools/gen_*.py`, `docs/`; its changes to the platform, marked (OrGigs) | OrGigs's author (Bobo), with Claude |
-| The web installer's update protocol: `web/fm1pkg.js`, `web/fm1ota.js` (unchanged) | Copyright (C) 2026 Leo Kuroshita (@kurogedelic), Hügelton Instruments (Felucca), as [Skiff](https://github.com/illuminus5/skiff) (illuminus5, GPL-3.0) carries it; `web/installer.html`, `tools/make_site.py` and `tests/web_test.mjs` are OrGigs's, after Skiff's installer page, site script and fake device |
+| The web installer's update protocol: `web/fm1pkg.js` (unchanged), `web/fm1ota.js` (its changes for Windows 11's MIDI service marked (OrGigs)) | Copyright (C) 2026 Leo Kuroshita (@kurogedelic), Hügelton Instruments (Felucca), as [Skiff](https://github.com/illuminus5/skiff) (illuminus5, GPL-3.0) carries it; `web/installer.html`, `tools/make_site.py` and `tests/web_test.mjs` are OrGigs's, after Skiff's installer page, site script and fake device |
 | The SMK-37 protections after [Skiff](https://github.com/illuminus5/skiff) (illuminus5, GPL-3.0): the package size check in `ota.c`, the loader size limit in `tools/build.py` | marked (OrGigs, after Skiff) |
 
 ## Third-party material
