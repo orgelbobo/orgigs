@@ -31,10 +31,11 @@ hub use it to tell firmwares apart: two firmwares with the same identity look li
 
 - Dinghy is `FM-1_99N` (N = the minor version; on the SMK-37 `SMK-37 Pro_99N`, `SMK-37 Elite_99N`, `MKE-P37_99N`).
   **Pick your own** in `tools/build.py` (`BOARD_PREFIX` and `PRODUCT`).
-- Keep the form `FM-1_9` + two digits if you can: the web installers then also finish an install that was cut
-  off halfway (they resume only the update loaders they know, `FM-1_9NN`).
-- Taken so far: `900` SLOOP, `91N` Felucca, `93N` sloopDX, `97N` zp12, `98N` (a Doom port), `99N` Dinghy, and others
-  in the hub's list. There is no registry yet: look at the hub, and ask there if you are unsure.
+- Keep the update loader's identity `ota-FM-1_9NN` (`firmware/loader/`): the web installers then also finish an
+  install that was cut off halfway (they resume only the update loaders they know). The app's own number is free.
+- Taken so far: `900` SLOOP, `91N` Felucca, `93N` sloopDX, `97N` zp12, `98N` (a Doom port), `99N` Dinghy, `674XYZ`
+  OrGigs, and others in the hub's list. The hub's `catalog.json` has every firmware's `ident` pattern, and its submit
+  form checks a number: check there, a pattern can claim more than the number its firmware reports.
 
 ## 4. Release
 

@@ -259,7 +259,7 @@ def send(link, b, out, tries=3):
 def find(port):
     import fm1_install as fi
     up = fi.Updater(fi.MidoBackend(), port)
-    dev = up.find(lambda i: not i.loader and 970 <= i.version <= 979)
+    dev = up.find(lambda i: not i.loader and (674000 <= i.version <= 674999 or 970 <= i.version <= 979))   # (97N: up to 1.0.1)
     if not dev:
         raise BackupError(3, "OrGigs not found (connected by USB, and no other program using the port?)")
     return dev

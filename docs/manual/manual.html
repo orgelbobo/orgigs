@@ -92,7 +92,7 @@ td:first-child { white-space: nowrap; }
     <h1>OrGigs FM-1</h1>
     <div class="sub">Three-manual organ, pipe organ and free-reed workstation with three MIDI Zones, for the M-VAVE FM-1.</div>
   </div>
-  <div class="foot"><span>Firmware package FM-1_970</span><span>October 2026</span></div>
+  <div class="foot"><span>Firmware package FM-1_674102</span><span>October 2026</span></div>
 </section>
 
 <!-- ============ CONTENTS ============ -->
@@ -626,7 +626,7 @@ FM-1 (USB MIDI out) ──▶ MIDI host ──▶ synth, sequencer (USB or 5-pin
 <div class="note warn"><p><b>During installation</b> don't unplug the FM-1. If the write is cut off anyway, plug it in again and press <b>Install</b>: it goes on where it stopped.</p></div>
 
 <h2>Without a browser</h2>
-<p>OrGigs's source also has an installer script, <code>tools/fm1_install.py</code> (Python 3.12 with <code>mido</code> and <code>python-rtmidi</code>). In the source folder, <code>py -3.12 tools\fm1_install.py --info</code> only reads and shows the running firmware, for example <code>FM-1_970 [running]</code>; <code>py -3.12 tools\fm1_install.py orgigs-1.0.1.fwsc</code> installs a package.</p>
+<p>OrGigs's source also has an installer script, <code>tools/fm1_install.py</code> (Python 3.12 with <code>mido</code> and <code>python-rtmidi</code>). In the source folder, <code>py -3.12 tools\fm1_install.py --info</code> only reads and shows the running firmware, for example <code>FM-1_674102 [running]</code>; <code>py -3.12 tools\fm1_install.py orgigs-1.0.2.fwsc</code> installs a package.</p>
 
 <h2>Going back to the original firmware</h2>
 <ul>
@@ -665,7 +665,7 @@ sim/serve.sh            # then open http://localhost:8099</pre>
 <tr><td>Memory</td><td>16 performance setups; a drawbar list of 75 registrations + 16 user slots, a pedal list of 24 + 8; kept across power-off</td></tr>
 <tr><td>MIDI mixer</td><td>16 channel volumes (CC 7), per setup</td></tr>
 <tr><td>MIDI</td><td>USB MIDI in and out; 3 zones with channel, range, transpose, velocity, filters; cloner, 9-channel harmonic mapper, chord memory per zone; up to 48 incoming notes held at once</td></tr>
-<tr><td>Firmware package</td><td>FM-1_970</td></tr></table>
+<tr><td>Firmware package</td><td>FM-1_674102</td></tr></table>
 
 <h2>Known limits</h2>
 <ul>

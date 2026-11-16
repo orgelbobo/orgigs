@@ -9,7 +9,7 @@ Outputs in build/: orgigs_fm1.bin (app), loader/ota.bin (update loader),
 orgigs_fm1.fwsc (package; SMK-37: orgigs_fm1-smk37[-elite|-mke].fwsc). See README.md for the toolchain and the SDK.
 
 --board smk37 (or BOARD=smk37) builds for the M-Vave SMK-37 (docs/SMK37.md): -DBOARD_SMK37=1 for the app and the
-loader, identity SMK-37 Pro_970 (release X.Y: SMK-37 Pro_97Y), the SMK flash layout (fm1pkg_make.py, app slot
+loader, identity SMK-37 Pro_674000 (release X.Y.Z: SMK-37 Pro_674XYZ), the SMK flash layout (fm1pkg_make.py, app slot
 0x97400), the package build/orgigs_fm1-smk37.fwsc. --model elite / mke (or MODEL=) with smk37: the same build under the
 SMK-37 Elite's or the MKE-P37's model name (identity, loader and update record; -DSMK_MODEL), so M-Vave's updater
 still takes that unit's factory package: orgigs_fm1-smk37-elite.fwsc, -mke.fwsc. The default stays the FM-1.
@@ -55,8 +55,8 @@ SDK_SHA256 = {
 }
 
 BOARD = "fm1"                       # fm1 (default) or smk37: BOARD env or --board
-BOARD_PREFIX = {"fm1": "FM-1_97", "smk37": "SMK-37 Pro_97"}   # OrGigs: 97N (check the hub before a release)
-                                    # identity: prefix + minor (0: a dev build)
+BOARD_PREFIX = {"fm1": "FM-1_674", "smk37": "SMK-37 Pro_674"}   # OrGigs: 674 ("ORG") + XYZ (check the hub before a release)
+                                    # identity: prefix + major, minor, patch (000: a dev build)
 BOARD_DEFS = {"fm1": [], "smk37": ["-DBOARD_SMK37=1"]}
 MODELS = {"pro": "SMK-37 Pro", "elite": "SMK-37 Elite", "mke": "MKE-P37"}   # smk37: one keyboard, three names
 # (OrGigs, after Skiff's SMK37.md) the SMK's stock app stages a package's loader at 0xBD000, below its update record at
@@ -65,7 +65,7 @@ LDR_MAX_SMK = 0xBEF00 - 0xBD000       # 7,936 B
 DATA_FAMILY = "ORGIGS"              # the SMK store's owner tag (store.h): 1..7 of A-Z 0-9. Your fork: your own
 SCREEN_NAME = "ORGIGS"              # the update loader's screen (FM-1, ldr_screen.c): the name and its colour (RGB565)
 SCREEN_COLOUR = 0xFD86              # amber, #FFB030 (the screen's accent)
-PRODUCT = "FM-1_970"                # OrGigs: 97N (the installer wants _9NN; free in the hub catalog of 2026-11-15)
+PRODUCT = "FM-1_674000"             # OrGigs: 674XYZ (97N is zp12's; 674 is free in the hub catalog of 2026-11-16)
 VERSION = None                      # APP_VER for release builds
 
 
@@ -314,7 +314,7 @@ def mmio_check():
 def main():
     global PRODUCT, VERSION, BOARD, APP_SLOT
     ap = argparse.ArgumentParser()
-    ap.add_argument("--release", metavar="X.Y", help="release build: identity FM-1_97Y, version string X.Y")
+    ap.add_argument("--release", metavar="X.Y", help="release build: identity FM-1_674XYZ, version string X.Y[.Z]")
     ap.add_argument("--selftest", action="store_true", help="self-playing test build for the FM-1 emulator (not for release)")
     ap.add_argument("--intro-head", action="store_true", help="the welcome screen with the head (out of the release)")
     ap.add_argument("--tonetest", action="store_true", help="A4 sine on/off every second, for recording the emulator (not for release)")
@@ -337,13 +337,13 @@ def main():
         BOARD_DEFS[BOARD] = [*BOARD_DEFS[BOARD], f'-DSMK_MODEL="{MODELS[model]}"']
         BOARD_PREFIX[BOARD] = BOARD_PREFIX[BOARD].replace(MODELS["pro"], MODELS[model])
         suffix += "-" + model
-    PRODUCT = BOARD_PREFIX[BOARD] + "0"
+    PRODUCT = BOARD_PREFIX[BOARD] + "000"
     name = f"orgigs_fm1{suffix}.fwsc"
-    if a.release:                   # one digit each: the identity has room for two (X.Y; a .Z only in the text)
+    if a.release:                   # one digit each: X, Y and Z in the identity (674XYZ; the SMK's 20 characters hold it)
         m = re.fullmatch(r"(\d)\.(\d)(\.\d)?(-[A-Za-z0-9]+)?", a.release)
         if not m:
             raise SystemExit(f"--release {a.release}: use X.Y, X.Y.Z or X.Y-suffix, one digit each")
-        PRODUCT = BOARD_PREFIX[BOARD] + m[2]
+        PRODUCT = BOARD_PREFIX[BOARD] + m[1] + m[2] + (m[3] or ".0")[1]
         VERSION = m[1] + "." + m[2] + (m[3] or "")
         name = f"orgigs_fm1-{a.release}{suffix}.fwsc"
     if a.selftest:                  # (OrGigs) the emulator's self-playing test, the tone test

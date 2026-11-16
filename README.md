@@ -74,7 +74,7 @@ whatever plays. If it does, try `PULSE_LATENCY_MSEC=60 ./emulator build/orgigs_f
 
 The build refuses what would brick the FM-1 (64-bit division, chip ROM calls, RAM over budget, register access
 outside `hal/`). Installing firmware is at your own risk; the way back: hold **OCT-** at power-on (USB rescue),
-or [The Firmware Hub](https://thefirmwarehub.com). The package identity is `FM-1_970`: check the hub
+or [The Firmware Hub](https://thefirmwarehub.com). The package identity is `FM-1_674XYZ` (674, "ORG", and the version: 1.0.2 is `FM-1_674102`): check the hub
 that nobody else uses it before you publish a release.
 
 ## Playing it
@@ -176,7 +176,7 @@ track. While it is connected, what the SEQTRAK sends on channels 1..11 and its c
 would send its own notes back to it). Tests: `tests/yst_test.py` (scripts `tests/yst.txt`, `tests/yst_elite.txt`).
 
 ```sh
-./build.sh --board smk37 --model elite   # build/orgigs_fm1-smk37-elite.fwsc, identity SMK-37 Elite_970 (also pro, mke)
+./build.sh --board smk37 --model elite   # build/orgigs_fm1-smk37-elite.fwsc, identity SMK-37 Elite_674000 (also pro, mke)
 ./build.sh                               # the FM-1 last: the SMK build overwrites build/orgigs_fm1.bin
 BOARD=smk37 tests/run_host.sh tests/elite.txt      # keys, pads (their colours print at each shot), faders, wheels
 sh tests/run_tests.sh                    # the update path, the loader, the packages, the flash maps, the installer

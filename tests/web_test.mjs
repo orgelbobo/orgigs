@@ -109,34 +109,37 @@ async function run(identity, port, after, { midi = true, stale = false, ua = "",
   return { els, dev, asked };
 }
 
-const elite = await run("SMK-37 Elite_016", "SMK-37 Elite", "SMK-37 Elite_970");
+const elite = await run("SMK-37 Elite_016", "SMK-37 Elite", "SMK-37 Elite_674000");
 ok(/^Done/.test(elite.els.status.textContent) && elite.dev.bad === 0 && elite.dev.served > 10 && elite.els.bar.value === 100,
   `a stock Elite (V016): installed, every read answered right (${elite.dev.served} reads)`);
-ok(elite.asked.length === 1 && /SMK-37 Elite_016/.test(elite.asked[0]) && /SMK-37 Elite_970/.test(elite.asked[0]),
+ok(elite.asked.length === 1 && /SMK-37 Elite_016/.test(elite.asked[0]) && /SMK-37 Elite_674000/.test(elite.asked[0]),
   "it asks before installing over another firmware");
-const win11 = await run("SMK-37 Elite_016", "SMK-37 Elite Midi", "SMK-37 Elite_970", { stale: true });
+const win11 = await run("SMK-37 Elite_016", "SMK-37 Elite Midi", "SMK-37 Elite_674000", { stale: true });
 ok(/^Done/.test(win11.els.status.textContent) && win11.dev.bad === 0,
   "Windows 11: the update mode and the new firmware found through a new MIDI access");
 const WIN_CHROME = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36";
 const WIN_FIREFOX = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0";
-const wc = await run("SMK-37 Elite_016", "SMK-37 Elite Midi", "SMK-37 Elite_970", { ua: WIN_CHROME, yes: false });
+const wc = await run("SMK-37 Elite_016", "SMK-37 Elite Midi", "SMK-37 Elite_674000", { ua: WIN_CHROME, yes: false });
 ok(/Use Firefox/.test(wc.els.status.textContent) && wc.dev.served === 0 && /Firefox/.test(wc.asked[0] || ""),
   "Chrome on Windows, stock Elite: points to Firefox, nothing written when declined");
-const wcu = await run("SMK-37 Elite_970", "OrGigs SMK-37 Elite", "SMK-37 Elite_970", { ua: WIN_CHROME });
+const wcu = await run("SMK-37 Elite_674000", "OrGigs SMK-37 Elite", "SMK-37 Elite_674000", { ua: WIN_CHROME });
 ok(/^Done/.test(wcu.els.status.textContent) && wcu.asked.length === 0, "Chrome on Windows, OrGigs update: no warning");
-const wf = await run("SMK-37 Elite_016", "SMK-37 Elite Midi", "SMK-37 Elite_970", { ua: WIN_FIREFOX, stale: true });
+const wf = await run("SMK-37 Elite_016", "SMK-37 Elite Midi", "SMK-37 Elite_674000", { ua: WIN_FIREFOX, stale: true });
 ok(/^Done/.test(wf.els.status.textContent) && wf.asked.length === 1, "Firefox on Windows, stock Elite: installed (one question)");
-const upd = await run("SMK-37 Elite_970", "SMK-37 Elite", "SMK-37 Elite_970");
+const upd = await run("SMK-37 Elite_674000", "SMK-37 Elite", "SMK-37 Elite_674000");
 ok(/^Done/.test(upd.els.status.textContent) && upd.asked.length === 0, "an Elite running OrGigs: updated without asking");
-const fm1 = await run("FM-1_015", "FM-1", "FM-1_970");
+const mig = await run("SMK-37 Elite_970", "OrGigs SMK-37 Elite", "SMK-37 Elite_674000");
+ok(/^Done/.test(mig.els.status.textContent) && mig.asked.length === 1 && /Elite_970/.test(mig.asked[0]),
+  "OrGigs 1.0.1 and older (97N, zp12's number): updated to 674XYZ after one question");
+const fm1 = await run("FM-1_015", "FM-1", "FM-1_674000");
 ok(/^Done/.test(fm1.els.status.textContent) && fm1.dev.bad === 0, "an FM-1: gets the FM-1 package");
-const pro = await run("SMK-37 Pro_016", "SMK-37 Pro", "SMK-37 Pro_970");
+const pro = await run("SMK-37 Pro_016", "SMK-37 Pro", "SMK-37 Pro_674000");
 ok(/no OrGigs package/.test(pro.els.status.textContent) && pro.dev.served === 0, "an SMK-37 Pro: no package, nothing written");
-const old = await run("SMK-37 Elite_015", "SMK-37 Elite", "SMK-37 Elite_970");
+const old = await run("SMK-37 Elite_015", "SMK-37 Elite", "SMK-37 Elite_674000");
 ok(/older than V016/.test(old.els.status.textContent) && old.dev.served === 0, "an Elite on stock firmware before V016: refused, nothing written");
 const wrong = await run("SMK-37 Elite_016", "SMK-37 Elite", "SMK-37 Elite_016");
 ok(/reports another firmware/.test(wrong.els.status.textContent), "the keyboard reports another identity afterwards: said so");
-const none = await run("FM-1_015", "FM-1", "FM-1_970", { midi: false });
+const none = await run("FM-1_015", "FM-1", "FM-1_674000", { midi: false });
 ok(/no Web MIDI/.test(none.els.status.textContent) && none.els.go.disabled, "a browser without Web MIDI: said so, Install stays off");
 
 console.log(failed ? "WEB TESTS FAILED" : "web tests passed");

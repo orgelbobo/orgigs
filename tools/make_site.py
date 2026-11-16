@@ -37,8 +37,8 @@ def strip_module(src):
 def package(path, suffix, model, version):
     raw = (ROOT / path).read_bytes()
     product = I.product_of(raw)
-    if product.rpartition("_")[0] != model or not re.fullmatch(r"97\d", product.rpartition("_")[2]):
-        raise SystemExit(f"{path}: identity {product!r} is not OrGigs's {model}_97N")
+    if product.rpartition("_")[0] != model or not re.fullmatch(r"674\d{3}", product.rpartition("_")[2]):
+        raise SystemExit(f"{path}: identity {product!r} is not OrGigs's {model}_674XYZ")
     if I.LOADER_MARK not in raw:                    # never publish a package with vendor files
         raise SystemExit(f"{path}: no Felucca loader in it")
     return product, raw, f"orgigs-{re.sub(r'[^A-Za-z0-9.-]', '-', version)}{suffix}.fwsc"
