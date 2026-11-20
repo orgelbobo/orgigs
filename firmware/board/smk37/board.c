@@ -732,8 +732,11 @@ static uint32_t smk_lr(void)            /* 1 = both are held */
     return now == 3u;
 }
 
-/* ---- the sustain pedal (its jack: raw 0..1023): it holds the keys let go, inside and out, and sends CC 64 on the
-   focused zone's channels. Either kind of pedal: up is how it rests at power-on (so: plugged in, not pressed). */
+/* ---- the pedal socket (raw 0..1023). A sustain pedal: it holds the keys let go, inside and out, and sends CC 64 on
+   the focused zone's channels; either kind (up is how it rests at power-on: plugged in, not pressed). An expression
+   pedal: the swell (the expression, CC 11 out on the same channels), its travel learned as the mod wheel's. PEDAL on
+   the WHEELS page (pnl_st.ped): AUTO takes an expression pedal for one when it rests between the ends at power-on or
+   stays there for 0.3 s (a sustain pedal only passes), until power-off; SUSTAIN, SWELL fixed */
 static uint16_t ped_rest = 0xFFFFu;
 static uint8_t ped_down;
 static void smk_sustain(uint32_t down)
@@ -746,11 +749,57 @@ static void smk_sustain(uint32_t down)
     }
     for (ch = 0; ch < 16u; ch++) if (m >> ch & 1u) ml_q(0xB0u | ch, 64, down ? 127u : 0u);
 }
+#define PED_MID_LO 150u                 /* AUTO: between these, an expression pedal (a sustain pedal reads its ends) */
+#define PED_MID_HI 900u
+#define PED_MIN 40u                     /* the swell closed: 10 % of the level (the expression squares: 40^2 / 127^2) */
+static void smk_swell(uint32_t v)       /* v: the pedal's travel, 0..127 */
+{
+    uint32_t e = PED_MIN + (v * (127u - PED_MIN) + 63u) / 127u, ch;
+    uint32_t m = zn.z[mls.focus].flags & Z_NOCC ? 0u : zone_ctl_mask(&zn.z[mls.focus], 0);
+    org_par.expression = (uint8_t)e;
+    for (ch = 0; ch < 16u; ch++) if (m >> ch & 1u) ml_q(0xB0u | ch, 11, e);
+    ctl_say_int("SWELL %", (int32_t)(v * 100u / 127u), 0);
+}
+static void smk_swell_tick(uint32_t r)
+{
+    uint32_t a, v;
+    ped.acc = (uint16_t)(ped.acc + ((int32_t)r * 16 - ped.acc) / 4);   /* x16, smoothed */
+    a = ped.acc / 16u;
+    if (a < ped.lo) ped.lo = (uint16_t)a;
+    if (a > ped.hi) ped.hi = (uint16_t)a;
+    if (ped.hi < ped.lo + 200u) return; /* (the travel not learned yet: once all the way) */
+    v = a < ped.lo + 6u ? 0u : (a - ped.lo - 6u) * 127u / (ped.hi - ped.lo - 12u);
+    if (v > 127u) v = 127u;
+    if (ped.swell != 0xFFu && v + 2u > ped.swell && v < ped.swell + 2u && !(v != ped.swell && (v == 0u || v == 127u))) return;
+    ped.swell = (uint8_t)v;             /* (+-1 dead band, the ends reachable) */
+    smk_swell(v);
+}
+static void smk_pedal_mode(void)        /* PEDAL changed: sustain up, the swell open, its travel and rest taken anew */
+{
+    if (ped_down) { ped_down = 0; smk_sustain(0); }
+    if (ped.swell != 0xFFu) { ped.swell = 0xFFu; smk_swell(127); }
+    ped_rest = (uint16_t)fm1_in.pedal;
+    ped.lo = 0xFFFFu; ped.hi = 0; ped.acc = (uint16_t)(fm1_in.pedal * 16u);
+    ped.mid_at = fm1_ms;
+}
 static void smk_sustain_tick(void)
 {
     uint32_t r = fm1_in.pedal, d, now;
     if (fm1_ms < 1500u) return;         /* (once the ADC has settled) */
-    if (ped_rest == 0xFFFFu) { ped_rest = (uint16_t)r; return; }
+    if (ped_rest == 0xFFFFu) {
+        ped_rest = (uint16_t)r; ped.acc = (uint16_t)(r * 16u); ped.mid_at = fm1_ms;
+        ped.expr = r >= PED_MID_LO - 90u && r <= PED_MID_HI + 50u;   /* resting between the ends: 60..950 */
+        return;
+    }
+    if (pnl_st.ped == PJ_AUTO && !ped.expr) {
+        if (r < PED_MID_LO || r > PED_MID_HI) ped.mid_at = fm1_ms;
+        else if (fm1_ms - ped.mid_at > 300u) {
+            ped.expr = 1;
+            if (ped_down) { ped_down = 0; smk_sustain(0); }
+            ctl_say("PEDAL", "EXPRESSION: THE SWELL");
+        }
+    }
+    if (ped_swell()) { smk_swell_tick(r); return; }
     d = r > ped_rest ? r - ped_rest : ped_rest - r;
     now = ped_down ? d > 250u : d > 400u;   /* (a gap: no flutter) */
     if (now != ped_down) { ped_down = (uint8_t)now; smk_sustain(now); }
@@ -761,7 +810,7 @@ static void smk_knob_fx(uint32_t f, int32_t st)
     uint32_t sh = ui.shift;
     if (ui.fxp == FXP_LESLIE) { les_step(f, st); return; }
     if (ui.fxp == FXP_EFFECT) { fxi_step(f, st); return; }
-    if (ui.fxp == FXP_MASTER) { mst_step(f, st); return; }
+    if (ui.fxp == FXP_MASTER) { mst_step(ui.shift ? (f < 3u ? MSP_LFREQ + f : MSP_N) : f, st); return; }   /* SCALE + K1..K3 */
     if (ui.fxp == FXP_WHEELS) { whl_knob(f, st); return; }
     ui.shift = f >= 4u;                                     /* (knob_fx: SCALE = the shared ones) */
     knob_fx(f & 3u, st);

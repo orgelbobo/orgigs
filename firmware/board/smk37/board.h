@@ -13,5 +13,6 @@
 typedef uint64_t board_keys_t;
 #define BOARD_SPLASH 1                  /* a model or layout chosen: its name big over the whole screen (orgigs_ui.c) */
 static void board_splash(const char *kind, const char *name, const char *more);
-#define BOARD_BK_EXTRA_MAX 512u         /* the backup's extra part: the rotary cabinets, the insert effect, the master
-                                           (board.c: smk_bk_put, smk_bk_get) */
+#define BOARD_PAR_DUMP smk_par_dump    /* (host) the rotary cabinets' values in the parameter table's print */
+#define BOARD_BK_EXTRA_MAX 340u         /* the backup's extra part, after the core's insert effect and master: the rotary
+                                           cabinets, the panel (orgigs_ui.c: board_bk_put, board_bk_get) */

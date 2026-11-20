@@ -1,0 +1,6 @@
+# AUTO meets an expression pedal at its toe (rests at 984 at power-on, like a sustain pedal): it goes to the middle
+# and stays there 0.3 s: the sustain it was for that while let go, then it is the swell (checked by tests/elite_test.py)
+0 pedal 984
+2000 pedal 500
+2600 pedal 984
+3000 end

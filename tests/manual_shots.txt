@@ -74,4 +74,25 @@
 17650 enc 3 1
 17700 enc 4 1
 19400 shot
-19500 end
+# --- INSERT: back to the drawbars, SEL + FX; EDIT: CHORUS on the upper, its rate a little up; a chord
+19500 btn 8
+19600 down 3
+19650 btn 2
+19700 up 3
+19800 btn 6
+19900 enc 2 4
+20000 keys 0x4880
+21600 shot
+# --- MASTER: SEL + FX again; the EQ on, the low +3 dB, the high +2 dB; the compressor on, its threshold -30 dB
+21700 down 3
+21750 btn 2
+21800 up 3
+21900 btn 4
+22000 enc 2 3
+22050 enc 4 2
+22100 btn 5
+22200 btn 6
+22300 enc 2 -12
+24000 shot
+24100 keys 0
+24200 end

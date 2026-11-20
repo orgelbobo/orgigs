@@ -1,0 +1,12 @@
+# The Elite's pedal socket with an expression pedal (BOARD=smk37 tests/run_host.sh tests/elite_swell.txt; checked by
+# tests/elite_test.py). It rests at 102 (the heel) at power-on: AUTO takes it for an expression pedal, the swell.
+# --- the toe (937): the travel learned, the swell open (CC 11 127); a key held through it all
+0 pedal 102
+2000 keys 0x1000
+2200 pedal 937
+# --- the heel: closed, soft but there (CC 11 40, 10 % of the level); no CC 64 anywhere
+2600 pedal 102
+# --- half way
+3000 pedal 520
+3400 keys 0
+3600 end

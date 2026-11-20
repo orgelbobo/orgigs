@@ -105,9 +105,15 @@ static void set_leslie(uint32_t s) { org_par.leslie = (uint8_t)s; }
 /* ---- the strips (or what stands in for them): internal effect only; local moves also go out */
 /* CC 1 and pitch bend (and the strips, where there are any): reeds always bellows and bend; the organs as
    ml_ctl_mode says: PITCH = bend and rotary slow/fast, ROTARY = kick/tutti and slow/brake/fast */
+#ifdef BOARD_CC1_WAH
+static void fxi_wheel(uint32_t mv);     /* orgigs_params.c */
+#endif
 static void ml_strip_mod(uint32_t v)
 {
     ctl.mod_strip = v;
+#ifdef BOARD_CC1_WAH                    /* (the FM-1) while the insert is the WAH, CC 1 is its pedal */
+    if (fxi_rt.type == FXI_WAH) { fxi_wheel(v); return; }
+#endif
     if (dept_now() == DEPT_REED) { org_par.expression = (uint8_t)v; return; }   /* the bellows */
     if (ml_ctl_mode == CTL_PITCH) ctl.leslie_user = v < 64u ? LESLIE_SLOW : LESLIE_FAST;
     else ctl.leslie_user = v < 43u ? LESLIE_SLOW : v < 85u ? LESLIE_BRAKE : LESLIE_FAST;
@@ -187,7 +193,8 @@ static void ctl_drawbar(uint32_t d, int32_t steps)
     touched();
 }
 
-/* ---- the effects: KNOB steps on the focused manual, or the shared ones */
+/* ---- the effects: KNOB steps on the focused manual, or the shared ones (the plain ones, drive, the sends, the delay
+   and the reverb's room, step through the parameter table: orgigs_params.c) */
 static void ctl_character(int32_t st)  /* tonewheel: percussion; pipes: chiff; reeds: the musette's detune */
 {
     uint32_t dept = dept_now();
@@ -201,18 +208,7 @@ static void ctl_character(int32_t st)  /* tonewheel: percussion; pipes: chiff; r
     }
     touched();
 }
-static void ctl_delay_fb(int32_t st) { org_par.delay_fb = (uint8_t)clampi((int32_t)org_par.delay_fb + st * 3, 0, 127); ctl_say_int("DELAY FEEDBACK", org_par.delay_fb, 0); touched(); }
-static void ctl_delay_time(int32_t st) { org_par.delay_time = (uint8_t)clampi((int32_t)org_par.delay_time + st * 2, 0, 127); ctl_say_int("DELAY MS", 20 + org_par.delay_time * 980 / 127, 0); touched(); }
-static void ctl_rev_mode(int32_t st) { org_par.rev_mode = (uint8_t)clampi((int32_t)org_par.rev_mode + st, 0, ORG_NREV - 1); ctl_say("REVERB", REV_NAME[org_par.rev_mode]); touched(); }
 static char *man_label(char *t, const char *what) { char *p = cat(t, MAN_TAG[mls.focus]); *p++ = ' '; return cat(p, what); }
-static void ctl_drive(int32_t st)
-{
-    char t[16];
-    uint32_t m = mls.focus;
-    org_par.drive[m] = (uint8_t)clampi((int32_t)org_par.drive[m] + st * 2, 0, 127);
-    man_label(t, "DRIVE"); ctl_say_int(t, org_par.drive[m], 0);
-    touched();
-}
 static void ctl_vib(int32_t st)         /* vibrato / chorus on the tonewheels, tremulant on the rest */
 {
     char t[16];
@@ -226,22 +222,6 @@ static void ctl_vib(int32_t st)         /* vibrato / chorus on the tonewheels, t
         if (org_par.trem[m]) ctl.trem_last = org_par.trem[m];
         man_label(t, "TREMULANT"); ctl_say_int(t, org_par.trem[m], 0);
     }
-    touched();
-}
-static void ctl_dsend(int32_t st)
-{
-    char t[16];
-    uint32_t m = mls.focus;
-    org_par.dsend[m] = (uint8_t)clampi((int32_t)org_par.dsend[m] + st * 3, 0, 127);
-    man_label(t, "DELAY SEND"); ctl_say_int(t, org_par.dsend[m], 0);
-    touched();
-}
-static void ctl_rsend(int32_t st)
-{
-    char t[16];
-    uint32_t m = mls.focus;
-    org_par.rsend[m] = (uint8_t)clampi((int32_t)org_par.rsend[m] + st * 3, 0, 127);
-    man_label(t, "REVERB SEND"); ctl_say_int(t, org_par.rsend[m], 0);
     touched();
 }
 

@@ -1,5 +1,7 @@
 # The Elite's battery (BOARD=smk37 tests/run_host.sh tests/elite_battery.txt: look at the shots).
-# T batt RAW: the divider's raw ADC value (635: a nearly full cell, ~4.10 V). Button 8 SCALE.
+# T batt RAW: the divider's raw ADC value (635: a nearly full cell, ~4.10 V). T usb 0/1: off / on a USB host
+# (on: the cell charges, a bolt in the symbol). Button 8 SCALE.
+0 usb 0
 100 batt 635
 1500 shot
 # --- SCALE: the load and the battery
@@ -13,4 +15,7 @@
 # --- FX page: the right-hand text moves left of the symbol
 6100 btn 14
 6300 shot
-6500 end
+# --- on a USB host: the bolt
+6400 usb 1
+6600 shot
+6700 end

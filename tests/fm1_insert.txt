@@ -1,0 +1,31 @@
+# FM-1: the insert effect and the master (core/orgigs_params.c; tests/run_host.sh tests/fm1_insert.txt).
+# SEL + FX: INSERT (off); EDIT: CHORUS on; KNOB1 its rate up, SEL + KNOB1 its width; a chord. EDIT: WAH; CC 1 its pedal
+# down and up. SEL + FX: MASTER; ENV the EQ on, LFO the compressor; EDIT: the knobs hold it, KNOB1 the threshold down to -40 dB;
+# FX: back to the drawbars
+300 down 3
+350 btn 2
+400 up 3
+500 shot
+600 btn 6
+700 enc 2 10
+800 down 3
+850 enc 2 4
+900 up 3
+1000 keys 0x7FFFF
+1500 shot
+2000 btn 6
+2100 midi 0xB0 1 0
+2600 midi 0xB0 1 127
+2700 shot
+2900 down 3
+3000 btn 2
+3050 up 3
+3100 btn 4
+3200 btn 5
+3300 btn 6
+3400 enc 2 -22
+3500 shot
+4000 btn 2
+4100 shot
+4500 keys 0
+6000 end

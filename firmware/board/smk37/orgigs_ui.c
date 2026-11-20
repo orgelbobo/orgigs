@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 /* OrGigs on the SMK-37 (Elite): the panel and the screen (main loop), the Elite's own copy since 2026-11-07.
- * It began as board/fm1/orgigs_ui.c with the SMK-37's parts kept (the FM-1's copy is frozen; the Elite's grows
+ * It began as board/fm1/orgigs_ui.c with the SMK-37's parts kept (the FM-1's copy grows little; the Elite's grows
  * into its own control concept, see docs/WISHLIST.md round 5). board.c includes it and adds the SMK-37's own
  * controls on top. The notes below still describe the FM-1's panel under the SMK's button names (platform.c).
  *
@@ -57,16 +57,17 @@ enum { LESP_HSLOW, LESP_HFAST, LESP_HRISE, LESP_DSLOW, LESP_DFAST, LESP_DRISE, L
        LESP_HDOP, LESP_DDOP, LESP_AM, LESP_WIDTH, LESP_N };
 enum { LES_T122, LES_T145, LES_U1, LES_U2, LES_NT };
 static const char *const LES_TNAME[LES_NT] = {"CLASSIC", "COMPACT", "USER 1", "USER 2"};
-static const char *const LESP_TAG[LESP_N] = {"H SLOW", "H FAST", "H RISE", "D SLOW", "D FAST", "D RISE", "XOVER",
-                                            "BALANCE", "H DOPP", "D DOPP", "AM", "WIDTH"};
-static const char *const LESP_NAME[LESP_N] = {"HORN SLOW HZ", "HORN FAST HZ", "HORN RISE S", "DRUM SLOW HZ",
-                                             "DRUM FAST HZ", "DRUM RISE S", "CROSSOVER HZ", "BALANCE HORN",
-                                             "HORN DOPPLER", "DRUM DOPPLER", "LEVEL SWING %", "STEREO WIDTH %"};
-static const int16_t LESP_MIN[LESP_N] = {30, 300, 2, 20, 300, 5, 200, -10, 0, 0, 0, 0};
-static const int16_t LESP_MAX[LESP_N] = {150, 900, 40, 150, 800, 100, 2000, 10, 18, 7, 200, 150};
-static const int16_t LESP_STEP[LESP_N] = {2, 10, 1, 2, 10, 2, 20, 1, 1, 1, 5, 5};
-/* speeds in 1/100 Hz, rise (to ~95 %) in 1/10 s, crossover in Hz, balance -10 (drum) .. 10 (horn), Doppler swing in
-   samples, level swing and width in % of the CLASSIC */
+/* the cabinet's values (core/orgigs_params.c's par_t; the start: the CLASSIC's): speeds in 1/100 Hz, rise (to ~95 %)
+   in 1/10 s, crossover in Hz, balance -10 (drum) .. 10 (horn), Doppler swing in samples, level swing and width in %
+   of the CLASSIC */
+static const par_t LESP[LESP_N] = {
+    {"H SLOW", "HORN SLOW HZ", 30, 150, 2, 80, PU_HZ}, {"H FAST", "HORN FAST HZ", 300, 900, 10, 680, PU_HZ},
+    {"H RISE", "HORN RISE S", 2, 40, 1, 8, PU_DSEC}, {"D SLOW", "DRUM SLOW HZ", 20, 150, 2, 66, PU_HZ},
+    {"D FAST", "DRUM FAST HZ", 300, 800, 10, 590, PU_HZ}, {"D RISE", "DRUM RISE S", 5, 100, 2, 30, PU_DSEC},
+    {"XOVER", "CROSSOVER HZ", 200, 2000, 20, 800, PU_NUM}, {"BALANCE", "BALANCE HORN", -10, 10, 1, 0, PU_SNUM},
+    {"H DOPP", "HORN DOPPLER", 0, 18, 1, 14, PU_NUM}, {"D DOPP", "DRUM DOPPLER", 0, 7, 1, 6, PU_NUM},
+    {"AM", "LEVEL SWING %", 0, 200, 5, 100, PU_PCT}, {"WIDTH", "STEREO WIDTH %", 0, 150, 5, 100, PU_PCT},
+};
 static const int16_t LES_DEF[LES_NT][LESP_N] = {
     {80, 680, 8, 66, 590, 30, 800, 0, 14, 6, 100, 100},       /* CLASSIC: the audio's (core/orgigs_fx.c) */
     {86, 700, 6, 76, 620, 22, 900, 0, 10, 4, 85, 80},         /* COMPACT: smaller, closer, quicker */
@@ -107,7 +108,7 @@ static void les_check(uint32_t ok)     /* les_st as read (ok: read at all): chec
     uint32_t t, i;
     ok = ok && les_st.ver == LES_VER && les_st.type < LES_NT;
     for (t = 0; ok && t < 2u; t++)
-        for (i = 0; i < LESP_N; i++) ok &= les_st.user[t][i] >= LESP_MIN[i] && les_st.user[t][i] <= LESP_MAX[i];
+        for (i = 0; i < LESP_N; i++) ok &= les_st.user[t][i] >= LESP[i].min && les_st.user[t][i] <= LESP[i].max;
     if (!ok) {
         memset(&les_st, 0, sizeof les_st);
         les_st.ver = LES_VER;
@@ -118,16 +119,14 @@ static void les_check(uint32_t ok)     /* les_st as read (ok: read at all): chec
 static void les_init(void) { les_122 = les_rt; les_check(blob_load(1, &les_st, sizeof les_st) == 0); }
 static void les_init_loaded(void) { les_check(1); }
 static void les_touch(void) { les_dirty = 1; les_at = fm1_ms; }
-static char *les_fmt(char *p, uint32_t i, int32_t v)
+static char *les_fmt(char *p, uint32_t i, int32_t v) { return par_fmt(p, &LESP[i], v); }
+#ifdef DINGHY_HOST
+static void smk_par_dump(void)          /* (core/orgigs_params.c par_dump: the board's own) */
 {
-    if (i == LESP_HSLOW || i == LESP_HFAST || i == LESP_DSLOW || i == LESP_DFAST) {
-        p = org_fmt(p, v / 100, 0); *p++ = '.'; *p++ = (char)('0' + v / 10 % 10); *p++ = (char)('0' + v % 10); *p = 0;
-        return p;
-    }
-    if (i == LESP_HRISE || i == LESP_DRISE) { p = org_fmt(p, v / 10, 0); *p++ = '.'; *p++ = (char)('0' + v % 10); *p = 0; return cat(p, "s"); }
-    if (i == LESP_AM || i == LESP_WIDTH) return cat(org_fmt(p, v, 0), "%");
-    return org_fmt(p, v, i == LESP_BAL);
+    uint32_t i;
+    for (i = 0; i < LESP_N; i++) par_dump_one("ROTARY CABINET (USER 1, 2)", &LESP[i], 0, "one", "blob 1", 0);
 }
+#endif
 static void les_pick(uint32_t t)
 {
     les_st.type = (uint8_t)t;
@@ -149,282 +148,13 @@ static void les_step(uint32_t k, int32_t st)   /* K1..K8; SCALE + K1..K4 the fou
     if (i >= LESP_N) return;
     if (les_st.type < LES_U1) { ctl_say(LES_TNAME[les_st.type], "FIXED: BT + PAD 3/4 COPIES"); return; }
     v = &les_st.user[les_st.type - LES_U1][i];
-    *v = (int16_t)clampi(*v + st * LESP_STEP[i], LESP_MIN[i], LESP_MAX[i]);
+    *v = (int16_t)par_next(&LESP[i], *v, st);
     les_apply();
     les_touch();
     les_fmt(s, i, *v);
-    ctl_say(LESP_NAME[i], s);
+    ctl_say(LESP[i].name, s);
 }
-/* ---- the insert effect (the EFFECT page: FX, then PATCH twice): one effect on one manual, after its vibrato,
-   before its rotary (core/orgigs_fx.c, fxi_rt). Each effect keeps its own eight values; all kept in flash (blob 2).
-   Pads 1-7 the effect (again: off), pads 9-11 the manual. So far CHORUS, WAH (while WAH is chosen the mod wheel
-   is its pedal, not the rotary's), AUTO-WAH, FLANGER, PHASER, RING MOD and AMP */
-static const char *const FXI_NAME[FXI_N] = {"OFF", "CHORUS", "WAH-WAH", "AUTO-WAH", "FLANGER", "PHASER", "RING MOD", "AMP"};
-static const char *const FXI_TAG[FXI_N] = {"OFF", "CHO", "WAH", "AWA", "FLG", "PHS", "RNG", "AMP"};
-static const uint8_t FXI_READY[FXI_N] = {1, 1, 1, 1, 1, 1, 1, 1};
-#define FXI_NP 8u
-enum { FU_NUM, FU_HZ, FU_PCT, FU_MS, FU_SPCT, FU_AMP, FU_CAB, FU_SNUM, FU_DB, FU_RATIO };   /* (+ dB, n:1) */   /* as they are, 1/100 Hz, %, 1/10 ms,
-                                                                            +-%, the amp's model, its box, +- */
-static const char *const AMP_NAME[4] = {"CLEAN", "CRUNCH", "LEAD", "FUZZ"};
-static const char *const CAB_NAME[4] = {"OFF", "1X12", "2X12", "4X12"};
-typedef struct { const char *tag, *name; int16_t min, max, step, def; uint8_t unit; } fxi_par_t;
-static const fxi_par_t FXI_PAR[FXI_N][FXI_NP] = {
-    [FXI_CHORUS] = {{"RATE", "CHORUS RATE HZ", 10, 500, 5, 80, FU_HZ}, {"DEPTH", "CHORUS DEPTH", 0, 100, 5, 50, FU_PCT},
-                    {"DELAY", "CHORUS DELAY MS", 30, 250, 5, 120, FU_MS}, {"MIX", "CHORUS MIX", 0, 100, 5, 50, FU_PCT},
-                    {"WIDTH", "CHORUS WIDTH", 0, 100, 5, 70, FU_PCT}, {"FEEDBK", "CHORUS FEEDBACK", 0, 90, 5, 0, FU_PCT}},
-    [FXI_WAH] = {{"PEDAL", "WAH PEDAL", 0, 100, 2, 50, FU_PCT}, {"LOW", "WAH LOW HZ", 200, 800, 10, 350, FU_NUM},
-                 {"HIGH", "WAH HIGH HZ", 1000, 4000, 50, 2200, FU_NUM}, {"RESO", "WAH RESONANCE", 1, 10, 1, 5, FU_NUM},
-                 {"MIX", "WAH MIX", 0, 100, 5, 100, FU_PCT}, {"LEVEL", "WAH LEVEL", 30, 300, 10, 120, FU_PCT}},
-    [FXI_AUTOWAH] = {{"SENS", "AUTO-WAH SENSITIVITY", 0, 100, 5, 60, FU_PCT}, {"RATE", "AUTO-WAH LFO HZ", 0, 500, 5, 0, FU_HZ},
-                     {"LOW", "AUTO-WAH LOW HZ", 200, 800, 10, 300, FU_NUM}, {"HIGH", "AUTO-WAH HIGH HZ", 1000, 4000, 50, 2500, FU_NUM},
-                     {"RESO", "AUTO-WAH RESONANCE", 1, 10, 1, 6, FU_NUM}, {"DECAY", "AUTO-WAH DECAY MS", 20, 2000, 20, 260, FU_NUM},
-                     {"MIX", "AUTO-WAH MIX", 0, 100, 5, 100, FU_PCT}, {"LEVEL", "AUTO-WAH LEVEL", 30, 300, 10, 120, FU_PCT}},
-    [FXI_FLANGER] = {{"RATE", "FLANGER RATE HZ", 5, 500, 5, 25, FU_HZ}, {"DEPTH", "FLANGER DEPTH", 0, 100, 5, 70, FU_PCT},
-                     {"DELAY", "FLANGER DELAY MS", 5, 50, 1, 20, FU_MS}, {"FEEDBK", "FLANGER FEEDBACK", -90, 90, 5, 50, FU_SPCT},
-                     {"MIX", "FLANGER MIX", 0, 100, 5, 100, FU_PCT}, {"WIDTH", "FLANGER WIDTH", 0, 100, 5, 60, FU_PCT}},
-    [FXI_PHASER] = {{"RATE", "PHASER RATE HZ", 5, 500, 5, 40, FU_HZ}, {"LOW", "PHASER LOW HZ", 100, 1000, 10, 300, FU_NUM},
-                    {"HIGH", "PHASER HIGH HZ", 1000, 6000, 100, 2500, FU_NUM}, {"STAGES", "PHASER STAGES", 2, 8, 2, 4, FU_NUM},
-                    {"FEEDBK", "PHASER FEEDBACK", -90, 90, 5, 30, FU_SPCT}, {"MIX", "PHASER MIX", 0, 100, 5, 100, FU_PCT},
-                    {"WIDTH", "PHASER WIDTH", 0, 100, 5, 50, FU_PCT}},
-    [FXI_RING] = {{"FREQ", "RING FREQ HZ", 20, 2000, 0, 440, FU_NUM}, {"MIX", "RING MIX", 0, 100, 5, 50, FU_PCT},
-                  {"RATE", "RING LFO HZ", 0, 1000, 5, 0, FU_HZ}, {"DEPTH", "RING LFO DEPTH", 0, 100, 5, 30, FU_PCT},
-                  {"WIDTH", "RING WIDTH", 0, 100, 5, 50, FU_PCT}},
-    [FXI_AMP] = {{"MODEL", "AMP MODEL", 0, 3, 1, 1, FU_AMP}, {"GAIN", "AMP GAIN", 0, 100, 2, 40, FU_PCT},
-                 {"TONE", "AMP TONE", -10, 10, 1, 0, FU_SNUM}, {"CAB", "AMP CABINET", 0, 3, 1, 2, FU_CAB},
-                 {"LEVEL", "AMP LEVEL", 10, 200, 5, 50, FU_PCT}, {"MIX", "AMP MIX", 0, 100, 5, 100, FU_PCT}},
-};
-#define FXI_VER 1u
-static struct { uint8_t ver, type, man, seen; int16_t p[FXI_N][FXI_NP]; } fxi_st;   /* seen: the effects given their start */
-static uint32_t fxi_dirty, fxi_at;
-static uint32_t fxi_pedal;              /* WAH: the pedal now, 0..1000 (the mod wheel or K1; not kept) */
-static struct { uint8_t on, type[2], k[2]; int16_t v[2]; } fxi_ovr;   /* a wheel's hold on a value (bit w: wheel w) */
-
-
-static void fxi_apply(void)
-{
-    fxi_rt_t r;
-    int16_t p[FXI_NP];
-    uint32_t w;
-    memcpy(p, fxi_st.p[fxi_st.type < FXI_N ? fxi_st.type : 0u], sizeof p);
-    for (w = 0; w < 2u; w++)                    /* the wheels' values over the knobs' */
-        if (fxi_ovr.on >> w & 1u && fxi_ovr.type[w] == fxi_st.type) p[fxi_ovr.k[w] & 7u] = fxi_ovr.v[w];
-    memset(&r, 0, sizeof r);
-    r.type = fxi_st.type < FXI_N && FXI_READY[fxi_st.type] ? fxi_st.type : FXI_OFF;
-    r.man = fxi_st.man < ORG_NMAN ? fxi_st.man : MAN_UPPER;
-    if (r.type == FXI_CHORUS) {
-        r.rate_inc = ((uint32_t)p[0] * 31165u) >> 5;            /* 2^32 / 44100 per 1/100 Hz */
-        r.base_q8 = p[2] * 1129;                                /* 4.41 samples per 1/10 ms, 1/256 */
-        r.swing_q8 = p[1] * 450;                                /* 100 % = 4 ms */
-        if (r.swing_q8 > r.base_q8 - 512) r.swing_q8 = r.base_q8 - 512;
-        r.mix = p[3] * 128 / 100;
-        r.width = p[4] * 128 / 100;
-        r.fb = p[5] * 128 / 100;
-    } else if (r.type == FXI_FLANGER) {     /* the delay swings DEPTH % of its middle around it */
-        r.rate_inc = ((uint32_t)p[0] * 31165u) >> 5;
-        r.base_q8 = p[2] * 1129;
-        r.swing_q8 = r.base_q8 * p[1] / 100;
-        if (r.swing_q8 > r.base_q8 - 256) r.swing_q8 = r.base_q8 - 256;
-        r.fb = p[3] * 128 / 100;
-        r.mix = p[4] * 128 / 100;
-        r.width = p[5] * 128 / 100;
-    } else if (r.type == FXI_PHASER) {
-        r.rate_inc = ((uint32_t)p[0] * 31165u) >> 5;
-        r.aw_lo = ilog2_q12((uint32_t)p[1]);
-        r.aw_hi = ilog2_q12((uint32_t)p[2]);
-        r.ph_stages = (uint32_t)p[3];
-        r.fb = p[4] * 128 / 100;
-        r.mix = p[5] * 128 / 100;
-        r.width = p[6] * 128 / 100;
-    } else if (r.type == FXI_RING) {        /* the LFO swings the carrier up to +-50 % */
-        r.rm_inc = (uint32_t)p[0] * 97391u;                     /* 2^32 / 44100 per Hz */
-        r.mix = p[1] * 128 / 100;
-        r.rate_inc = ((uint32_t)p[2] * 31165u) >> 5;
-        r.rm_swing = r.rm_inc / 200u * (uint32_t)p[3];
-        r.width = p[4] * 128 / 100;
-    } else if (r.type == FXI_AMP) {         /* the gain 1 .. 64 times, even in octaves */
-        static const int16_t CAB_A[4] = {0, 16696, 14235, 11397};   /* the box's corner: 5, 4, 3 kHz */
-        r.amp_model = (uint32_t)p[0] & 3u;
-        int32_t oct = p[1] * 6 * 4096 / 100;                    /* the gain in octaves, Q12 */
-        r.amp_gain = (int32_t)iexp2_q12(8 * 4096 + oct);
-        r.amp_tone = p[2];
-        r.amp_cab = CAB_A[p[3] & 3];
-        r.level = (p[4] * 128 / 100) * (int32_t)iexp2_q12(12 * 4096 - oct * 35 / 100) >> 12;   /* gain^-0.35: the
-                                                                                level about the same at any gain */
-        r.mix = p[5] * 128 / 100;
-    } else if (r.type == FXI_WAH) {         /* the pedal: from LOW to HIGH, even in octaves */
-        int32_t lo = ilog2_q12((uint32_t)p[1]), hi = ilog2_q12((uint32_t)p[2]);
-        uint32_t fc = iexp2_q12(lo + (hi - lo) * (int32_t)fxi_pedal / 1000);
-        r.wah_f = wah_f_of(fc);
-        r.wah_q = 4096 / p[3];
-        r.mix = p[4] * 128 / 100;
-        r.level = p[5] * 128 / 100;
-    } else if (r.type == FXI_AUTOWAH) {     /* the level (and an LFO) moves it from LOW to HIGH */
-        r.aw_sens = p[0];
-        r.rate_inc = ((uint32_t)p[1] * 31165u) >> 5;
-        r.aw_lo = ilog2_q12((uint32_t)p[2]);
-        r.aw_hi = ilog2_q12((uint32_t)p[3]);
-        r.wah_q = 4096 / p[4];
-        r.aw_rel = 47552 / p[5];                                /* a block (0.73 ms) of the decay's time constant */
-        r.mix = p[6] * 128 / 100;
-        r.level = p[7] * 128 / 100;
-    }
-    fxi_rt = r;
-}
-static void fxi_check(uint32_t ok)     /* fxi_st as read (ok: read at all): checked, new effects their start; applied */
-{
-    uint32_t t, k;
-    ok = ok && fxi_st.ver == FXI_VER;
-    if (!ok) { memset(&fxi_st, 0, sizeof fxi_st); fxi_st.ver = FXI_VER; }
-    else if (!fxi_st.seen) fxi_st.seen = 1u << FXI_CHORUS;     /* (a store of the CHORUS-only firmware) */
-    if (fxi_st.type >= FXI_N) fxi_st.type = FXI_OFF;
-    if (fxi_st.man >= ORG_NMAN) fxi_st.man = MAN_UPPER;
-    for (t = 1; t < FXI_N; t++) {               /* an effect new here: its start; a value out of range: its start */
-        uint32_t fresh = !(fxi_st.seen >> t & 1u) && FXI_PAR[t][0].tag;
-        for (k = 0; k < FXI_NP; k++) {
-            const fxi_par_t *q = &FXI_PAR[t][k];
-            if (fresh || fxi_st.p[t][k] < q->min || fxi_st.p[t][k] > q->max) fxi_st.p[t][k] = q->tag ? q->def : 0;
-        }
-        if (FXI_PAR[t][0].tag) fxi_st.seen |= (uint8_t)(1u << t);
-    }
-    fxi_pedal = (uint32_t)fxi_st.p[FXI_WAH][0] * 10u;
-    fxi_apply();
-}
-static void fxi_init(void) { fxi_check(blob_load(2, &fxi_st, sizeof fxi_st) == 0); }
-static void fxi_init_loaded(void) { fxi_check(1); }
-static void fxi_touch(void) { fxi_dirty = 1; fxi_at = fm1_ms; }
-static char *fxi_fmt(char *p, const fxi_par_t *q, int32_t v)
-{
-    if (q->unit == FU_HZ && v == 0) return cat(p, "OFF");
-    if (q->unit == FU_AMP) return cat(p, AMP_NAME[v & 3]);
-    if (q->unit == FU_CAB) return cat(p, CAB_NAME[v & 3]);
-    if (q->unit == FU_SNUM) return org_fmt(p, v, 1);
-    if (q->unit == FU_DB) return cat(org_fmt(p, v, 1), "dB");
-    if (q->unit == FU_RATIO) return cat(org_fmt(p, v, 0), ":1");
-    if (q->unit == FU_HZ) { p = org_fmt(p, v / 100, 0); *p++ = '.'; *p++ = (char)('0' + v / 10 % 10); *p++ = (char)('0' + v % 10); *p = 0; return p; }
-    if (q->unit == FU_MS) { p = org_fmt(p, v / 10, 0); *p++ = '.'; *p++ = (char)('0' + v % 10); *p = 0; return p; }
-    if (q->unit == FU_PCT || q->unit == FU_SPCT) return cat(org_fmt(p, v, q->unit == FU_SPCT), "%");
-    return org_fmt(p, v, 0);
-}
-static void fxi_wheel(uint32_t mv)      /* WAH: the mod wheel is the pedal (0..127) */
-{
-    fxi_pedal = mv * 1000u / 127u;
-    fxi_apply();
-    ctl_say_int("WAH PEDAL %", (int32_t)(fxi_pedal / 10u), 0);
-}
-static void fxi_pick(uint32_t t)        /* pads 1-7: the effect; its pad again: off */
-{
-    if (t >= FXI_N) return;
-    if (!FXI_READY[t]) { ctl_say(FXI_NAME[t], "NOT YET"); return; }
-    fxi_st.type = (uint8_t)(t == fxi_st.type ? FXI_OFF : t);
-    if (fxi_st.type == FXI_WAH) fxi_pedal = (uint32_t)fxi_st.p[FXI_WAH][0] * 10u;
-    fxi_apply();
-    fxi_touch();
-    ctl_say("EFFECT", FXI_NAME[fxi_st.type]);
-}
-static void fxi_man(uint32_t m)
-{
-    char t[24];
-    fxi_st.man = (uint8_t)m;
-    fxi_apply();
-    fxi_touch();
-    cat(cat(t, FXI_NAME[fxi_st.type]), " ON");
-    ctl_say(t, MAN_TAG[m]);
-}
-/* an effect's value, kept out of line: inlined, clang loads it with an immediate pre-increment (h[++rX=n] (s)) that
-   the FM-1 emulator rejects */
-static __attribute__((noinline)) int16_t *fxi_val(uint32_t t, uint32_t k) { return &fxi_st.p[t][k & 7u]; }
-static void fxi_step(uint32_t k, int32_t st)
-{
-    const fxi_par_t *q;
-    int16_t *v;
-    char s[12];
-    if (fxi_st.type == FXI_OFF) { ctl_say("EFFECT OFF", "PADS 1-7: PICK ONE"); return; }
-    q = &FXI_PAR[fxi_st.type][k & 7u];
-    if (!q->tag) return;
-    v = fxi_val(fxi_st.type, k);
-    *v = (int16_t)clampi(*v + st * (q->step ? q->step : *v / 16 > 1 ? *v / 16 : 1), q->min, q->max);   /* (step 0: ~6 %) */
-    if (fxi_st.type == FXI_WAH && k == 0u) fxi_pedal = (uint32_t)*v * 10u;   /* K1: the pedal set */
-    fxi_apply();
-    fxi_touch();
-    fxi_fmt(s, q, *v);
-    ctl_say(q->name, s);
-}
-
-/* ---- the master (the MASTER page: FX, then ARP): EQ and compressor on the sum (core/orgigs_fx.c, mst_rt); pad 1 the
-   EQ, pad 2 the compressor on / off; K1..K8 and SCALE + K1..K3 the values; all kept in flash (blob 3) */
-enum { MSP_LO, MSP_MID, MSP_MFREQ, MSP_HI, MSP_THR, MSP_RATIO, MSP_ATT, MSP_REL, MSP_LFREQ, MSP_HFREQ, MSP_MAKEUP, MSP_N };
-static const fxi_par_t MSP[MSP_N] = {
-    {"LOW", "EQ LOW", -12, 12, 1, 0, FU_DB}, {"MID", "EQ MID", -12, 12, 1, 0, FU_DB},
-    {"M FREQ", "EQ MID HZ", 200, 5000, 0, 1000, FU_NUM}, {"HIGH", "EQ HIGH", -12, 12, 1, 0, FU_DB},
-    {"THRESH", "COMP THRESHOLD", -40, 0, 1, -18, FU_DB}, {"RATIO", "COMP RATIO", 1, 20, 1, 4, FU_RATIO},
-    {"ATTACK", "COMP ATTACK MS", 1, 100, 1, 10, FU_NUM}, {"RELEASE", "COMP RELEASE MS", 20, 1000, 0, 200, FU_NUM},
-    {"L FREQ", "EQ LOW HZ", 50, 400, 0, 120, FU_NUM}, {"H FREQ", "EQ HIGH HZ", 2000, 12000, 0, 6000, FU_NUM},
-    {"MAKEUP", "COMP MAKEUP", 0, 12, 1, 0, FU_DB},
-};
-#define MST_VER 1u
-static struct { uint8_t ver, eq_on, comp_on, spare; int16_t p[MSP_N]; } mst_st;
-static uint32_t mst_dirty, mst_at;
-
-static int32_t onepole_q15(int32_t f)   /* 1 - e^(-2 pi f / 44100), Q15 (a series: good to ~5 kHz) */
-{
-    int32_t x = (f * 9562) >> 11, x2 = (x * x) >> 15;
-    return x - x2 / 2 + ((x2 * x) >> 15) / 6;
-}
-static int32_t db_q12(int32_t db) { return (int32_t)iexp2_q12(12 * 4096 + db * 4096 * 100 / 602); }   /* 10^(dB/20) */
-static void mst_apply(void)
-{
-    mst_rt_t r;
-    const int16_t *p = mst_st.p;
-    int32_t ms;
-    memset(&r, 0, sizeof r);
-    r.eq_on = mst_st.eq_on;
-    r.comp_on = mst_st.comp_on;
-    r.g_lo = db_q12(p[MSP_LO]); r.g_mid = db_q12(p[MSP_MID]); r.g_hi = db_q12(p[MSP_HI]);
-    r.a_lo = onepole_q15(p[MSP_LFREQ]);
-    r.a_hi = p[MSP_HFREQ] > 5000 ? 16696 + (p[MSP_HFREQ] - 5000) * 2 : onepole_q15(p[MSP_HFREQ]);   /* (above 5 kHz: near) */
-    r.f_mid = wah_f_of((uint32_t)p[MSP_MFREQ]);
-    r.thr = 15 * 4096 + p[MSP_THR] * 4096 * 100 / 602;              /* 0 dB = 32768 */
-    r.slope = 4096 - 4096 / p[MSP_RATIO];
-    ms = p[MSP_ATT];
-    r.att = 47552 / ms > 65535 ? 65535 : 47552 / ms;                /* a block (0.73 ms) of the time */
-    r.rel = 47552 / p[MSP_REL];
-    r.makeup = db_q12(p[MSP_MAKEUP]);
-    mst_rt = r;
-}
-static void mst_check(uint32_t ok)     /* mst_st as read (ok: read at all): checked, else the start; applied */
-{
-    uint32_t i;
-    ok = ok && mst_st.ver == MST_VER;
-    if (!ok) { memset(&mst_st, 0, sizeof mst_st); mst_st.ver = MST_VER; }
-    for (i = 0; i < MSP_N; i++) if (!ok || mst_st.p[i] < MSP[i].min || mst_st.p[i] > MSP[i].max) mst_st.p[i] = MSP[i].def;
-    mst_st.eq_on &= 1u; mst_st.comp_on &= 1u;
-    mst_apply();
-}
-static void mst_init(void) { mst_check(blob_load(3, &mst_st, sizeof mst_st) == 0); }
-static void mst_init_loaded(void) { mst_check(1); }
-static void mst_touch(void) { mst_dirty = 1; mst_at = fm1_ms; }
-static void mst_toggle(uint32_t comp)   /* pad 1: the EQ, pad 2: the compressor */
-{
-    uint8_t *o = comp ? &mst_st.comp_on : &mst_st.eq_on;
-    *o ^= 1u;
-    mst_apply();
-    mst_touch();
-    ctl_say(comp ? "COMPRESSOR" : "EQ", *o ? "ON" : "OFF");
-}
-static __attribute__((noinline)) int16_t *mst_val(uint32_t i) { return &mst_st.p[i]; }   /* (out of line: as fxi_val) */
-static void mst_step(uint32_t k, int32_t st)   /* K1..K8; SCALE + K1..K3 */
-{
-    uint32_t i = ui.shift ? (k < 3u ? MSP_LFREQ + k : MSP_N) : k;
-    int16_t *v;
-    char s[12];
-    if (i >= MSP_N) return;
-    v = mst_val(i);
-    *v = (int16_t)clampi(*v + st * (MSP[i].step ? MSP[i].step : *v / 16 > 1 ? *v / 16 : 1), MSP[i].min, MSP[i].max);
-    mst_apply();
-    mst_touch();
-    fxi_fmt(s, &MSP[i], *v);
-    ctl_say(MSP[i].name, s);
-}
+/* (the insert effect and the master: core/orgigs_params.c, its EFFECT and MASTER pages below) */
 
 /* ---- the coupler (the SMK-37's, in place of the organ's II/I): which manuals the keys play together, in turn
    OFF, UM+LM, UM+PM, LM+PM, UM+LM+PM (the zones' ZX_CPL, kept with the setup). A coupled pedal takes the lowest note.
@@ -516,7 +246,13 @@ static const char *const LAY_NAME[LAY_N] = {"A FULL DRAWBARS", "B1 DRAWBARS + LI
                                             "B2 DRAWBARS + MIDI"};
 static const char *const LAY_TAG[LAY_N] = {"PERF A", "PERF B1", "PERF C", "PERF D", "PERF B2"};
 static const uint8_t LAY_ORDER[LAY_N] = {LAY_FULL, LAY_PADS, LAY_PADS2, LAY_KNOBS, LAY_SOUND};   /* the round: A B1 B2 C D */
-#define PNL_VER 4u
+/* the pedal socket (board.c smk_pedal_tick): AUTO tells a sustain pedal (a switch: the ends) from an expression pedal
+   (a pot: the socket feeds its ring, the travel in between) and makes the latter the swell */
+enum { PJ_AUTO, PJ_SUS, PJ_SWELL, PJ_N };
+static const char *const PJ_NAME[PJ_N] = {"AUTO", "SUSTAIN", "SWELL"};
+static struct { uint8_t expr, swell; uint16_t lo, hi, acc; uint32_t mid_at; } ped = {0, 0xFFu, 0xFFFFu, 0, 0, 0};
+static void smk_pedal_mode(void);       /* (board.c) K4 on the WHEELS page changed it */
+#define PNL_VER 5u
 #define PNL_NFAV 4u
 typedef struct { uint8_t ver, lay, soft, spare, set_lay[NSETUP], set_soft[NSETUP]; } pnl_v1_t;
 static struct {
@@ -525,8 +261,11 @@ static struct {
     uint8_t fav[ORG_NMAN][PNL_NFAV][ORG_NDB];
     uint8_t pdk[2];                     /* (version 3; no longer used: the decays are not kept) */
     uint8_t whl[2], set_whl[NSETUP][2]; /* (version 4) the wheels' targets (WT_...): now, each setup's */
+    uint8_t ped;                        /* (version 5) the pedal socket: PJ_AUTO, PJ_SUS, PJ_SWELL */
 } pnl_st;
-#define PNL_V3_SIZE (sizeof pnl_st - 2u - 2u * NSETUP)
+static uint32_t ped_swell(void) { return pnl_st.ped == PJ_SWELL || (pnl_st.ped == PJ_AUTO && ped.expr); }
+#define PNL_V4_SIZE (sizeof pnl_st - 1u)
+#define PNL_V3_SIZE (PNL_V4_SIZE - 2u - 2u * NSETUP)
 #define PNL_V2_SIZE (PNL_V3_SIZE - 2u)
 /* the YST action pad's CC (pad 12; K3 here; in blob 4's spare byte): the master effects' 102..106 on channel 1, the
    single effect's 107..109 on the track's */
@@ -552,6 +291,7 @@ static void pnl_init_loaded(void)
     if (pnl_st.lay >= LAY_N) pnl_st.lay = LAY_FULL;
     pnl_st.soft &= 1u;
     if (pnl_st.spare >= VB_N) pnl_st.spare = 0;
+    if (pnl_st.ped >= PJ_N) pnl_st.ped = PJ_AUTO;
     for (i = 0; i < NSETUP; i++) { if (pnl_st.set_lay[i] >= LAY_N) pnl_st.set_lay[i] = LAY_FULL; pnl_st.set_soft[i] &= 1u; }
     for (i = 0; i <= NSETUP; i++) {     /* the wheels' targets (WT_N: 17, the mod wheel no pitch); NSETUP: now */
         uint8_t *w = i < NSETUP ? pnl_st.set_whl[i] : pnl_st.whl;
@@ -564,6 +304,8 @@ static void pnl_init(void)
 {
     memset(&pnl_st, 0, sizeof pnl_st);
     if (blob_load(4, &pnl_st, sizeof pnl_st) != 0 || pnl_st.ver != PNL_VER) {
+        memset(&pnl_st, 0, sizeof pnl_st);
+        if (blob_load(4, &pnl_st, PNL_V4_SIZE) == 0 && pnl_st.ver == 4u) { pnl_init_loaded(); return; }
         memset(&pnl_st, 0, sizeof pnl_st);
         if (blob_load(4, &pnl_st, PNL_V3_SIZE) == 0 && pnl_st.ver == 3u) { pnl_init_loaded(); return; }
         memset(&pnl_st, 0, sizeof pnl_st);
@@ -623,8 +365,7 @@ static void les_tick(void)              /* the cabinets, the effect, the master,
 {
     if (pnl_dirty && fm1_ms - pnl_at > 2000u) { pnl_dirty = 0; (void)blob_save(4, &pnl_st, sizeof pnl_st); }
     if (les_dirty && fm1_ms - les_at > 2000u) { les_dirty = 0; (void)blob_save(1, &les_st, sizeof les_st); }
-    if (fxi_dirty && fm1_ms - fxi_at > 2000u) { fxi_dirty = 0; (void)blob_save(2, &fxi_st, sizeof fxi_st); }
-    if (mst_dirty && fm1_ms - mst_at > 2000u) { mst_dirty = 0; (void)blob_save(3, &mst_st, sizeof mst_st); }
+    par_save_tick();
 }
 
 /* ---- the wheels (FX page WHEELS, K1 the mod wheel's, K5 the pitch-bend wheel's): what they move, each setup its own
@@ -677,7 +418,7 @@ static void whl_value(uint32_t w, uint32_t t, int32_t pos)   /* a value target: 
     int32_t v;
     if (t >= WT_FX) {                   /* one of the insert's */
         uint32_t k = t - WT_FX, ty = fxi_st.type;
-        const fxi_par_t *q = &FXI_PAR[ty][k];
+        const par_t *q = &FXI_PAR[ty][k];
         if (!pos || ty == FXI_OFF || !q->tag) {
             if (fxi_ovr.on >> w & 1u) { fxi_ovr.on &= (uint8_t)~(1u << w); if (fxi_ovr.type[w] == FXI_WAH && !fxi_ovr.k[w]) fxi_pedal = (uint32_t)fxi_st.p[FXI_WAH][0] * 10u; fxi_apply(); }
             return;
@@ -686,7 +427,7 @@ static void whl_value(uint32_t w, uint32_t t, int32_t pos)   /* a value target: 
         fxi_ovr.on |= (uint8_t)(1u << w); fxi_ovr.type[w] = (uint8_t)ty; fxi_ovr.k[w] = (uint8_t)k; fxi_ovr.v[w] = (int16_t)v;
         if (ty == FXI_WAH && !k) fxi_pedal = (uint32_t)v * 10u;   /* (the WAH's pedal: its own) */
         fxi_apply();
-        fxi_fmt(s, q, v);
+        par_fmt(s, q, v);
         ctl_say(q->name, s);
         return;
     }
@@ -738,7 +479,7 @@ static void whl_select(uint32_t w, uint32_t t)   /* wheel w now moves t (the old
     if (w && whl_bends(t)) { org_par.bend_range = (uint8_t)whl_range(t); whl_rpn(whl_range(t)); }
     if (!w && t != old && whl.pos[0]) whl_mod((uint32_t)whl.pos[0] * 127u / 8191u);   /* (where the wheel stands) */
 }
-static void whl_knob(uint32_t k, int32_t st)   /* K1: the mod wheel's target, K5: the bend wheel's */
+static void whl_knob(uint32_t k, int32_t st)   /* K1: the mod wheel's target, K3 pad 12's CC, K4 the pedal, K5 the bend wheel's */
 {
     uint32_t w = k == 4u ? 1u : 0u, t = pnl_st.whl[w], n;
     char s[16];
@@ -748,6 +489,13 @@ static void whl_knob(uint32_t k, int32_t st)   /* K1: the mod wheel's target, K5
         pnl_touch();
         org_fmt(cat(cat(s, VB_NAME[pnl_st.spare]), " CC "), VB_CC[pnl_st.spare], 0);
         ctl_say("ACTION PAD", s);
+        return;
+    }
+    if (k == 3u) {                      /* K4: what the pedal socket takes */
+        pnl_st.ped = (uint8_t)((pnl_st.ped + (st > 0 ? 1u : PJ_N - 1u)) % PJ_N);
+        pnl_touch();
+        smk_pedal_mode();
+        ctl_say("PEDAL", PJ_NAME[pnl_st.ped]);
         return;
     }
     if (k != 0u && k != 4u) return;
@@ -767,25 +515,16 @@ static void whl_init(void)              /* at power-on: the targets as kept */
     whl_select(1, t);
 }
 
-/* ---- the backup's extra part (core/orgigs_backup.c): records L (the rotary cabinets), F (the insert effect), M (the
-   master), P (the panel's layouts), each a tag, its length (LE 16) and the store as kept in flash; one of another length or version is skipped */
-static uint32_t smk_bk_rec(uint8_t *b, uint32_t room, uint8_t tag, const void *p, uint32_t n)
+/* ---- the backup's extra part (core/orgigs_backup.c), after the core's F and M: records L (the rotary cabinets), P (the
+   panel's layouts), each a tag, its length (LE 16) and the store as kept in flash (bk_rec); one of another length or
+   version is skipped */
+typedef char smk_bk_fits[3u + sizeof les_st + 3u + sizeof pnl_st <= BOARD_BK_EXTRA_MAX ? 1 : -1];
+static uint32_t board_bk_put(uint8_t *b, uint32_t room)
 {
-    if (room < n + 3u) return 0;
-    b[0] = tag; b[1] = (uint8_t)n; b[2] = (uint8_t)(n >> 8);
-    memcpy(b + 3, p, n);
-    return n + 3u;
+    uint32_t o = bk_rec(b, room, 'L', &les_st, sizeof les_st);
+    return o + bk_rec(b + o, room - o, 'P', &pnl_st, sizeof pnl_st);
 }
-static uint32_t smk_bk_put(uint8_t *b, uint32_t room)
-{
-    uint32_t o = 0;
-    o += smk_bk_rec(b + o, room - o, 'L', &les_st, sizeof les_st);
-    o += smk_bk_rec(b + o, room - o, 'F', &fxi_st, sizeof fxi_st);
-    o += smk_bk_rec(b + o, room - o, 'M', &mst_st, sizeof mst_st);
-    o += smk_bk_rec(b + o, room - o, 'P', &pnl_st, sizeof pnl_st);
-    return o;
-}
-static void smk_bk_get(const uint8_t *b, uint32_t n)
+static void board_bk_get(const uint8_t *b, uint32_t n)
 {
     uint32_t o = 0;
     while (o + 3u <= n) {
@@ -794,11 +533,8 @@ static void smk_bk_get(const uint8_t *b, uint32_t n)
         if (o + 3u + len > n) break;
         if (b[o] == 'L' && len == sizeof les_st && d[0] == LES_VER) {
             memcpy(&les_st, d, len); les_init_loaded(); les_dirty = 1; les_at = fm1_ms - 2000u;
-        } else if (b[o] == 'F' && len == sizeof fxi_st && d[0] == FXI_VER) {
-            memcpy(&fxi_st, d, len); fxi_init_loaded(); fxi_dirty = 1; fxi_at = fm1_ms - 2000u;
-        } else if (b[o] == 'M' && len == sizeof mst_st && d[0] == MST_VER) {
-            memcpy(&mst_st, d, len); mst_init_loaded(); mst_dirty = 1; mst_at = fm1_ms - 2000u;
-        } else if (b[o] == 'P' && ((len == sizeof pnl_st && d[0] == PNL_VER) || (len == PNL_V3_SIZE && d[0] == 3u)
+        } else if (b[o] == 'P' && ((len == sizeof pnl_st && d[0] == PNL_VER) || (len == PNL_V4_SIZE && d[0] == 4u)
+                                    || (len == PNL_V3_SIZE && d[0] == 3u)
                                     || (len == PNL_V2_SIZE && d[0] == 2u)
                                     || (len == sizeof(pnl_v1_t) && d[0] == 1u))) {
             memset(&pnl_st, 0, sizeof pnl_st);
@@ -1090,51 +826,8 @@ static int32_t text_w_s(const char *s) { return text_w(&FONT_S, s); }
 enum { R_TOP, R_BARS, R_MINI, R_BOT, R_VIS, R_ROW1, R_ROW2, R_INFO, R_MSG, R_BTN, R_N };
 static uint32_t drawn[R_N], drawn_view = 99;
 
-/* the battery (fm1_in.batt, the raw ADC of the battery divider): about half the cell's voltage against 3.3 V, so
-   raw x 6600 / 1023 mV (measured on the Elite: 635 off the cable, a nearly full cell, 647 charging). The % follows
-   a lithium cell's discharge curve; 0 % = 3.40 V is an estimate until a near-empty reading. Below 300: no reading
-   (the host build), nothing shown */
-static struct { uint32_t acc, shown, warned, warn_at; } bat;
-static const uint16_t BAT_MV[11] = {4150, 4100, 4000, 3900, 3800, 3750, 3700, 3650, 3600, 3500, 3400};
-static const uint8_t BAT_PCT[11] = {100, 95, 85, 75, 60, 50, 40, 25, 15, 8, 0};
-static uint32_t bat_ok(void) { return bat.acc >= 300u * 64u; }
-static uint32_t bat_mv(void) { return bat.acc * 6600u / (1023u * 64u); }
-static uint32_t bat_pct(void)
-{
-    uint32_t mv = bat_mv(), i;
-    if (mv >= BAT_MV[0]) return 100u;
-    for (i = 1; i < 11u; i++)
-        if (mv >= BAT_MV[i])
-            return BAT_PCT[i] + (mv - BAT_MV[i]) * (BAT_PCT[i - 1] - BAT_PCT[i]) / (BAT_MV[i - 1] - BAT_MV[i]);
-    return 0;
-}
-static char *bat_fmt(char *p)            /* "85% 4.05V", "--" */
-{
-    uint32_t mv = bat_mv();
-    if (!bat_ok()) return cat(p, "--");
-    p = cat(org_fmt(p, (int32_t)bat_pct(), 0), "% ");
-    p = cat(org_fmt(p, (int32_t)(mv / 1000u), 0), ".");
-    if ((mv % 1000u) / 10u < 10u) p = cat(p, "0");
-    return cat(org_fmt(p, (int32_t)((mv % 1000u) / 10u), 0), "V");
-}
-static void bat_tick(void)              /* smoothed; the symbol redrawn when it changes; BATTERY LOW below 10 % */
-{
-    uint32_t raw = fm1_in.batt, pct, key;
-    if (raw < 300u) { if (bat.acc) { bat.acc = 0; drawn[R_TOP] = 0; } return; }
-    bat.acc = bat.acc ? bat.acc + (uint32_t)(((int32_t)raw * 64 - (int32_t)bat.acc) / 256) : raw * 64u;
-    pct = bat_pct();
-    key = (pct * 12u + 50u) / 100u + (pct < 20u ? 16u : 0u) + 32u;
-    if (key != bat.shown) { bat.shown = key; drawn[R_TOP] = 0; }
-    if (pct >= 15u) bat.warned = 0;
-    else if (pct < 10u && fm1_ms > 3000u && (!bat.warned || fm1_ms - bat.warn_at >= 300000u)) {
-        char t[8];
-        bat.warned = 1;
-        bat.warn_at = fm1_ms;
-        cat(org_fmt(t, (int32_t)pct, 0), "%");
-        ctl_say("BATTERY LOW", t);
-    }
-}
-static void draw_bat(void)              /* the symbol at the top bar's right end, 18 x 10 */
+/* the battery: core/orgigs_bat.c */
+static void draw_bat(void)              /* the symbol at the top bar's right end, 18 x 10; charging: a bolt in it */
 {
     uint32_t pct = bat_pct(), w = (pct * 12u + 50u) / 100u;
     uint16_t c = pct < 20u ? C_HRED : C_TXT;
@@ -1142,6 +835,7 @@ static void draw_bat(void)              /* the symbol at the top bar's right end
     cv_rect(222, 8, 13, 8, C_BG);
     cv_rect(236, 10, 2, 4, C_MUT);
     if (w) cv_rect(223, 9, (int32_t)w - (w > 11u ? 1 : 0), 6, c);
+    if (bat_charging()) draw_bolt(229, 5);
 }
 
 /* the top bar: a number + tag, then badges; the right-hand text (left of the battery, when there is one) */
@@ -1406,7 +1100,7 @@ static void les_cells(cells_t *c, uint32_t from)   /* four values from the cabin
     char s[12];
     memset(c, 0, sizeof *c);
     c->lit = les_st.type >= LES_U1;
-    for (i = 0; i < 4u; i++) { les_fmt(s, from + i, p[from + i]); cells_set(c, i, LESP_TAG[from + i], s); }
+    for (i = 0; i < 4u; i++) { les_fmt(s, from + i, p[from + i]); cells_set(c, i, LESP[from + i].tag, s); }
 }
 static void draw_les_types(void)        /* the four cabinets, the one chosen lit (pads 1..4) */
 {
@@ -1429,9 +1123,9 @@ static void fxi_cells(cells_t *c, uint32_t from)   /* four values of the effect 
     memset(c, 0, sizeof *c);
     c->lit = t != FXI_OFF;
     for (i = 0; i < 4u; i++) {
-        const fxi_par_t *q = &FXI_PAR[t][from + i];
+        const par_t *q = &FXI_PAR[t][from + i];
         if (!q->tag) continue;
-        fxi_fmt(s, q, fxi_st.p[t][from + i]);
+        par_fmt(s, q, fxi_st.p[t][from + i]);
         cells_set(c, i, q->tag, s);
     }
 }
@@ -1468,7 +1162,7 @@ static void mst_cells(cells_t *c, uint32_t from, uint32_t n, uint32_t lit)   /* 
     char s[12];
     memset(c, 0, sizeof *c);
     c->lit = lit;
-    for (i = 0; i < n; i++) { fxi_fmt(s, &MSP[from + i], mst_st.p[from + i]); cells_set(c, i, MSP[from + i].tag, s); }
+    for (i = 0; i < n; i++) { par_fmt(s, &MSP[from + i], mst_st.p[from + i]); cells_set(c, i, MSP[from + i].tag, s); }
 }
 static int32_t mst_gr10(void)           /* the compressor's cut now, 1/10 dB */
 {
@@ -1724,7 +1418,7 @@ static uint32_t padmap_hash(void)
 
 static const char *midi_hint(void)
 {
-    static const char *const H[MS_N] = {"PADS: SWITCHES  KNOB BANK: ZONE", "PADS 1-16: CHANNELS", BOARD_YST_HINT,
+    static const char *const H[MS_N] = {"PADS: SWITCHES  K-BANK: ZONE", "PADS 1-16: CHANNELS", BOARD_YST_HINT,
                                         "PADS 1-9: FOOTAGES", "HOLD A CHORD, PRESS PAD 1"};
     if (ui.ms == MS_YST && !zn.yst) return "YST OFF  " BOARD_YST_ON ": ON";
     if (ui.ms == MS_YST && !yst.on) return yst.ask < 2u * YST_NTRK ? "LOOKING FOR THE SEQTRAK" : "NO SEQTRAK " BOARD_YST_REF ": AGAIN";
@@ -2177,7 +1871,7 @@ static void ui_draw(void)
             int32_t pc0 = whl.pos[0] * 100 / 8191, pc1 = whl.pos[1] >= 0 ? whl.pos[1] * 100 / 8191 : whl.pos[1] * 100 / 8192;
             fx_btnmap(&bm);
             cat(b, "WHEELS");
-            hint = "K1: MOD  K3: PAD 12  K5: BEND";
+            hint = "K1 MOD K3 PAD K4 PED K5 BEND";
             h = hash_mem(hash_add(81u, mls.focus), tag, sizeof tag) | 1u;
             if (h != drawn[R_TOP]) { drawn[R_TOP] = h; draw_top_bar(tag, MAN_BADGE[mls.focus], C_TXT, b, r, C_MUT); }
             h = hash_add(hash_add(82u, (uint32_t)(pc0 + 200)), (uint32_t)(pc1 + 200)) | 1u;
@@ -2189,9 +1883,13 @@ static void ui_draw(void)
             whl_name(v, pnl_st.whl[0]); cells_set(&top, 0, "MOD", v);
             cat(org_fmt(v, pc0, 0), "%"); cells_set(&top, 1, "NOW", v);
             cells_set(&top, 2, "PAD 12", VB_NAME[vb_idx()]);
+            cells_set(&top, 3, "PEDAL", PJ_NAME[pnl_st.ped]);
             whl_name(v, pnl_st.whl[1]); cells_set(&sel, 0, "BEND", v);
             cat(org_fmt(v, pc1, 1), "%"); cells_set(&sel, 1, "NOW", v);
             if (whl_bends(pnl_st.whl[1])) { uint32_t rg = whl_range(pnl_st.whl[1]); cat(org_fmt(cat(v, "+-"), (int32_t)(rg < 12u ? rg : rg / 12u), 0), rg < 12u ? " ST" : " OCT"); cells_set(&sel, 2, "RANGE", v); }
+            if (!ped_swell()) cells_set(&sel, 3, "SUSTAIN", mls.key_sus ? "DOWN" : "UP");
+            else if (ped.swell == 0xFFu) cells_set(&sel, 3, "SWELL", "MOVE IT");   /* (its travel not learned yet) */
+            else { cat(org_fmt(v, (int32_t)(ped.swell * 100u / 127u), 0), "%"); cells_set(&sel, 3, "SWELL", v); }
             h = hash_add(hash_mem(83u, &top, sizeof top), fxi_st.type) | 1u;
             if (h != drawn[R_ROW1]) { drawn[R_ROW1] = h; draw_cells(52, &top); }
             h = hash_mem(84u, &sel, sizeof sel) | 1u;
@@ -2201,7 +1899,7 @@ static void ui_draw(void)
             fx_btnmap(&bm);
             cat(b, "MASTER");
             cat(r, mst_st.eq_on && mst_st.comp_on ? "EQ+COMP" : mst_st.eq_on ? "EQ" : mst_st.comp_on ? "COMP" : "OFF");
-            hint = "PAD 1: EQ  PAD 2: COMP  SCALE: MORE";
+            hint = "PADS: EQ, COMP  SCALE: MORE";
             h = hash_mem(hash_add(hash_add(61u, mst_st.eq_on + 2u * mst_st.comp_on), mls.focus), tag, sizeof tag) | 1u;
             if (h != drawn[R_TOP]) { drawn[R_TOP] = h; draw_top_bar(tag, MAN_BADGE[mls.focus], C_TXT, b, r, C_MUT); }
             h = hash_add(hash_add(62u, mst_st.eq_on + 2u * mst_st.comp_on), (uint32_t)mst_gr10()) | 1u;
@@ -2220,7 +1918,7 @@ static void ui_draw(void)
             fx_btnmap(&bm);
             cat(b, "EFFECT");
             cat(r, FXI_NAME[fxi_st.type]);
-            hint = "PADS 1-7: EFFECT  9-11: MANUAL";
+            hint = "PADS 1-7: EFFECT 9-11: MANUAL";
             h = hash_mem(hash_add(hash_add(51u, fxi_st.type), mls.focus), tag, sizeof tag) | 1u;
             if (h != drawn[R_TOP]) { drawn[R_TOP] = h; draw_top_bar(tag, MAN_BADGE[mls.focus], C_TXT, b, r, C_MUT); }
             h = hash_add(52u, fxi_st.type) | 1u;
@@ -2242,7 +1940,7 @@ static void ui_draw(void)
             fx_btnmap(&bm);
             cat(b, "ROTARY");
             cat(r, LES_TNAME[les_st.type]);
-            hint = les_st.type >= LES_U1 ? "PADS 1-4: CABINET  SCALE: MORE" : "BT + PAD 3/4: COPY TO USER";
+            hint = les_st.type >= LES_U1 ? "PADS 1-4: CABINET SCALE: MORE" : "BT + PAD 3/4: COPY TO USER";
             h = hash_mem(hash_add(hash_add(41u, les_st.type), mls.focus), tag, sizeof tag) | 1u;
             if (h != drawn[R_TOP]) { drawn[R_TOP] = h; draw_top_bar(tag, MAN_BADGE[mls.focus], C_TXT, b, r, C_MUT); }
             h = hash_add(42u, les_st.type) | 1u;
@@ -2262,7 +1960,7 @@ static void ui_draw(void)
             fx_btnmap(&bm);
             cat(b, "FX");
             cat(r, LESLIE_NAME[org_par.leslie]);
-            hint = "PADS 1-3: MANUAL  4: ITS ROTARY";
+            hint = "PADS 1-3: MANUAL  4: ROTARY";
             h = hash_mem(hash_add(hash_add(5u, 2u * org_par.leslie), mls.focus), tag, sizeof tag) | 1u;
             if (h != drawn[R_TOP]) { drawn[R_TOP] = h; draw_top_bar(tag, MAN_BADGE[mls.focus], C_TXT, b, r, C_MUT); }
             h = hash_add(hash_add(6u, dept_now()), mls.focus);
@@ -2280,7 +1978,7 @@ static void ui_draw(void)
             cat(tag, "MIDI");
             cat(b, "MIXER");
             cat(r, MXP_TAG[mx.par]);
-            hint = "KNOB BANK: 1-8 / 9-16  < >: PARAMETER";
+            hint = "K-BANK: 1-8/9-16  < >: PARAM";
             h = hash_add(hash_add(15u, mx.par), mls.focus) | 1u;
             if (h != drawn[R_TOP]) { drawn[R_TOP] = h; draw_top_bar(tag, MAN_BADGE[mls.focus], C_ACC, b, r, C_MUT); }
             h = hash_add(hash_add(hash_add(16u, mx.page), mx.par), ml_used_channels());
@@ -2355,8 +2053,7 @@ static void ui_init(void)
     ctl_nperc = ORG_NPERC_ALL;          /* (the SMK-37: with 4TH) */
     yst_reset();
     les_init();
-    fxi_init();
-    mst_init();
+    par_init();
     pnl_init();
     whl_init();
     smk_pad_events = 1;                         /* the pads are the SMK panel's (board/smk37/board.c), no notes */
@@ -2497,15 +2194,15 @@ static void ui_step(void)
     /* MIDI in, then the panel */
     while ((src = midi_get(&ms, &m1, &m2)) != 0) if (!yst_midi_in(ms, m1, m2, src == 1)) ml_midi_in(ms, m1, m2);   /* (the SEQTRAK: YST) */
     yst_tick();
-    bat_tick();
+    if (bat_tick()) drawn[R_TOP] = 0;
     if (intro_step()) { ml_flush(); return; }
 
     if (!ui.shift && (fm1_in.buttons >> BTN_SEL & 1u)) {     /* SEL pressed: the setups, the audio interrupt's load */
-        char s[48], *p = cat(s, "DSP ");                     /* and the battery, the pedal's jack (raw) */
-        p = org_fmt(p, (int32_t)(org_stat.load_us * 100u / 5805u), 0);
-        p = bat_fmt(cat(p, "%  BAT "));
-        org_fmt(cat(p, " PED "), (int32_t)fm1_in.pedal, 0);
-        ctl_say("SETUP ", s);
+        char s[48], *p = cat(s, "PED ");                     /* and the battery, the pedal's jack (raw) first: the */
+        p = org_fmt(p, (int32_t)fm1_in.pedal, 0);            /* line holds about 30 characters */
+        p = org_fmt(cat(p, " DSP "), (int32_t)(org_stat.load_us * 100u / 5805u), 0);
+        bat_fmt(cat(p, "% BAT "));
+        ctl_say(s, 0);
     }
     ui.shift = fm1_in.buttons >> BTN_SEL & 1u;
     b = fm1_input_edges(&rel);

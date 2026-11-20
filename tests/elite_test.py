@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 """The SMK-37 Elite's panel on the host build (tests/elite_pads.txt, tests/elite_midi.txt): the keys only play;
 setups, the cloner's channels and the harmonic drawbars are on the pads; the MIDI area (8 knobs, ARP / PATCH the
-screens, the zone's switches on the pads, chord capture); the chord memory on CHORD (tests/elite_chord.txt); the mixer (tests/elite_mix.txt); FX and the Leslie cabinets (tests/elite_fx.txt); the delay's echoes after a short note (tests/elite_delay.txt); the insert effects CHORUS, WAH (tests/elite_chorus.txt, tests/elite_wah.txt), AUTO-WAH (tests/elite_autowah.txt), FLANGER (tests/elite_flanger.txt), PHASER (tests/elite_phaser.txt), RING MOD (tests/elite_ring.txt), AMP (tests/elite_amp.txt); the MASTER page's EQ and compressor (tests/elite_master.txt); the YST sound browser (tests/elite_ysb.txt, < + > K4 K5: tests/elite_ysb_quick.txt, a kit track: tests/elite_ysb_kit.txt); panic and the lights (tests/elite_panel.txt); layout B DRAWBARS + PADS (tests/elite_layout.txt); the sustain pedal (tests/elite_sustain.txt); layout C KNOBS + 16 PADS (tests/elite_layout_c.txt); layout D SOUND DESIGN (tests/elite_layout_d.txt); the zone's FILTER CC IN (tests/elite_ccin.txt).
+screens, the zone's switches on the pads, chord capture); the chord memory on CHORD (tests/elite_chord.txt); the mixer (tests/elite_mix.txt); FX and the Leslie cabinets (tests/elite_fx.txt); the delay's echoes after a short note (tests/elite_delay.txt); the insert effects CHORUS, WAH (tests/elite_chorus.txt, tests/elite_wah.txt), AUTO-WAH (tests/elite_autowah.txt), FLANGER (tests/elite_flanger.txt), PHASER (tests/elite_phaser.txt), RING MOD (tests/elite_ring.txt), AMP (tests/elite_amp.txt); the MASTER page's EQ and compressor (tests/elite_master.txt); the YST sound browser (tests/elite_ysb.txt, < + > K4 K5: tests/elite_ysb_quick.txt, a kit track: tests/elite_ysb_kit.txt); panic and the lights (tests/elite_panel.txt); layout B DRAWBARS + PADS (tests/elite_layout.txt); the sustain pedal (tests/elite_sustain.txt); an expression pedal, the swell (tests/elite_swell.txt, AUTO: tests/elite_swell_auto.txt); layout C KNOBS + 16 PADS (tests/elite_layout_c.txt); layout D SOUND DESIGN (tests/elite_layout_d.txt); the zone's FILTER CC IN (tests/elite_ccin.txt).
 
   tests/elite_test.py
 """
@@ -262,6 +262,17 @@ def main():
     check(midi(su, 2500, 2500, "80  60") and midi(su, 2500, 2500, "80  64") and midi(su, 2500, 2500, "B0  64   0"),
           "sustain up: the held notes off, CC 64 0")
     check(midi(su, 2800, 2800, "80  60"), "without the pedal a key goes off at once")
+    sw = run("elite_swell.txt")
+    w = wave.open(os.path.join(ROOT, "build", "host", "orgigs.wav"))
+    a = struct.unpack("<%dh" % (w.getnframes() * 2), w.readframes(w.getnframes()))[0::2]
+    rms = lambda t0, t1: (sum(v * v for v in a[int(t0 * 44100):int(t1 * 44100)]) / int((t1 - t0) * 44100)) ** 0.5
+    toe, heel, half = rms(2.45, 2.55), rms(2.85, 2.95), rms(3.25, 3.35)
+    check(midi(sw, 2200, 2220, "B0  11 127") and midi(sw, 2600, 2650, "B0  11  40") and midi(sw, 3000, 3050, "B0  11  83")
+          and not any("B0  64" in ln for ln in sw), "expression pedal (rests at 102, AUTO): the swell, CC 11 127 / 40 / 83, no sustain")
+    check(0.07 < heel / toe < 0.13 and heel < half < toe, "the swell closed: soft but there (10 % of the level), half way between")
+    sa = run("elite_swell_auto.txt")
+    check(midi(sa, 2290, 2310, "B0  64   0") and midi(sa, 2290, 2320, "B0  11  40") and midi(sa, 2600, 2650, "B0  11 127")
+          and not midi(sa, 2000, 2280, "B0  11"), "AUTO: resting at an end, then 0.3 s in the middle: the sustain let go, the swell")
     lc = run("elite_layout_c.txt")
     c0, mo, low, zs = (pads(lc, t) for t in (500, 900, 1800, 2300))
     bri = lambda c: sum(int(v) for v in c.split(","))

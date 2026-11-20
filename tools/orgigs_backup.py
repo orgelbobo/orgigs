@@ -125,8 +125,8 @@ class Backup:
         self.raw, self.data = raw, raw[HDR:HDR + n]
 
     def extras(self):
-        """the SMK-37's extra records after "OGEX" (tag -> bytes): L the rotary cabinets, F the insert effect,
-        M the master; {} for a backup without them (the FM-1's, or older ones)"""
+        """the extra records after "OGEX" (tag -> bytes): F the insert effect, M the master (both boards), L
+        the rotary cabinets, P the panel layouts (the SMK-37); {} for a backup without them (older ones)"""
         at, got = self.data.find(b"OGEX", self.st0_len) if self.kind == KIND_ALL else -1, {}
         if at < 0:
             return got

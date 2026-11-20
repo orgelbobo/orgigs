@@ -18,20 +18,27 @@
  *                 SEL + GLO: the lights
  *   PLAY / REC    rotary brake / rotary slow-fast (SEL + REC: the focused manual through the rotary or not)
  *   OCT- OCT+     octave of the FM-1's keys
- *   FX            the effects screen (again: back)       GLO   the MIDI zones (again: the next screen)
+ *   FX            the effects screen (again: back); SEL + FX the insert effect, again the master
+ *                                                        GLO   the MIDI zones (again: the next screen)
  *   HOME          on the drawbars: the MIDI mixer (again: back); elsewhere back to the drawbars
  * The drawbars (PLAY): ENV drawbars 1-4, LFO 5-8, EDIT 1 3 4 + 9 on KNOB1..4; ARP vibrato (tremulant) of the
  * manual on/off, SEQ coupler II/I.
  * The effects (FX): a row per manual (UPPER, LOWER, PEDAL = the focused manual: ENV LFO ARP or SELECT), KNOB1..4
  * drive, vibrato / tremulant, delay send, reverb send; SEQ the manual through the rotary. SEL + knobs: the
  * shared ones (percussion / chiff / detune, delay feedback and time, the reverb's room).
+ * INSERT (SEL + FX; core/orgigs_params.c): one effect on one manual's bus, after its vibrato, before the rotary. EDIT the next
+ * effect (SEL + EDIT: the one before), SEQ it on / off, ENV LFO ARP the manual it sits on; KNOB1..4 its values 1-4,
+ * SEL + knobs 5-8. While WAH is in, CC 1 (the mod strip's) is its pedal.
+ * MASTER (SEL + FX on INSERT): EQ and compressor on the sum. ENV the EQ on / off, LFO the compressor, EDIT what the knobs hold: the EQ
+ * (KNOB1..3 low, mid, high; SEL + them their frequencies) or the compressor (threshold, ratio, attack, release;
+ * SEL + KNOB1 the make-up gain).
  * The MIDI mixer: 16 channels in 4 rows; ENV LFO ARP SEQ choose the row, KNOB1..4 send CC 7.
  * The MIDI zones: ENV LFO EDIT ARP SEQ are the screen's switches (SEL + them: the second ones).
  * The lights: KNOB1 the keys, KNOB2 the buttons (OFF, DIM: all glow, FULL: all lit and what matters blinks),
  * KNOB3 how bright DIM glows; SEQ sends a backup of all settings over USB-MIDI (core/orgigs_backup.c).
  * A backup coming in asks first: SAVE loads it, any other button keeps what is there. */
 
-enum { MODE_PLAY, MODE_FX, MODE_MIDI, MODE_MIX, MODE_LIGHT };
+enum { MODE_PLAY, MODE_FX, MODE_MIDI, MODE_MIX, MODE_LIGHT, MODE_INS, MODE_MST };
 enum { GRP_DB14, GRP_DB58, GRP_DB9 };
 enum { MS_ZONE, MS_CLONE, MS_HARM, MS_CHORD, MS_YST, MS_N };
 
@@ -46,7 +53,9 @@ static struct {
     uint32_t mix_row;                   /* MIDI mixer: the row the knobs hold (channels 4r+1 .. 4r+4) */
     uint32_t shift, save_used;
     uint32_t clone_cur;                 /* CLONE: the channel KNOB2 sets the octave of */
-} ui;
+    uint32_t mst_comp;                  /* MASTER: the knobs hold the compressor (else the EQ) */
+    uint32_t fx_last;                   /* INSERT: the effect SEQ switches back on */
+} ui = {.fx_last = FXI_CHORUS};
 
 /* ---- knobs */
 static void knob_fx(uint32_t k, int32_t st)
@@ -144,9 +153,22 @@ static void knob_midi(uint32_t k, int32_t st)
     touched();
 }
 
+/* INSERT: KNOB1..4 the values 1-4, SEL + them 5-8; MASTER: the EQ's gains (SEL: their frequencies) or the compressor */
+static const uint8_t MST_KNOB[2][2][4] = {
+    {{MSP_LO, MSP_MID, MSP_HI, MSP_N}, {MSP_LFREQ, MSP_MFREQ, MSP_HFREQ, MSP_N}},
+    {{MSP_THR, MSP_RATIO, MSP_ATT, MSP_REL}, {MSP_MAKEUP, MSP_N, MSP_N, MSP_N}},
+};
+static void knob_mst(uint32_t k, int32_t st)
+{
+    uint32_t i = MST_KNOB[ui.mst_comp][ui.shift][k];
+    if (i < MSP_N) mst_step(i, st);
+}
+
 static void knob(uint32_t k, int32_t st)        /* k = 0..3 */
 {
     if (ui.mode == MODE_FX) knob_fx(k, st);
+    else if (ui.mode == MODE_INS) fxi_step(k + (ui.shift ? 4u : 0u), st);
+    else if (ui.mode == MODE_MST) knob_mst(k, st);
     else if (ui.mode == MODE_MIDI) knob_midi(k, st);
     else if (ui.mode == MODE_MIX) knob_mix(k, st);
     else if (ui.mode == MODE_LIGHT) knob_light(k, st);
@@ -262,6 +284,18 @@ static int32_t text_w_s(const char *s) { return text_w(&FONT_S, s); }
 enum { R_TOP, R_BARS, R_MINI, R_BOT, R_VIS, R_ROW1, R_ROW2, R_INFO, R_MSG, R_BTN, R_N };
 static uint32_t drawn[R_N], drawn_view = 99;
 
+/* the battery (core/orgigs_bat.c): the symbol at the top bar's right end, 18 x 10; charging: a bolt in it */
+static void draw_bat(void)
+{
+    uint32_t pct = bat_pct(), w = (pct * 12u + 50u) / 100u;
+    uint16_t c = pct < 20u ? C_HRED : C_TXT;
+    cv_rect(221, 7, 15, 10, C_MUT);
+    cv_rect(222, 8, 13, 8, C_BG);
+    cv_rect(236, 10, 2, 4, C_MUT);
+    if (w) cv_rect(223, 9, (int32_t)w - (w > 11u ? 1 : 0), 6, c);
+    if (bat_charging()) draw_bolt(229, 5);
+}
+
 /* the top bar: a number + tag, then badges; the right-hand text */
 static void draw_top_bar(const char *tag, const char *b1, uint16_t c1, const char *b2, const char *right, uint16_t cr)
 {
@@ -272,7 +306,8 @@ static void draw_top_bar(const char *tag, const char *b1, uint16_t c1, const cha
     x = cv_text(x, 4, &FONT_S, b1, c1) + 7;
     cv_rect(x - 2, 3, text_w_s(b2) + 4, 18, C_ACC);
     cv_text(x, 4, &FONT_S, b2, C_BLACK);
-    cv_text(236 - text_w_s(right), 4, &FONT_S, right, cr);
+    cv_text((bat_ok() ? 216 : 236) - text_w_s(right), 4, &FONT_S, right, cr);
+    if (bat_ok()) draw_bat();
     cv_rect(0, 23, 240, 1, C_GRID);
     cv_blit(0, 0);
 }
@@ -468,7 +503,8 @@ static void btn_set(btnmap_t *b, uint32_t id, const char *lab, uint32_t on)
 /* what every FX / MIDI screen shows on the global buttons */
 static void btn_common(btnmap_t *b)
 {
-    btn_set(b, BTN_FX, "FX", ui.mode == MODE_FX);
+    btn_set(b, BTN_FX, !ui.shift ? "FX" : ui.mode == MODE_INS ? "MST" : "INS",
+            ui.mode == MODE_FX || ui.mode == MODE_INS || ui.mode == MODE_MST);
     btn_set(b, BTN_SEL, "2ND", ui.shift);
     btn_set(b, BTN_GLO, "MIDI", ui.mode == MODE_MIDI);
     btn_set(b, BTN_HOME, "HOME", 0);
@@ -558,6 +594,121 @@ static void fx_btnmap(btnmap_t *b)
     btn_set(b, BTN_LFO, "LM", mls.focus == MAN_LOWER);
     btn_set(b, BTN_ARP, "PM", mls.focus == MAN_PEDAL);
     btn_set(b, BTN_SEQ, "ROT", org_par.les_on[mls.focus]);
+}
+
+/* ---- INSERT: the effect big and the manual it sits on, the seven in a row (the one chosen lit); its values in two
+   rows of cells, KNOB1..4 and SEL + them */
+static uint32_t ins_shown(void) { return fxi_st.type ? fxi_st.type : ui.fx_last; }   /* (off: the one SEQ brings back) */
+static void ins_cells(cells_t *top, cells_t *sel)
+{
+    uint32_t t = ins_shown(), k;
+    char s[12];
+    memset(top, 0, sizeof *top);
+    memset(sel, 0, sizeof *sel);
+    top->lit = fxi_st.type && !ui.shift;
+    sel->lit = fxi_st.type && ui.shift;
+    for (k = 0; k < FXI_NP; k++) {
+        const par_t *q = &FXI_PAR[t][k];
+        if (!q->tag) continue;
+        par_fmt(s, q, fxi_st.p[t][k]);
+        cells_set(k < 4u ? top : sel, k & 3u, q->tag, s);
+    }
+}
+static void draw_vis_ins(void)
+{
+    uint32_t t = ins_shown(), on = fxi_st.type != FXI_OFF, i;
+    char s[16];
+    cv_begin(240, 64, C_BG);
+    cv_text(4, 0, &FONT_L, FXI_NAME[t], on ? C_ACC : C_MUT);
+    cat(cat(s, on ? "ON " : "OFF "), on ? MAN_BADGE[fxi_st.man] : "");
+    cv_text(236 - text_w_s(s), 8, &FONT_S, s, on ? C_TXT : C_MUT);
+    for (i = 1; i < FXI_N; i++) {
+        int32_t x = 2 + (int32_t)(i - 1u) * 34;
+        uint32_t cur = i == t;
+        cv_rect(x, 40, 32, 22, cur ? (on ? C_ACC : C_DARKB) : C_GRID);
+        if (!cur) cv_rect(x + 1, 41, 30, 20, C_BG);
+        cv_text(x + 16 - text_w_s(FXI_TAG[i]) / 2, 43, &FONT_S, FXI_TAG[i], cur && on ? C_BLACK : C_TXT);
+    }
+    cv_blit(0, 24);
+}
+static void ins_btnmap(btnmap_t *b)
+{
+    memset(b, 0, sizeof *b);
+    btn_common(b);
+    btn_set(b, BTN_ENV, "UM", fxi_st.man == MAN_UPPER);
+    btn_set(b, BTN_LFO, "LM", fxi_st.man == MAN_LOWER);
+    btn_set(b, BTN_ARP, "PM", fxi_st.man == MAN_PEDAL);
+    btn_set(b, BTN_EDIT, ui.shift ? "PREV" : "NEXT", 0);
+    btn_set(b, BTN_SEQ, fxi_st.type ? "ON" : "OFF", fxi_st.type != FXI_OFF);
+}
+static void ins_next(int32_t d)         /* EDIT: the next effect (d -1: the one before); from off the last one again */
+{
+    uint32_t t = ins_shown();
+    if (fxi_st.type) t = (t - 1u + (uint32_t)(d + (int32_t)FXI_N - 1)) % (FXI_N - 1u) + 1u;
+    ui.fx_last = t;
+    if (t != fxi_st.type) fxi_pick(t);
+}
+static void ins_toggle(void)            /* SEQ: the effect off, or the last one on again */
+{
+    if (fxi_st.type) { ui.fx_last = fxi_st.type; fxi_pick(fxi_st.type); }
+    else fxi_pick(ui.fx_last);
+}
+
+/* ---- MASTER: the EQ and the compressor, on or off, and how much the compressor takes now; the knobs' values in two
+   rows of cells */
+static void mst_cells(cells_t *top, cells_t *sel)
+{
+    uint32_t r, k;
+    char s[12];
+    memset(top, 0, sizeof *top);
+    memset(sel, 0, sizeof *sel);
+    top->lit = !ui.shift;
+    sel->lit = (uint8_t)ui.shift;
+    for (r = 0; r < 2u; r++)
+        for (k = 0; k < 4u; k++) {
+            uint32_t i = MST_KNOB[ui.mst_comp][r][k];
+            if (i >= MSP_N) continue;
+            par_fmt(s, &MSP[i], mst_st.p[i]);
+            cells_set(r ? sel : top, k, MSP[i].tag, s);
+        }
+}
+static int32_t mst_gr10(void)           /* the compressor's gain now, 1/10 dB (0 or less) */
+{
+    int32_t g = mst_gain;
+    return g >= 4096 || g < 1 ? 0 : (ilog2_q12((uint32_t)g) - 12 * 4096) * 602 / 40960;
+}
+static void draw_vis_mst(void)
+{
+    static const char *const NAME[2] = {"EQ", "COMPRESSOR"};
+    uint32_t i;
+    int32_t gr = mst_gr10(), w = -gr * 130 / 200;    /* the bar: 20 dB over 130 px */
+    char s[16], *p;
+    cv_begin(240, 64, C_BG);
+    for (i = 0; i < 2u; i++) {
+        uint32_t on = i ? mst_st.comp_on : mst_st.eq_on, held = i == ui.mst_comp;
+        int32_t x = 2 + (int32_t)i * 119;
+        cv_rect(x, 0, 117, 22, on ? C_ACC : held ? C_DARKB : C_GRID);
+        if (!on) cv_rect(x + 1, 1, 115, 20, C_BG);
+        cv_text(x + 58 - text_w_s(NAME[i]) / 2, 3, &FONT_S, NAME[i], on ? C_BLACK : held ? C_TXT : C_MUT);
+    }
+    cv_text(2, 30, &FONT_S, "GAIN", C_MUT);
+    if (w > 130) w = 130;
+    cv_rect(44, 34, 130, 10, C_GRID);
+    if (mst_st.comp_on && w > 0) cv_rect(174 - w, 34, w, 10, C_HRED);
+    p = s;
+    if (gr < 0) *p++ = '-';
+    p = org_fmt(p, -gr / 10, 0); *p++ = '.'; *p++ = (char)('0' + -gr % 10); cat(p, "dB");
+    cv_text(236 - text_w_s(s), 30, &FONT_S, mst_st.comp_on ? s : "-", C_TXT);
+    cv_text(2, 48, &FONT_S, ui.mst_comp ? "KNOBS: COMPRESSOR" : "KNOBS: EQ  SEL: ITS HZ", C_MUT);
+    cv_blit(0, 24);
+}
+static void mst_btnmap(btnmap_t *b)
+{
+    memset(b, 0, sizeof *b);
+    btn_common(b);
+    btn_set(b, BTN_ENV, "EQ", mst_st.eq_on);
+    btn_set(b, BTN_LFO, "COMP", mst_st.comp_on);
+    btn_set(b, BTN_EDIT, ui.mst_comp ? "K:CP" : "K:EQ", 0);
 }
 
 /* ---- the MIDI mixer: 4 x 4 channels, a knob each (CC 7); the row the knobs hold lit */
@@ -855,7 +1006,8 @@ static void draw_vis_chord(void)
 static void ui_draw(void)
 {
     uint32_t h, d, m, view = ui.mode == MODE_PLAY ? 0u : ui.mode == MODE_FX ? 1u : ui.mode == MODE_MIX ? 2u + MS_N :
-                             ui.mode == MODE_LIGHT ? 3u + MS_N : 2u + ui.ms;
+                             ui.mode == MODE_LIGHT ? 3u + MS_N : ui.mode == MODE_INS ? 4u + MS_N :
+                             ui.mode == MODE_MST ? 5u + MS_N : 2u + ui.ms;
     char tag[16], b[16], r[16];
     memset(tag, 0, sizeof tag); memset(b, 0, sizeof b); memset(r, 0, sizeof r);
     if (view != drawn_view) {
@@ -911,6 +1063,22 @@ static void ui_draw(void)
                 h |= 1u;
                 if (h != drawn[R_VIS]) { drawn[R_VIS] = h; draw_fx_grid(); }
             }
+        } else if (ui.mode == MODE_INS || ui.mode == MODE_MST) {
+            uint32_t ins = ui.mode == MODE_INS;
+            if (ins) { ins_cells(&top, &sel); ins_btnmap(&bm); } else { mst_cells(&top, &sel); mst_btnmap(&bm); }
+            cat(b, ins ? (ui.shift ? "INSERT 2ND" : "INSERT") : ui.shift ? "MASTER 2ND" : "MASTER");
+            hint = ins ? (ui.shift ? "KNOBS: VALUES 5-8" : "EDIT: EFFECT  SEQ: ON/OFF") : "ENV:EQ  LFO:COMP  EDIT:KNOBS";
+            h = hash_mem(hash_add(hash_add(19u + ins, ui.shift), fxi_st.man), tag, sizeof tag) | 1u;
+            if (h != drawn[R_TOP]) { drawn[R_TOP] = h; draw_top_bar(tag, ins ? MAN_BADGE[fxi_st.man] : "SUM", C_TXT, b, r, C_MUT); }
+            h = ins ? hash_add(hash_add(hash_add(20u, fxi_st.type), fxi_st.man), ui.fx_last)
+                    : hash_add(hash_add(hash_add(hash_add(21u, mst_st.eq_on), mst_st.comp_on), ui.mst_comp),
+                               (uint32_t)(mst_st.comp_on ? mst_gr10() / 5 : 0) + 64u);
+            h |= 1u;
+            if (h != drawn[R_VIS]) { drawn[R_VIS] = h; if (ins) draw_vis_ins(); else draw_vis_mst(); }
+            h = hash_mem(22u, &top, sizeof top) | 1u;
+            if (h != drawn[R_ROW1]) { drawn[R_ROW1] = h; draw_cells(88, &top); }
+            h = hash_mem(23u, &sel, sizeof sel) | 1u;
+            if (h != drawn[R_ROW2]) { drawn[R_ROW2] = h; draw_cells(124, &sel); }
         } else if (ui.mode == MODE_MIX) {
             uint32_t ch;
             mix_btnmap(&bm);
@@ -978,11 +1146,12 @@ static void ui_draw(void)
 
 /* =========================================================== the loop */
 static board_keys_t ui_prev_keys;
-#include "orgigs_intro.c"                  /* the welcome screen */
+#include "../smk37/orgigs_intro.c"         /* the welcome screen (the Elite's: the logo; no pads here) */
 
 static void ui_init(void)
 {
     ctl_init();
+    par_init();                         /* the insert effect, the master: as kept */
     yst_reset();
 #if !defined(ORGIGS_NO_INTRO) && !defined(ORGIGS_SELFTEST) && !defined(ORGIGS_TONETEST)
     intro_start();
@@ -1044,6 +1213,16 @@ static void ui_leds(void)
         lv[BTN_LFO] = mls.focus == MAN_LOWER ? 2u : 1u;
         lv[BTN_ARP] = mls.focus == MAN_PEDAL ? 2u : 1u;
         lv[BTN_SEQ] = org_par.les_on[mls.focus] ? 2u : 0u;
+    } else if (ui.mode == MODE_INS) {           /* the manuals' buttons glow, the effect's is lit; SEQ: the effect on */
+        lv[BTN_ENV] = fxi_st.man == MAN_UPPER ? 2u : 1u;
+        lv[BTN_LFO] = fxi_st.man == MAN_LOWER ? 2u : 1u;
+        lv[BTN_ARP] = fxi_st.man == MAN_PEDAL ? 2u : 1u;
+        lv[BTN_EDIT] = 1u;
+        lv[BTN_SEQ] = fxi_st.type ? 2u : 1u;
+    } else if (ui.mode == MODE_MST) {           /* EQ, compressor: lit when on; EDIT lit while the knobs hold the compressor */
+        lv[BTN_ENV] = mst_st.eq_on ? 2u : 1u;
+        lv[BTN_LFO] = mst_st.comp_on ? 2u : 1u;
+        lv[BTN_EDIT] = ui.mst_comp ? 2u : 1u;
     } else if (ui.mode == MODE_PLAY) {
         uint32_t m = mls.focus;
         lv[BTN_ENV] = ui.grp == GRP_DB14 ? 2u : 0u;
@@ -1052,7 +1231,7 @@ static void ui_leds(void)
         lv[BTN_ARP] = (dept_now() == DEPT_VINTAGE ? org_par.vib[m] != 0u : org_par.trem[m] != 0u) ? 2u : 0u;
         lv[BTN_SEQ] = org_par.coupler ? 2u : 0u;
     }
-    lv[BTN_FX] = ui.mode == MODE_FX ? 2u : 0u;
+    lv[BTN_FX] = ui.mode == MODE_FX || ui.mode == MODE_INS || ui.mode == MODE_MST ? 2u : 0u;
     lv[BTN_GLO] = midi || ui.mode == MODE_LIGHT ? 2u : 0u;
     lv[BTN_HOME] = ui.mode == MODE_MIX ? 2u : 0u;
     lv[BTN_PLAY] = org_par.leslie == LESLIE_BRAKE ? 2u : 0u;
@@ -1085,7 +1264,10 @@ static void ui_buttons(uint32_t b, uint32_t rel)
         }
         touched();
     }
-    if (b & 1u << BTN_FX) set_mode(ui.mode == MODE_FX ? MODE_PLAY : MODE_FX);
+    if (b & 1u << BTN_FX) {                     /* FX: the effects, again back; SEL + FX: INSERT, again MASTER */
+        if (ui.shift) set_mode(ui.mode == MODE_INS ? MODE_MST : MODE_INS);
+        else set_mode(ui.mode == MODE_FX || ui.mode == MODE_INS || ui.mode == MODE_MST ? MODE_PLAY : MODE_FX);
+    }
     if (b & 1u << BTN_GLO) {
         if (ui.shift) set_mode(ui.mode == MODE_LIGHT ? MODE_PLAY : MODE_LIGHT);
         else if (!midi) set_mode(MODE_MIDI);
@@ -1113,6 +1295,18 @@ static void ui_buttons(uint32_t b, uint32_t rel)
         if (b & 1u << BTN_LFO) focus_set(MAN_LOWER);
         if (b & 1u << BTN_ARP) focus_set(MAN_PEDAL);
         if (b & 1u << BTN_SEQ) les_toggle();
+        b &= ~(1u << BTN_ENV | 1u << BTN_LFO | 1u << BTN_EDIT | 1u << BTN_ARP | 1u << BTN_SEQ);
+    } else if (ui.mode == MODE_INS) {           /* ENV LFO ARP: the manual it sits on; EDIT: the next effect; SEQ: on / off */
+        if (b & 1u << BTN_ENV) fxi_man(MAN_UPPER);
+        if (b & 1u << BTN_LFO) fxi_man(MAN_LOWER);
+        if (b & 1u << BTN_ARP) fxi_man(MAN_PEDAL);
+        if (b & 1u << BTN_EDIT) ins_next(ui.shift ? -1 : 1);
+        if (b & 1u << BTN_SEQ) ins_toggle();
+        b &= ~(1u << BTN_ENV | 1u << BTN_LFO | 1u << BTN_EDIT | 1u << BTN_ARP | 1u << BTN_SEQ);
+    } else if (ui.mode == MODE_MST) {           /* ENV: the EQ on / off; LFO: the compressor; EDIT: what the knobs hold */
+        if (b & 1u << BTN_ENV) mst_toggle(0);
+        if (b & 1u << BTN_LFO) mst_toggle(1);
+        if (b & 1u << BTN_EDIT) { ui.mst_comp ^= 1u; ctl_say("KNOBS:", ui.mst_comp ? "COMPRESSOR" : "EQ"); }
         b &= ~(1u << BTN_ENV | 1u << BTN_LFO | 1u << BTN_EDIT | 1u << BTN_ARP | 1u << BTN_SEQ);
     } else if (ui.mode == MODE_LIGHT) {
         if (b & 1u << BTN_SEQ) bk_send_all();
@@ -1149,13 +1343,17 @@ static void ui_step(void)
     /* MIDI in, then the panel */
     while ((src = midi_get(&ms, &m1, &m2)) != 0) if (!yst_midi_in(ms, m1, m2, src == 1)) ml_midi_in(ms, m1, m2);   /* (the SEQTRAK: YST) */
     yst_tick();
+    if (bat_tick()) drawn[R_TOP] = 0;
     if (intro_step()) { ml_flush(); return; }
 
-    if (!ui.shift && (fm1_in.buttons >> BTN_SEL & 1u)) {     /* SEL pressed: the setups, and the audio interrupt's load */
-        char s[24], *p = cat(s, "KEYS 1-16  DSP ");
-        p = org_fmt(p, (int32_t)(org_stat.load_us * 100u / 5805u), 0);
-        cat(p, "%");
-        ctl_say("SETUP:", s);
+    if (!ui.shift && (fm1_in.buttons >> BTN_SEL & 1u)) {     /* SEL pressed: the setups, the audio interrupt's load, */
+        char s[40], *p = cat(s, "KEYS 1-16 DSP ");           /* the battery and (for now) its raw reading: the line */
+        p = org_fmt(p, (int32_t)(org_stat.load_us * 100u / 5805u), 0);   /* holds about 30 characters */
+        if (bat_ok()) {
+            p = cat(org_fmt(cat(p, "% BAT "), (int32_t)bat_pct(), 0), "% ");
+            org_fmt(p, (int32_t)batt_raw(), 0);
+        } else cat(p, "%");
+        ctl_say(s, 0);
     }
     ui.shift = fm1_in.buttons >> BTN_SEL & 1u;
     save = fm1_in.buttons >> BTN_SAVE & 1u;
@@ -1214,4 +1412,5 @@ static void ui_step(void)
     bk_tick();
     ui_draw();
     ctl_save_tick();
+    if (!org_stat.held && org_stat.peak < 64u) par_save_tick();   /* (an erase stalls the audio: when nothing sounds) */
 }

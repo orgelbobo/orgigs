@@ -16,15 +16,19 @@
  *                          T wheel W RAW     the pitch (0) or mod (1) wheel, raw 0..1023
  *                          T vel V           the velocity of the keys pressed from now on
  *                          T batt RAW, T pedal RAW        the battery divider's, the pedal jack's raw ADC value (0 by default)
+ *                          T usb 0 / 1       off / on a USB host (1 by default: the battery charges)
  *                          a shot also prints the pads' colours (PADS r,g,b ..)
  *                          T mod V / T bend V    the touch strips (0..127 / -8192..8191)
  *                          T shot            the screen to OUT-T.ppm
- *                          T end */
+ *                          T end
+ * ORGIGS_BLOB_LOG=1 prints each save of a flash blob ("blob N saved"); --params prints the parameter table
+ * (core/orgigs_params.c, tools/params_doc.py) */
 #include "../sim/sim_platform.h"
 #ifdef ORG_LEVEL_DEBUG
 static int32_t lv_dbg[3];               /* (orgigs_fx.c fills it) */
 #endif
 
+static void par_dump(void);            /* core/orgigs_params.c: the parameter table (--params) */
 static void midi_send(uint32_t st, uint32_t d1, uint32_t d2) { printf("%6u ms  MIDI out %02X %3u %3u\n", fm1_ms, st, d1, d2); }
 static void host_settings_saved(void) { printf("%6u ms  settings saved\n", fm1_ms); }
 static int sysex_send(const uint8_t *p, uint32_t n)
@@ -36,7 +40,7 @@ static int sysex_send(const uint8_t *p, uint32_t n)
     return 0;
 }
 
-enum { EV_KEYS, EV_BTN, EV_DOWN, EV_UP, EV_ENC, EV_MIDI, EV_MOD, EV_BEND, EV_SHOT, EV_SYSEX, EV_PAD, EV_FADER, EV_WHEEL, EV_VEL, EV_BATT, EV_PEDAL };
+enum { EV_KEYS, EV_BTN, EV_DOWN, EV_UP, EV_ENC, EV_MIDI, EV_MOD, EV_BEND, EV_SHOT, EV_SYSEX, EV_PAD, EV_FADER, EV_WHEEL, EV_VEL, EV_BATT, EV_PEDAL, EV_USB };
 typedef struct { uint32_t t, kind; int32_t a, b, c; uint8_t *sx; unsigned long long m; } host_ev_t;
 static host_ev_t ev[8192];
 static uint32_t ev_n, end_ms = 5000;
@@ -67,6 +71,7 @@ static void read_script(const char *path)
         else if (!strcmp(what, "vel")) e.kind = EV_VEL;
         else if (!strcmp(what, "batt")) e.kind = EV_BATT;
         else if (!strcmp(what, "pedal")) e.kind = EV_PEDAL;
+        else if (!strcmp(what, "usb")) e.kind = EV_USB;
         else if (!strcmp(what, "btn")) e.kind = EV_BTN;
         else if (!strcmp(what, "down")) e.kind = EV_DOWN;
         else if (!strcmp(what, "up")) e.kind = EV_UP;
@@ -138,10 +143,11 @@ static void platform_poll(void)                 /* one call = one millisecond */
         case EV_PAD: host_pad((uint32_t)e->a, (uint32_t)e->b); break;
         case EV_FADER: if (e->a >= 0 && e->a < 4) fm1_in.fader[e->a] = (uint8_t)e->b; break;
         case EV_WHEEL: if (e->a >= 0 && e->a < 2) fm1_in.wheel[e->a] = (uint16_t)e->b; break;
-        case EV_BATT: fm1_in.batt = (uint16_t)e->a; break;
         case EV_PEDAL: fm1_in.pedal = (uint16_t)e->a; break;
         case EV_VEL: host_vel = (uint32_t)e->b ? (uint32_t)e->b : (uint32_t)e->a; break;
 #endif
+        case EV_BATT: sim_batt = (uint32_t)e->a; break;
+        case EV_USB: sim_usb_up = (uint32_t)e->a; break;
         case EV_BTN: host_button((uint32_t)e->a, 1); if ((uint32_t)e->a < FM1_NBTN) btn_release_at[e->a] = fm1_ms + 40u; break;
         case EV_DOWN: host_button((uint32_t)e->a, 1); break;
         case EV_UP: host_button((uint32_t)e->a, 0); break;
@@ -190,8 +196,10 @@ static void platform_poll(void)                 /* one call = one millisecond */
 
 int main(int argc, char **argv)
 {
-    if (argc < 3) { fprintf(stderr, "usage: %s OUT script.txt\n", argv[0]); return 1; }
+    if (argc == 2 && !strcmp(argv[1], "--params")) { par_dump(); return 0; }
+    if (argc < 3) { fprintf(stderr, "usage: %s OUT script.txt | --params\n", argv[0]); return 1; }
     host_out = argv[1];
+    host_blob_log = getenv("ORGIGS_BLOB_LOG") != 0;
 #if BOARD_SMK37
     fm1_in.wheel[0] = 512;              /* the pitch wheel rests in the middle */
     fm1_in.wheel[1] = 1023;             /* the mod wheel down (the Elite reads it backwards) */

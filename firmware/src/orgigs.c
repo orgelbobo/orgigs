@@ -9,6 +9,7 @@
  *   orgigs_midi_zones.c  three MIDI zones: router, cloner, 9-ch harmonic mapper, chord memory (main loop)
  *   orgigs_presets.c     drawbar presets, performance setups, the settings in flash      (main loop)
  *   orgigs_ctl.c         what a panel can do with the organ, the message line             (main loop)
+ *   orgigs_params.c      the parameter table; the insert effect and the master, kept     (main loop)
  *   orgigs_backup.c      the settings as a SysEx backup over USB-MIDI (tools/orgigs_backup.py) (main loop)
  *   orgigs_yst.c         YST: a Yamaha SEQTRAK on the USB cable, its tracks, sounds and knobs  (main loop)
  * board/<name>/ is one device:
@@ -37,6 +38,8 @@
 #include "../core/orgigs_midi_zones.c"
 #include "../core/orgigs_presets.c"
 #include "../core/orgigs_ctl.c"
+#include "../core/orgigs_bat.c"
+#include "../core/orgigs_params.c"
 #include "../core/orgigs_backup.c"
 #include "../core/orgigs_yst.c"
 

@@ -1,0 +1,16 @@
+# The FM-1's battery (tests/run_host.sh tests/fm1_battery.txt: look at the shots). T batt RAW: the divider's raw
+# ADC value; T usb 0/1: off / on a USB host (on: the cell charges, a bolt in the symbol). Button 3 SEL.
+0 usb 0
+100 batt 624
+1500 shot
+# --- SEL: the setups, the load, the battery and its raw reading
+1600 down 3
+1700 shot
+1750 up 3
+# --- the cell runs low: the symbol red, BATTERY LOW
+3500 batt 540
+4600 shot
+# --- on a USB host: the bolt, no warning
+6400 usb 1
+6600 shot
+6700 end

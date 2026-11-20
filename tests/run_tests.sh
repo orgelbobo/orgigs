@@ -19,6 +19,8 @@ run() { echo "== $1"; shift; "$@" || fail=1; }
 run "FM-1 app on the host: the demo" sh tests/run_host.sh tests/demo.txt
 run "SMK-37 app on the host: the demo" env BOARD=smk37 sh tests/run_host.sh tests/demo.txt
 run "SMK-37 Elite panel: the keys only play; setups, cloner, harmonic on the pads; the MIDI area" python3 tests/elite_test.py
+run "parameter table (core/orgigs_params.c): docs/PARAMETERS.md is what it gives" python3 tools/params_doc.py --check
+run "FM-1 INSERT and MASTER: the effect on its manual only, the WAH's pedal from CC 1, the compressor, saved when silent" python3 tests/fm1_fx_test.py
 
 $CC -DBOARD_SMK37=1 -Ifirmware/hal -o "$OUT/smk_flash_test" tests/smk_flash_test.c
 run "SMK-37 flash map: settings, blobs, owner tag, slots in the store; never the head, BTIF/USRTRIM, USR, key_mac" "$OUT/smk_flash_test"

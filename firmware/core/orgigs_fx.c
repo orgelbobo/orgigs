@@ -44,7 +44,7 @@ typedef struct {
 static les_rt_t les_rt = {{INC_HORN_SLOW, INC_HORN_FAST, INC_DRUM_SLOW, INC_DRUM_FAST},
                           176, 48, LP_XOVER_A, 16384, 16384, 14, 6, 8192, 11264, 64};
 
-/* the insert slot (the Elite's EFFECT page; the FM-1 leaves it off): one effect on one manual's bus, after its
+/* the insert slot (core/orgigs_params.c: the Elite's EFFECT page, the FM-1's INSERT): one effect on one manual's bus, after its
    vibrato, before the rotary and the sends; a chorus's stereo side goes straight to the output. What the audio reads:
    the effect, its manual, and its values worked out (board/smk37) */
 enum { FXI_OFF, FXI_CHORUS, FXI_WAH, FXI_AUTOWAH, FXI_FLANGER, FXI_PHASER, FXI_RING, FXI_AMP, FXI_N };
@@ -73,7 +73,7 @@ static struct {
     int32_t side[32];                   /* (SUB) */
 } fxi;
 
-/* the master (the Elite's MASTER page; the FM-1 leaves it off): a three-band EQ and a stereo compressor on the sum,
+/* the master (core/orgigs_params.c: the MASTER page of both): a three-band EQ and a stereo compressor on the sum,
    after the delay and the reverb, before the expression. EQ: the band below a one-pole (low shelf), a band-pass
    (Chamberlin, Q 1) and the band above a one-pole (high shelf), each added at its gain. Compressor: the block's peak
    (both sides), in octaves over the threshold, cut by (1 - 1 / ratio); the gain glides (attack, release) and is

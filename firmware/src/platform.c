@@ -458,6 +458,8 @@ static uint32_t sysex_room(uint32_t n)
     return usb.config && !sx_busy && so_w - so_r + (n + 2u) / 3u + 1u <= SXQ;
 }
 static uint32_t usb_host_up(void) { return usb.config != 0; }
+static uint32_t batt_last, batt_pass;   /* (OrGigs) the battery divider's raw ADC (core/orgigs_bat.c) */
+static uint32_t batt_raw(void) { return batt_last; }
 static uint32_t usb_tx_count(void) { return usb.tx_pkts; }   /* (OrGigs, diagnosis) transfers the host took */
 
 /* ---- the main loop's duties: watchdog, USB, the installer's update request, the MASTER knob */
@@ -484,6 +486,8 @@ static void platform_poll(void)
     }
     if (fm1_ms >= 30000u && bootguard.pending)
         bootguard_clear(&bootguard);            /* 30 s up: this firmware boots */
+    if ((++batt_pass & 63u) == 0u && (a = fm1_adc_read(FM1_ADC_BATT)) >= 0)
+        batt_last = (uint32_t)a;                /* (OrGigs) the battery divider, every 64th pass */
     if ((a = fm1_adc_read(FM1_ADC_MASTER)) >= 0) {
         uint32_t k10;
         knob_avg += (a * 16 - knob_avg) / 8;

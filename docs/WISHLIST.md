@@ -193,3 +193,12 @@ The user collects further wishes while playing v3 on the FM-1.
   documented (jaeggerr/seqtrak-docs: only a DrumKit bank MSB 32 + part, unverified). Later: the note map tried on
   the hardware, the pads named after it.
 - REC (no MIDI for it) and layout C pads 6-8: dropped for now (user, 2026-11-13).
+
+## 2026-11-17: battery, and the look for OrGigs 2
+- Charge indicator (Elite) and battery display (FM-1): core/orgigs_bat.c for both boards; a bolt in the symbol
+  while the keyboard is on a USB host (computer, SEQTRAK; a plain charger does not show); no BATTERY LOW while
+  charging. FM-1: symbol, SEL shows "BAT n%" and (for now) the raw reading, to set its divider (BOARD_BAT_SCALE,
+  6600 like the Elite until measured). Built.
+- V2 (Merkposten): the screen's look, all elements consistent: drawbars, buttons/tabs, knobs, lamps. Either a
+  more realistic drawbar (rounded, shaded, "smoky" glass) or a mix of real faders with single LED lamps as on old
+  organs. Proposals in the chat of 2026-11-17; mock-ups to choose from before building.

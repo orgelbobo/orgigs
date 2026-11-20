@@ -1,6 +1,5 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
-/* OrGigs on the SMK-37 Elite: the welcome screen (main loop), about 3.2 s. Included by orgigs_ui.c.
- * (The FM-1 keeps its own, board/fm1/orgigs_intro.c.)
+/* OrGigs: the welcome screen (main loop), about 3.2 s. Included by orgigs_ui.c, the Elite's and the FM-1's.
  *
  *   0    .. 1100 ms  the head draws itself, line by line, hair first (Gigstart2.jpg as polylines)
  *   1100 .. 1400 ms  it rests
@@ -8,7 +7,7 @@
  *                    manual's cover grow down
  *   2100 .. 2500 ms  O r G i g s letter by letter, as the logo (Orgigs-Logo Idee.jpg; the black G with a grey rim)
  *   .. 3200 ms       hold
- * All the while the pads: a wave of drawbars pulled out runs from left to right and back, through the colours.
+ * All the while (the Elite) the pads: a wave of drawbars pulled out runs from left to right and back, through the colours.
  *
  * Any key or button ends it at once (and does nothing else).
  *
@@ -82,6 +81,7 @@ static void intro_head(uint32_t npts, int32_t dy, int32_t y0)
 }
 #endif
 
+#if BOARD_SMK37
 /* the pads: a wave of drawbars pulled out, left to right in the first half, back in the second; its colour runs
    once round the colour wheel. A column's level 0..8 lights its bottom pad (0..4), then the top one (5..8). */
 static void intro_pads(uint32_t t)
@@ -110,6 +110,7 @@ static void intro_pads(uint32_t t)
     }
     padled_flush();
 }
+#endif
 
 static void intro_frame(uint32_t t)
 {
@@ -124,7 +125,9 @@ static void intro_frame(uint32_t t)
     int32_t grow = intro_smooth(p);
     uint32_t letters = t < INTRO_FALL + 700u ? 0u : (t - INTRO_FALL - 700u) / 65u;
 
+#if BOARD_SMK37
     intro_pads((t - INTRO_SKIP) * INTRO_MS / (INTRO_MS - INTRO_SKIP));   /* (the wave: all of it, there and back) */
+#endif
     for (half = 0; half < 4u; half++) {        /* four strips of 60 rows (the canvas holds 64) */
         cv_begin(240, 60, C_BG);
         cv_oy = -(int32_t)half * 60;
@@ -162,7 +165,7 @@ static uint32_t intro_step(void)
         (void)fm1_input_edges(&rel);            /* the press that ended it does nothing else */
         (void)fm1_input_note_edges();
         lcd_fill(0, 0, 240, 240, C_BG);
-        drawn_view = 99;                        /* the UI draws everything again (the pads too: they differ) */
+        drawn_view = 99;                        /* the UI draws everything again (the Elite's pads too: they differ) */
         ui_prev_keys = fm1_in.notes;            /* a held key does not start a note */
         return 0;
     }

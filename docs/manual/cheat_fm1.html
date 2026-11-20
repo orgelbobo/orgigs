@@ -78,13 +78,13 @@ td:first-child { white-space: nowrap; }
     <h1>OrGigs <span>FM-1</span> at a glance</h1>
     <p>A three-manual organ and a MIDI router for the M-VAVE FM-1.</p>
   </div>
-  <div class="id">package FM-1_674102<br>GPL-3.0-only</div>
+  <div class="id">package FM-1_674110<br>GPL-3.0-only</div>
 </header>
 
 <table class="glance">
 <tr><td>Sound</td><td>84 free-running tone generators (C1–B7): every key sounds, no voice stealing. 8 models in 3 departments: tonewheel and three combo organs, baroque and cathedral pipe organs, musette and bandoneon reeds</td></tr>
 <tr><td>Manuals</td><td>Upper (9 drawbars), Lower (9 drawbars), Pedal (4 stops). Coupler II/I, split and auto-pedal by MIDI zones</td></tr>
-<tr><td>Effects</td><td>Per manual: drive, scanner vibrato / chorus or tremulant, rotary on / off, delay and reverb sends. Shared: percussion, two-rotor rotary, stereo ping-pong delay (to 1 s), 4 reverbs (spring, stage, hall, cathedral)</td></tr>
+<tr><td>Effects</td><td>Per manual: drive, scanner vibrato / chorus or tremulant, rotary on / off, delay and reverb sends. Shared: percussion, two-rotor rotary, stereo ping-pong delay (to 1 s), 4 reverbs (spring, stage, hall, cathedral), an insert slot (7 effects), master EQ and compressor</td></tr>
 <tr><td>Memory</td><td>16 performance setups (the whole instrument, one per white key); a drawbar list of 75 registrations + 16 user slots; all kept after power-off; backup over USB</td></tr>
 <tr><td>MIDI</td><td>3 zones (in / out channel, key range, transpose, velocity, filters), cloner, 9-channel harmonic mapper, chord memory, a 16-channel mixer (CC 7), Yamaha SEQTRAK control (YST)</td></tr>
 </table>
@@ -100,8 +100,8 @@ td:first-child { white-space: nowrap; }
 
 <h2><span class="n">2</span>The buttons on the drawbar screen</h2>
 <div class="panel">
-  <div class="btn"><b>FX</b><span>the FX screen; again: back</span></div>
-  <div class="btn"><b>SEL</b><span>held: white keys recall the setups; shows the DSP load</span></div>
+  <div class="btn"><b>FX</b><span>the FX screen; again: back</span><em>SEL: INSERT, again MASTER</em></div>
+  <div class="btn"><b>SEL</b><span>held: white keys recall the setups; shows DSP load and battery</span></div>
   <div class="btn"><b>ENV</b><span>knobs = drawbars 1–4</span></div>
   <div class="btn"><b>LFO</b><span>knobs = drawbars 5–8</span></div>
   <div class="btn"><b>EDIT</b><span>knobs = drawbars 1, 3, 4, 9</span></div>
@@ -124,6 +124,7 @@ td:first-child { white-space: nowrap; }
 <tr><td><span class="k">SEL</span> + <span class="k">HOME</span></td><td>panic: all notes off, inside and on all 16 channels</td></tr>
 <tr><td><span class="k">SEL</span> + <span class="k">GLO</span></td><td>panel lights: keys and buttons OFF / DIM / FULL; <span class="k">SEQ</span> there: backup</td></tr>
 <tr><td><span class="k">SEL</span> + <span class="k">KNOB 1–4</span></td><td>the screen's second row (shared values on FX)</td></tr>
+<tr><td><span class="k">SEL</span> + <span class="k">FX</span></td><td>the insert effect; again: the master EQ and compressor</td></tr>
 <tr><td>any key or button</td><td>skips the welcome screen</td></tr>
 </table>
 </div>
@@ -140,6 +141,8 @@ td:first-child { white-space: nowrap; }
 </div>
 </div>
 
+<div class="note"><b>INSERT</b> (<span class="k">SEL</span> + <span class="k">FX</span>): one effect on one manual, chorus, wah-wah (CC 1 its pedal), auto-wah, flanger, phaser, ring mod, amp. <span class="k">EDIT</span> the next, <span class="k">SEQ</span> on / off, <span class="k">ENV</span> <span class="k">LFO</span> <span class="k">ARP</span> its manual; <span class="k">KNOB 1–4</span> its values 1–4, <span class="k">SEL</span> + knobs 5–8. <b>MASTER</b> (<span class="k">SEL</span> + <span class="k">FX</span> again): <span class="k">ENV</span> the EQ, <span class="k">LFO</span> the compressor on / off; <span class="k">EDIT</span>: the knobs hold the EQ (low, mid, high; <span class="k">SEL</span>: their frequencies) or the compressor (threshold, ratio, attack, release; <span class="k">SEL</span> + <span class="k">KNOB 1</span> make-up).</div>
+
 <div class="note"><b>The mixer</b> (<span class="k">HOME</span> on the drawbars): 16 knobs, one per MIDI channel, send CC 7 at once. <span class="k">ENV</span> <span class="k">LFO</span> <span class="k">ARP</span> <span class="k">SEQ</span> choose the row of four channels. Each setup keeps its own volumes.</div>
 
 <!-- ============ PAGE 2 ============ -->
@@ -148,7 +151,7 @@ td:first-child { white-space: nowrap; }
 <div class="shot">
   <img src="img/screen-b3.png" alt="The drawbar screen: model 1 WHEEL, the upper manual, drawbars 888000000">
   <ol>
-    <li><b>Top bar:</b> model number and short name (<span class="d">1 WHEEL</span>), the manual (<span class="d">UPPER</span>), the drawbars the knobs hold (<span class="d">DB1-4</span>), the preset (<span class="d">P1</span>; <span class="d">P1*</span> = changed since).</li>
+    <li><b>Top bar:</b> model number and short name (<span class="d">1 WHEEL</span>), the manual (<span class="d">UPPER</span>), the drawbars the knobs hold (<span class="d">DB1-4</span>), the preset (<span class="d">P1</span>; <span class="d">P1*</span> = changed since), the battery (red below 20 %; a bolt: charging on a computer or the SEQTRAK).</li>
     <li><b>Drawbars</b> 0–8, coloured by family. Amber marks: the four the knobs move now.</li>
     <li><b>Mini-bars:</b> the other two manuals, <span class="d">II/I</span> when coupled, the setup (<span class="d">S1</span>). A change shows its name and value here.</li>
     <li><b>Tabs:</b> green vibrato (<span class="d">V1</span>…<span class="d">C3</span>) or tremulant; red percussion (<span class="d">2F</span>…<span class="d">3S</span>) or the coupler; yellow <span class="d">ROT</span>: <span class="d">SLOW</span> <span class="d">FAST</span> <span class="d">BRK</span> or <span class="d">OFF</span>.</li>
@@ -195,7 +198,7 @@ td:first-child { white-space: nowrap; }
 </table>
 <div class="note"><b>Avoid MIDI loops:</b> never route the FM-1's output back into the FM-1. For a 5-pin DIN synth behind a MIDI host, switch the zone screen's <span class="k">SEL</span> + <span class="k">EDIT</span> to <span class="d">TRS-SAFE</span>.</div>
 
-<p class="cap">OrGigs is at heart a firmware for the M-VAVE SMK-37 Elite, and this is its compact edition. The full version adds an insert effect, master EQ and compressor, your own rotary cabinets, a full mixer and five pad layouts. Check it out.</p>
+<p class="cap">OrGigs is at heart a firmware for the M-VAVE SMK-37 Elite, and this is its compact edition. The full version adds your own rotary cabinets, a full mixer, an expression pedal and five pad layouts. Check it out.</p>
 <p class="tm">All product names are trademarks of their owners and are used only to identify compatible devices. OrGigs is not affiliated with them.</p>
 </section>
 

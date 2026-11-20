@@ -138,8 +138,10 @@ static int store_save(uint32_t sect, const void *p, uint32_t n)
 }
 static int settings_load(void *p, uint32_t n) { return store_load(0, p, n); }
 static int settings_save(const void *p, uint32_t n) { return store_save(0, p, n); }
-/* (OrGigs) blob sectors 1..4 (the Elite's rotary cabinets, insert effect, master, panel); not kept by the browser simulator */
+/* (OrGigs) blob sectors 1..4 (the Elite's rotary cabinets, the insert effect, the master, the Elite's panel); not kept
+   by the browser simulator. host_blob_log: each save printed (tests/host.c: ORGIGS_BLOB_LOG=1) */
 static uint8_t host_blobs[8][STORE_SECT];
+static int host_blob_log;
 static __attribute__((unused)) int blob_load(uint32_t i, void *p, uint32_t n)
 {
     const uint8_t *host_blob = host_blobs[i < 8u ? i : 0u];
@@ -153,6 +155,7 @@ static __attribute__((unused)) int blob_save(uint32_t i, const void *p, uint32_t
     if (i < 1u || i > 7u || n > STORE_SECT - 12u) return -1;
     host_blob[0] = 1; host_blob[1] = (uint8_t)n; host_blob[2] = (uint8_t)(n >> 8);
     memcpy(host_blob + 12, p, n);
+    if (host_blob_log) printf("%6u ms  blob %u saved\n", fm1_ms, i);
     return 0;
 }
 
@@ -178,7 +181,10 @@ static uint32_t midi_out_room(void) { return 64u; }
 /* SysEx (core/orgigs_backup.c): the host hands app_sysex the bytes between F0 and F7; sysex_send is the host's */
 static int sysex_send(const uint8_t *p, uint32_t n);
 static uint32_t sysex_room(uint32_t n) { (void)n; return 1; }
-static uint32_t usb_host_up(void) { return 1; }
+static uint32_t sim_usb_up = 1;          /* T usb 0: off a USB host (the battery shows no charging) */
+static uint32_t usb_host_up(void) { return sim_usb_up; }
+static uint32_t sim_batt;                 /* T batt RAW: the battery divider's raw ADC (0: none, nothing shown) */
+static uint32_t batt_raw(void) { return sim_batt; }
 static uint32_t usb_tx_count(void) { return 0; }
 static void app_sysex(const uint8_t *p, uint32_t n);
 

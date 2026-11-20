@@ -36,6 +36,7 @@ td { border-bottom: 0.5pt solid var(--line); padding: 1.5mm 2mm 1.5mm 0; vertica
 tr { break-inside: avoid; }
 td:first-child { white-space: nowrap; }
 .wrap td:first-child { white-space: normal; }
+.fxtab td:first-child { width: 14%; }
 .note { background: var(--amber-soft); border-left: 2.5pt solid var(--amber); padding: 2.5mm 3.5mm; margin: 2mm 0 4mm; break-inside: avoid; }
 .note.warn { background: #fdeceb; border-left-color: #d9443a; }
 .note p:last-child { margin: 0; }
@@ -92,7 +93,7 @@ td:first-child { white-space: nowrap; }
     <h1>OrGigs FM-1</h1>
     <div class="sub">Three-manual organ, pipe organ and free-reed workstation with three MIDI Zones, for the M-VAVE FM-1.</div>
   </div>
-  <div class="foot"><span>Firmware package FM-1_674102</span><span>October 2026</span></div>
+  <div class="foot"><span>Firmware package FM-1_674110</span><span>November 2026</span></div>
 </section>
 
 <!-- ============ CONTENTS ============ -->
@@ -128,7 +129,7 @@ td:first-child { white-space: nowrap; }
   <li><b>84 free-running tone generators</b> from C1 to B7. Every key gets its own sound, and no note is ever cut off to make room for another (no voice stealing).</li>
   <li><b>Eight instrument models</b> in three departments: Vintage &amp; Combo, Pipe, and Free Reed.</li>
   <li><b>Three manuals</b> with independent registrations: Upper (9 drawbars), Lower (9 drawbars) and Pedal (4 stops).</li>
-  <li><b>Effects per manual, like a mixer</b>: each manual has its own tube drive, scanner vibrato and chorus or tremulant, its own rotary switch and its own sends to a shared stereo ping-pong delay and four reverbs up to a 7.5-second cathedral. Tonewheel percussion and a two-rotor rotary with real inertia.</li>
+  <li><b>Effects per manual, like a mixer</b>: each manual has its own tube drive, scanner vibrato and chorus or tremulant, its own rotary switch and its own sends to a shared stereo ping-pong delay and four reverbs up to a 7.5-second cathedral. Tonewheel percussion and a two-rotor rotary with real inertia. An <b>insert effect</b> slot with chorus, wah-wah, auto-wah, flanger, phaser, ring modulator and amp, and a <b>master EQ and compressor</b>.</li>
   <li><b>One list of drawbar registrations</b>: 36 classic tonewheel registrations, pipe and free-reed registrations, a pedal list, and 16 user slots. <b>16 performance setups</b> store the whole instrument, one on each white key.</li>
   <li><b>A MIDI mixer</b>: 16 channel volumes (CC 7), kept with each setup.</li>
   <li><b>Panel lights</b> for dark stages: all keys and buttons can glow dimly, or light fully.</li>
@@ -139,7 +140,7 @@ td:first-child { white-space: nowrap; }
 <p>Panel buttons and encoders are written like <span class="k">FX</span> or <span class="k">PRESETS</span>. Text that appears on the FM-1's screen is written like <span class="d">ROTARY FAST</span>. <span class="k">SEL</span> + <span class="k">KNOB 3</span> means: hold <span class="k">SEL</span> and turn <span class="k">KNOB 3</span>.</p>
 
 <div class="note"><p><b>About SEL.</b> The FM-1's four knobs can't be pushed. OrGigs uses a held <span class="k">SEL</span> button as the "push" instead, so every knob has a second function.</p></div>
-<p><b>The full version.</b> OrGigs is at heart a firmware for the M-VAVE SMK-37 Elite: its main features were designed there, and this FM-1 version is a compact edition of it. The Elite version has the same organ and more around it: an insert effect, a master EQ and compressor, your own rotary cabinets, a mixer with pan, sends, mute and solo, and five pad layouts. If you have an Elite, check it out. Both read each other's backups (chapter 8).</p>
+<p><b>The full version.</b> OrGigs is at heart a firmware for the M-VAVE SMK-37 Elite: its main features were designed there, and this FM-1 version is a compact edition of it. The Elite version has the same organ and effects and more around them: your own rotary cabinets, a mixer with pan, sends, mute and solo, an expression pedal, and five pad layouts. If you have an Elite, check it out. Both read each other's backups (chapter 8).</p>
 </section>
 
 <!-- ============ 2 ============ -->
@@ -181,16 +182,16 @@ td:first-child { white-space: nowrap; }
 <tr><th style="width:24%">Control</th><th>Function</th><th style="width:30%">With SEL held</th></tr>
 <tr><td><span class="k">KNOB 1</span>–<span class="k">KNOB 4</span></td><td>The four parameters of the screen</td><td>The second row of the screen</td></tr>
 <tr><td><span class="k">MASTER</span></td><td>Output volume</td><td>—</td></tr>
-<tr><td><span class="k">ENV</span></td><td>Drawbars 1–4. FX: the upper manual's row. Mixer: row 1. In the MIDI Zones: a switch of the screen</td><td>In the MIDI Zones: a second switch</td></tr>
-<tr><td><span class="k">LFO</span></td><td>Drawbars 5–8. FX: the lower manual's row. Mixer: row 2. In the MIDI Zones: a switch</td><td>Ditto</td></tr>
-<tr><td><span class="k">EDIT</span></td><td>Drawbars 1, 3, 4 and 9 (drawbar 9 on <span class="k">KNOB 4</span>). In the MIDI Zones: a switch</td><td>Ditto</td></tr>
-<tr><td><span class="k">FX</span></td><td>The FX screen. Press again: back to the drawbars</td><td>—</td></tr>
+<tr><td><span class="k">ENV</span></td><td>Drawbars 1–4. FX: the upper manual's row. INSERT: the effect on the upper manual. MASTER: the EQ on and off. Mixer: row 1. In the MIDI Zones: a switch of the screen</td><td>In the MIDI Zones: a second switch</td></tr>
+<tr><td><span class="k">LFO</span></td><td>Drawbars 5–8. FX: the lower manual's row. INSERT: the effect on the lower manual. MASTER: the compressor on and off. Mixer: row 2. In the MIDI Zones: a switch</td><td>Ditto</td></tr>
+<tr><td><span class="k">EDIT</span></td><td>Drawbars 1, 3, 4 and 9 (drawbar 9 on <span class="k">KNOB 4</span>). INSERT: the next effect. MASTER: the knobs hold the EQ or the compressor. In the MIDI Zones: a switch</td><td>INSERT: the effect before. Otherwise ditto</td></tr>
+<tr><td><span class="k">FX</span></td><td>The FX screen. Press again: back to the drawbars</td><td>The insert effect (INSERT); press again: the master (MASTER)</td></tr>
 <tr><td><span class="k">GLO</span></td><td>The MIDI Zones. Press again: the next of their five screens</td><td>The panel lights (chapter 4)</td></tr>
 <tr><td><span class="k">HOME</span></td><td>On the drawbars: the MIDI mixer; press again: back. Everywhere else: back to the drawbars</td><td><b>Panic</b>: all notes off, inside and on all 16 MIDI channels</td></tr>
 <tr><td><span class="k">SAVE</span></td><td>Tap: store the drawbars of the manual into a user slot of the drawbar list. Hold + one of the 16 white keys: store the whole instrument into that performance setup</td><td>—</td></tr>
-<tr><td><span class="k">SEL</span></td><td>Held: the 16 white keys recall the performance setups. Pressing it also shows the processor load, <span class="d">DSP 10%</span></td><td>—</td></tr>
-<tr><td><span class="k">ARP</span></td><td>Vibrato / chorus of the manual on and off (tremulant on pipe and reed models). FX: the pedal's row. Mixer: row 3. In the MIDI Zones: a switch</td><td>In the MIDI Zones: a second switch</td></tr>
-<tr><td><span class="k">SEQ</span></td><td>Coupler II/I on and off (the upper keys also play the lower registration). FX: the manual through the rotary or not. Mixer: row 4. In the MIDI Zones: a switch</td><td>Ditto</td></tr>
+<tr><td><span class="k">SEL</span></td><td>Held: the 16 white keys recall the performance setups. Pressing it also shows the processor load and the battery, <span class="d">DSP 10% BAT 94%</span></td><td>—</td></tr>
+<tr><td><span class="k">ARP</span></td><td>Vibrato / chorus of the manual on and off (tremulant on pipe and reed models). FX: the pedal's row. INSERT: the effect on the pedal. Mixer: row 3. In the MIDI Zones: a switch</td><td>In the MIDI Zones: a second switch</td></tr>
+<tr><td><span class="k">SEQ</span></td><td>Coupler II/I on and off (the upper keys also play the lower registration). FX: the manual through the rotary or not. INSERT: the effect on and off. Mixer: row 4. In the MIDI Zones: a switch</td><td>Ditto</td></tr>
 <tr><td><span class="k">PLAY</span></td><td>Rotary brake</td><td>—</td></tr>
 <tr><td><span class="k">REC</span></td><td>Rotary slow ↔ fast</td><td>The manual through the rotary or not</td></tr>
 <tr><td><span class="k">OCT−</span> <span class="k">OCT+</span></td><td>Octave of the FM-1's keys, −2 … +3</td><td>—</td></tr>
@@ -205,14 +206,14 @@ td:first-child { white-space: nowrap; }
 <!-- ============ 4 ============ -->
 <section>
 <h1><span class="num">4</span>The screens</h1>
-<p class="lead">The 240 × 240 display shows the drawbars, the FX screen, the MIDI mixer, the panel lights and the five screens of the MIDI Zones (the fifth: YST, the Yamaha SEQTRAK). At power-on the welcome screen lets the nine drawbars grow down before the OrGigs logo appears; any key or button skips it.</p>
+<p class="lead">The 240 × 240 display shows the drawbars, the FX, INSERT and MASTER screens, the MIDI mixer, the panel lights and the five screens of the MIDI Zones (the fifth: YST, the Yamaha SEQTRAK). At power-on the welcome screen lets the nine drawbars grow down before the OrGigs logo appears; any key or button skips it.</p>
 
 <h2>The drawbars</h2>
 <div class="fig">
   <img src="img/screen-b3.png" alt="Drawbar screen">
   <div class="cap">
     <ol>
-      <li><b>Top bar.</b> Model number and short name (<span class="d">1 WHEEL</span>), the manual (<span class="d">UPPER</span>), the drawbar group the knobs hold (<span class="d">DB1-4</span>, <span class="d">DB5-8</span>, <span class="d">DB9</span>), and on the right the drawbar preset (<span class="d">P1</span>). A star (<span class="d">P1*</span>) means the drawbars have been moved since the preset was recalled.</li>
+      <li><b>Top bar.</b> Model number and short name (<span class="d">1 WHEEL</span>), the manual (<span class="d">UPPER</span>), the drawbar group the knobs hold (<span class="d">DB1-4</span>, <span class="d">DB5-8</span>, <span class="d">DB9</span>), and on the right the drawbar preset (<span class="d">P1</span>) and the battery. A star (<span class="d">P1*</span>) means the drawbars have been moved since the preset was recalled.</li>
       <li><b>Drawbars.</b> The nine drawbars of the manual, 0–8. The colour shows the family. Vintage: brown sub-harmonics, white octaves, dark grey the in-between footages, as on a tonewheel organ. Pipe: gold principals, blue flutes, red strings and reeds. Reed: violet the detuned reeds, grey the air. The amber marks show the drawbars the four knobs move right now.</li>
       <li><b>Mini-bars.</b> The other two manuals, so you see the whole registration; <span class="d">II/I</span> when the coupler is on, and the performance setup (<span class="d">S1</span>). When you change something, its name and value cover this strip for about one and a half seconds, for example <span class="d">DRIVE 70</span>.</li>
       <li><b>Tabs.</b> Three switches in the tonewheel-organ colours, lit when on. <b>Green</b>: vibrato/chorus (<span class="d">V1</span>…<span class="d">C3</span>), or the tremulant on pipe and reed models. <b>Red</b>: percussion on the tonewheel (<span class="d">2F</span> = 2nd fast … <span class="d">3S</span> = 3rd slow), the coupler <span class="d">II/I</span> on the other models. <b>Yellow</b>: the rotary of this manual: its speed (<span class="d">SLOW</span>, <span class="d">FAST</span>, <span class="d">BRK</span>), or <span class="d">OFF</span> when the manual goes past it.</li>
@@ -225,6 +226,8 @@ td:first-child { white-space: nowrap; }
   <figure><img src="img/screen-cathedral.png" alt=""><figcaption>Cathedral organ, performance setup 2, just recalled</figcaption></figure>
   <figure><img src="img/screen-musette.png" alt=""><figcaption>Paris musette: violet drawbars are the detuned reeds</figcaption></figure>
   <figure><img src="img/screen-fx.png" alt=""><figcaption>The FX screen (chapter 9)</figcaption></figure>
+  <figure><img src="img/screen-insert.png" alt=""><figcaption>INSERT: the chorus on the upper manual (chapter 9)</figcaption></figure>
+  <figure><img src="img/screen-master.png" alt=""><figcaption>MASTER: EQ and compressor, 13.5 dB taken off (chapter 9)</figcaption></figure>
 </div>
 
 <h2>The FX, mixer, lights and MIDI screens</h2>
@@ -235,6 +238,7 @@ td:first-child { white-space: nowrap; }
   <li><b>Message line</b>: the last change, or a hint.</li>
   <li><b>Button map</b>: the twelve buttons in two rows of six, as on the panel, labelled with what they do on this screen. A lit button is a switch that is on.</li>
 </ol>
+<p><b>The battery</b> shows at the right end of every top bar. Below 20 % it turns red; below 10 % the message line warns <span class="d">BATTERY LOW</span>, again every five minutes. A yellow <b>bolt</b> in the symbol means it is charging: the FM-1 is on a computer or the SEQTRAK, and there is no low-battery warning then. A plain USB charger charges too, but shows no bolt (nothing there talks to the keyboard). Pressing <span class="k">SEL</span> shows the charge (<span class="d">BAT 94%</span>). On the cable it reads full (charging raises the voltage).</p>
 <p>The MIDI screens add a picture above the knob row: the key ranges of the three zones, the channels of the cloner, the footages of the harmonic mapper, or the stored chord (chapter 10).</p>
 
 <h2>The MIDI mixer</h2>
@@ -431,10 +435,10 @@ td:first-child { white-space: nowrap; }
 <p>All 16 start with the standard MIDI Zones (upper on channel 1, lower on 2, pedal on 3, full key range, velocity through) and the mixer at 100.</p>
 
 <h2>What is kept after power-off</h2>
-<p>Everything: the instrument as you left it, the 16 setups, the user slots of the drawbar lists, the panel lights and the MIDI rate.</p>
+<p>Everything: the instrument as you left it, the 16 setups, the user slots of the drawbar lists, the insert effect and the master, the panel lights and the MIDI rate.</p>
 <div class="note"><p>OrGigs writes to its memory about 2 seconds after your last change, and only when nothing is sounding, because writing would interrupt the audio for a moment. Before switching off, take your hands off the keys for a couple of seconds.</p></div>
 <h2>Backing up your settings</h2>
-<p>Everything OrGigs keeps (the 16 setups, the instrument as you left it, the user drawbars, the lights) fits into one small backup file, sent over the USB cable as MIDI SysEx. Keep one before you install another firmware: BoGigs, for example, uses the same memory and starts OrGigs from the factory settings afterwards. The FM-1 and the SMK-37 Elite read each other's backups.</p>
+<p>Everything OrGigs keeps (the 16 setups, the instrument as you left it, the user drawbars, the lights, the insert effect and the master) fits into one small backup file, sent over the USB cable as MIDI SysEx. Keep one before you install another firmware: BoGigs, for example, uses the same memory and starts OrGigs from the factory settings afterwards. The FM-1 and the SMK-37 Elite read each other's backups.</p>
 <p>On the computer, <code>tools/orgigs_backup.py</code> (Python with mido and python-rtmidi, as the installer) does it; close other programs that use the OrGigs MIDI port first.</p>
 <table>
 <tr><th>Command</th><th>What it does</th></tr>
@@ -469,7 +473,10 @@ td:first-child { white-space: nowrap; }
   </div>
 </div>
 
-<p>The effects stay with the manuals when you change the model; a performance setup stores them. The sound passes through these stages, in this order.</p>
+<p>The effects stay with the manuals when you change the model; a performance setup stores them (the insert effect and the master are not part of a setup: they stay as they are when you recall one). The sound passes through these stages, in this order:</p>
+<pre>each manual:  body + drive ─▶ vibrato / chorus / tremulant ─▶ [insert effect] ─▶ rotary or past it
+                                                               └─ sends ─▶ delay, reverb
+all together: rotary ─▶ + delay + reverb ─▶ [master EQ ─▶ compressor] ─▶ expression ─▶ volume</pre>
 <h2>1 · Body and drive (per manual)</h2>
 <ul>
   <li><b>Vintage &amp; Combo:</b> asymmetric tube overdrive into a speaker cabinet. More <span class="d">DRIVE</span> gives more growl, especially with full drawbars.</li>
@@ -500,6 +507,50 @@ td:first-child { white-space: nowrap; }
 <tr><td><span class="d">STAGE</span></td><td>A small club or stage, 0.9 s</td></tr>
 <tr><td><span class="d">HALL</span></td><td>A concert hall, 2.8 s</td></tr>
 <tr><td><span class="d">CATHEDRAL</span></td><td>A stone church, 7.5 s with 45 ms pre-delay</td></tr></table>
+
+<h2>6 · The insert effect (one manual): SEL + FX</h2>
+<div class="fig">
+  <img src="img/screen-insert.png" alt="INSERT screen">
+  <div class="cap">
+    <p>Hold <span class="k">SEL</span> and press <span class="k">FX</span>: <span class="d">INSERT</span>. One effect at a time, on one manual, after its vibrato and before its rotary. <span class="k">EDIT</span> chooses the next effect (<span class="k">SEL</span> + <span class="k">EDIT</span>: the one before), <span class="k">SEQ</span> switches it off and on again, <span class="k">ENV</span>, <span class="k">LFO</span>, <span class="k">ARP</span> put it on the upper, lower or pedal manual. The row of seven shows which one is chosen.</p>
+    <p><span class="k">KNOB 1</span>–<span class="k">KNOB 4</span> are the effect's values 1–4, <span class="k">SEL</span> + <span class="k">KNOB 1</span>–<span class="k">KNOB 4</span> the values 5–8. Each effect keeps its own, also after power-off and while another effect is chosen. <span class="k">FX</span> or <span class="k">HOME</span> go back to the drawbars.</p>
+  </div>
+</div>
+<table class="wrap fxtab"><tr><th>Effect</th><th>KNOB 1</th><th>KNOB 2</th><th>KNOB 3</th><th>KNOB 4</th><th>SEL + 1</th><th>SEL + 2</th><th>SEL + 3</th><th>SEL + 4</th></tr>
+<tr><td><b>Chorus</b></td><td>Rate 0.10–5 Hz</td><td>Depth</td><td>Delay 3–25 ms</td><td>Mix</td><td>Width</td><td>Feedback</td><td></td><td></td></tr>
+<tr><td><b>Wah-wah</b></td><td>Pedal</td><td>Low 200–800 Hz</td><td>High 1–4 kHz</td><td>Resonance 1–10</td><td>Mix</td><td>Level</td><td></td><td></td></tr>
+<tr><td><b>Auto-wah</b></td><td>Sensitivity</td><td>LFO rate (0 = off)</td><td>Low</td><td>High</td><td>Resonance</td><td>Decay 20–2000 ms</td><td>Mix</td><td>Level</td></tr>
+<tr><td><b>Flanger</b></td><td>Rate</td><td>Depth</td><td>Delay 0.5–5 ms</td><td>Feedback ±90 %</td><td>Mix</td><td>Width</td><td></td><td></td></tr>
+<tr><td><b>Phaser</b></td><td>Rate</td><td>Low 100–1000 Hz</td><td>High 1–6 kHz</td><td>Stages 2–8</td><td>Feedback ±90 %</td><td>Mix</td><td>Width</td><td></td></tr>
+<tr><td><b>Ring mod</b></td><td>Frequency 20–2000 Hz</td><td>Mix</td><td>LFO rate (0 = off)</td><td>LFO depth</td><td>Width</td><td></td><td></td><td></td></tr>
+<tr><td><b>Amp</b></td><td>Model</td><td>Gain</td><td>Tone ±10</td><td>Cabinet</td><td>Level</td><td>Mix</td><td></td><td></td></tr></table>
+<ul>
+  <li><b>Chorus</b>: a lush stereo chorus, kept at the level of the dry sound. Feedback makes it richer.</li>
+  <li><b>Wah-wah</b>: while it is chosen, <b>MIDI CC 1 is the wah pedal</b> (the mod wheel of a keyboard on the USB, or the simulator's mod strip), not the rotary switch; <span class="k">KNOB 1</span> sets the pedal too. Low and High set the travel of the pedal, Resonance how vocal it is.</li>
+  <li><b>Auto-wah</b>: the wah follows how loud you play: chords open it, and it closes with the Decay. Sensitivity sets how far it opens. With an LFO rate above 0 it also sweeps by itself.</li>
+  <li><b>Flanger</b>: the jet sweep. Negative feedback sounds hollow, positive metallic.</li>
+  <li><b>Phaser</b>: notches sweeping between Low and High; more stages, more notches.</li>
+  <li><b>Ring mod</b>: the sound multiplied with a sine: bells and robots. Small frequencies turn into a tremolo. The LFO wobbles the frequency.</li>
+  <li><b>Amp</b>: a guitar amp for the organ. Models <span class="d">CLEAN</span>, <span class="d">CRUNCH</span>, <span class="d">LEAD</span> (two stages) and <span class="d">FUZZ</span>; Tone tilts dark to bright; Cabinet <span class="d">OFF</span>, <span class="d">1X12</span>, <span class="d">2X12</span>, <span class="d">4X12</span>. The level holds when you turn up the gain.</li>
+</ul>
+<p>Mix is the share of the effect (100 % = only the effect), Width how far it spreads in stereo, Level the effect's loudness. Rates are in Hz.</p>
+
+<h2>7 · The master: EQ and compressor (the whole sound)</h2>
+<div class="fig">
+  <img src="img/screen-master.png" alt="MASTER screen">
+  <div class="cap">
+    <p>On the INSERT screen, <span class="k">SEL</span> + <span class="k">FX</span> once more: <span class="d">MASTER</span>. A three-band EQ and a compressor on the whole sound, after the delay and the reverb, before the expression and the volume. <span class="k">ENV</span> switches the EQ, <span class="k">LFO</span> the compressor (lit: on). The bar shows how many dB the compressor takes off right now (<span class="d">-13.5dB</span>). <span class="k">EDIT</span> chooses what the knobs hold. Both are kept for all setups.</p>
+    <table><tr><th style="width:22%">Knob</th><th>EQ</th><th>Compressor (after <span class="k">EDIT</span>)</th></tr>
+    <tr><td>KNOB 1</td><td>Low, ±12 dB</td><td>Threshold, −40–0 dB</td></tr>
+    <tr><td>KNOB 2</td><td>Mid, ±12 dB</td><td>Ratio, 1:1–20:1</td></tr>
+    <tr><td>KNOB 3</td><td>High, ±12 dB</td><td>Attack, 1–100 ms</td></tr>
+    <tr><td>KNOB 4</td><td>—</td><td>Release, 20–1000 ms</td></tr>
+    <tr><td>SEL + KNOB 1</td><td>Low frequency, 50–400 Hz</td><td>Make-up gain, 0–12 dB</td></tr>
+    <tr><td>SEL + KNOB 2</td><td>Mid frequency, 200–5000 Hz</td><td>—</td></tr>
+    <tr><td>SEL + KNOB 3</td><td>High frequency, 2–12 kHz</td><td>—</td></tr></table>
+  </div>
+</div>
+<div class="note"><p><b>Processor load.</b> The effects only cost time while they are on. Press <span class="k">SEL</span> to see the load (<span class="d">DSP 10%</span>) with your heaviest registration; it should stay well below 100.</p></div>
 </section>
 
 <!-- ============ 10 ============ -->
@@ -626,7 +677,7 @@ FM-1 (USB MIDI out) ──▶ MIDI host ──▶ synth, sequencer (USB or 5-pin
 <div class="note warn"><p><b>During installation</b> don't unplug the FM-1. If the write is cut off anyway, plug it in again and press <b>Install</b>: it goes on where it stopped.</p></div>
 
 <h2>Without a browser</h2>
-<p>OrGigs's source also has an installer script, <code>tools/fm1_install.py</code> (Python 3.12 with <code>mido</code> and <code>python-rtmidi</code>). In the source folder, <code>py -3.12 tools\fm1_install.py --info</code> only reads and shows the running firmware, for example <code>FM-1_674102 [running]</code>; <code>py -3.12 tools\fm1_install.py orgigs-1.0.2.fwsc</code> installs a package.</p>
+<p>OrGigs's source also has an installer script, <code>tools/fm1_install.py</code> (Python 3.12 with <code>mido</code> and <code>python-rtmidi</code>). In the source folder, <code>py -3.12 tools\fm1_install.py --info</code> only reads and shows the running firmware, for example <code>FM-1_674110 [running]</code>; <code>py -3.12 tools\fm1_install.py orgigs-1.1.fwsc</code> installs a package.</p>
 
 <h2>Going back to the original firmware</h2>
 <ul>
@@ -660,12 +711,12 @@ sim/serve.sh            # then open http://localhost:8099</pre>
 <tr><td>Models</td><td>8, in 3 departments</td></tr>
 <tr><td>Manuals</td><td>Upper 9 drawbars, Lower 9 drawbars, Pedal 4 stops</td></tr>
 <tr><td>Keyboard</td><td>27 keys (F3–G5), octave −2…+3</td></tr>
-<tr><td>Effects</td><td>Per manual: drive / limiter / cassotto, scanner vibrato &amp; chorus or tremulant, rotary on/off, delay and reverb sends. Shared: percussion, two-rotor rotary, stereo delay up to 1 s, 4 reverbs up to 7.5 s</td></tr>
+<tr><td>Effects</td><td>Per manual: drive / limiter / cassotto, scanner vibrato &amp; chorus or tremulant, rotary on/off, delay and reverb sends. Shared: percussion, two-rotor rotary, stereo delay up to 1 s, 4 reverbs up to 7.5 s. Insert: chorus, wah-wah, auto-wah, flanger, phaser, ring modulator, amp. Master: 3-band EQ, compressor</td></tr>
 <tr><td>Audio</td><td>44.1 kHz stereo, 256-sample blocks (5.8 ms)</td></tr>
 <tr><td>Memory</td><td>16 performance setups; a drawbar list of 75 registrations + 16 user slots, a pedal list of 24 + 8; kept across power-off</td></tr>
 <tr><td>MIDI mixer</td><td>16 channel volumes (CC 7), per setup</td></tr>
 <tr><td>MIDI</td><td>USB MIDI in and out; 3 zones with channel, range, transpose, velocity, filters; cloner, 9-channel harmonic mapper, chord memory per zone; up to 48 incoming notes held at once</td></tr>
-<tr><td>Firmware package</td><td>FM-1_674102</td></tr></table>
+<tr><td>Firmware package</td><td>FM-1_674110</td></tr></table>
 
 <h2>Known limits</h2>
 <ul>
@@ -698,10 +749,11 @@ sim/serve.sh            # then open http://localhost:8099</pre>
 <section>
 <h1><span class="num">B</span>Troubleshooting</h1>
 <table class="wrap"><tr><th style="width:34%">Problem</th><th>Solution</th></tr>
-<tr><td>No sound</td><td>Turn up <span class="k">MASTER</span>. Check that some drawbars of the manual you're playing are above 0. In the clone and harmonic screens the keys are switches; press <span class="k">HOME</span>. On the zone screen check <span class="d">INT</span> (lit = the zone sounds).</td></tr>
+<tr><td>No sound</td><td>Turn up <span class="k">MASTER</span>. Check that some drawbars of the manual you're playing are above 0. In the clone and harmonic screens the keys are switches; press <span class="k">HOME</span>. On the zone screen check <span class="d">INT</span> (lit = the zone sounds). Is the master compressor's make-up or the EQ far off?</td></tr>
 <tr><td>An external keyboard plays nothing</td><td>Check the zone's in channel and key range on the zone screen, and that the MIDI host routes the keyboard to the FM-1.</td></tr>
 <tr><td>Some keys of the external keyboard are silent</td><td>They're outside the zone's range. Widen it with <span class="k">KNOB 2</span> / <span class="k">SEL</span> + <span class="k">KNOB 2</span> or learn it (<span class="d">LRN</span>).</td></tr>
-<tr><td>The sound is very different from before</td><td>Another setup, model or drawbar preset is active. Check the top bar; hold <span class="k">SEL</span> to see which setup key is lit.</td></tr>
+<tr><td>The sound is very different from before</td><td>Another setup, model or drawbar preset is active. Check the top bar; hold <span class="k">SEL</span> to see which setup key is lit. The insert effect and the master are not part of a setup: check them with <span class="k">SEL</span> + <span class="k">FX</span>.</td></tr>
+<tr><td>CC 1 doesn't switch the rotary</td><td>The insert effect is <span class="d">WAH-WAH</span>: CC 1 is its pedal. Choose another effect or switch it off (<span class="k">SEL</span> + <span class="k">FX</span>, then <span class="k">SEQ</span>).</td></tr>
 <tr><td>No percussion</td><td>Percussion only works on the Tonewheel Organ model, on the upper manual, and only on detached (non-legato) playing.</td></tr>
 <tr><td>No rotary effect</td><td>Pipe and reed models bypass the rotary. Press <span class="k">SEL</span> + <span class="k">REC</span> to turn it on.</td></tr>
 <tr><td>A synth receives nothing</td><td>Check the zone's out channel (not <span class="d">OFF</span>) and the filters. In the harmonic mapper only footages that are switched on and whose drawbar is above 0 send.</td></tr>

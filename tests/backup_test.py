@@ -105,7 +105,7 @@ def main():
 
 def elite(fm1_backup):
     """F: the SMK-37 Elite's backup carries its Leslie cabinets, insert effect and master; it loads back; one
-    without them (the FM-1's) loads too and leaves them as they are"""
+    without them loads too and leaves them as they are; the FM-1 takes the effect and the master from it"""
     import struct
     subprocess.run([os.path.join(ROOT, "tests", "run_host.sh"), os.path.join(ROOT, "tests", "elite_fx.txt")],
                    check=True, stdout=subprocess.DEVNULL, env=dict(os.environ, BOARD="smk37"))
@@ -118,7 +118,8 @@ def elite(fm1_backup):
     x = e.extras()
     check(sorted(x) == ["F", "L", "M", "P"] and horn(e) == 70 and x["L"][1] == 2 and x["F"][1] == 1,
           "Elite: the backup carries the rotary cabinets (USER 1, horn 0.70), the effect (CHORUS), the master, the layouts")
-    check("rotary" in e.describe() and not fm1_backup.extras(), "the tool names them (the FM-1's backup has none)")
+    check("rotary" in e.describe() and sorted(fm1_backup.extras()) == ["F", "M"],
+          "the tool names them (the FM-1's backup: the effect and the master, not the Elite's cabinets and layouts)")
     _, sx = run(feed(e, 100) + [f"1500 btn {bt}", "5000 sysex " + REQ_ALL], 5500)
     got = backups(sx)
     check(states(sx) == [1, 2] and horn(got[0]) == 60 and horn(got[-1]) == 70 and got[-1].extras()["F"][1] == 1,
@@ -128,14 +129,16 @@ def elite(fm1_backup):
     _, sx = run(["1000 btn 14", "1100 btn 12", "1200 pad 2 100", "1210 pad 2 0", "1300 enc 0 5"] + feed(plain, 1500)
                 + [f"2500 btn {bt}", "6000 sysex " + REQ_ALL], 6500)
     check(states(sx) == [1, 2] and horn(backups(sx)[-1]) == 70,
-          "Elite: a backup without them (as the FM-1's) loads; the cabinets stay as they were")
+          "Elite: a backup without them (as one of before) loads; the cabinets stay as they were")
     # (and the FM-1 takes the Elite's backup, skipping what it does not know)
     subprocess.run([os.path.join(ROOT, "tests", "run_host.sh"), os.path.join(ROOT, "tests", "leslie.txt")],
                    check=True, stdout=subprocess.DEVNULL)
     _, sx = run(feed(e, 100) + [f"1500 btn {BTN_SAVE}", "5000 sysex " + REQ_ALL], 5500)
     got = backups(sx)
-    check(states(sx) == [1, 2] and got[-1].data == e.data[:e.data.find(b"OGEX")] and not got[-1].extras(),
-          "FM-1: takes the Elite's backup (the shared part), sends none of the Elite's records")
+    fm1x = got[-1].extras()
+    check(states(sx) == [1, 2] and got[-1].data[:got[-1].data.find(b"OGEX")] == e.data[:e.data.find(b"OGEX")]
+          and sorted(fm1x) == ["F", "M"] and fm1x["F"] == x["F"] and fm1x["M"] == x["M"],
+          "FM-1: takes the Elite's backup (the shared part, the effect and the master), skips the cabinets and layouts")
 
 
 class FakeOrGigs:

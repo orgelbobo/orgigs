@@ -9,4 +9,7 @@
 #define BOARD_YST_ON "ENV"              /* YST: the buttons that switch it on, and read the SEQTRAK again */
 #define BOARD_YST_REF "LFO"
 #define BOARD_YST_HINT "SELECT: TRACK  PRESETS: SOUND"
+#define BOARD_FXI_PICK "EDIT: PICK ONE"   /* INSERT (FX twice): a knob turned with no effect chosen */
+#define BOARD_CC1_WAH 1                 /* while the insert is the WAH, CC 1 (the mod strip's) is its pedal */
+#define BOARD_BAT_SCALE 6810u           /* the battery divider (core/orgigs_bat.c): a full cell reads 624, 4.15 V */
 typedef uint32_t board_keys_t;          /* the keys held, bit k = key k */
