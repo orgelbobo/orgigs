@@ -12,8 +12,6 @@
   "smk37": {
     "image": "docs/hub/card-elite.png",
     "install": "https://orgelbobo.github.io/orgigs/install/",
-    "guide": "https://orgelbobo.github.io/orgigs/docs/OrGigs_Elite_Manual.pdf",
-    "play": "https://orgelbobo.github.io/orgigs/try/elite/",
-    "cheat": "https://orgelbobo.github.io/orgigs/docs/OrGigs_Elite_At_a_glance.pdf"
+    "guide": "https://orgelbobo.github.io/orgigs/docs/OrGigs_Elite_Manual.pdf"
   }
 }
