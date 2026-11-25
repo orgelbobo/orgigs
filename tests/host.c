@@ -31,6 +31,18 @@ static int32_t lv_dbg[3];               /* (orgigs_fx.c fills it) */
 static void par_dump(void);            /* core/orgigs_params.c: the parameter table (--params) */
 static void midi_send(uint32_t st, uint32_t d1, uint32_t d2) { printf("%6u ms  MIDI out %02X %3u %3u\n", fm1_ms, st, d1, d2); }
 static void host_settings_saved(void) { printf("%6u ms  settings saved\n", fm1_ms); }
+/* ORGIGS_FLASH=FILE: the settings sectors and the blobs come from FILE (if it is there) and go back to it at the
+   end, as the flash keeps them over a restart or an update (tests/settings_compat.sh: 1.1's settings in this build) */
+static void host_flash(int save)
+{
+    const char *path = getenv("ORGIGS_FLASH");
+    FILE *f;
+    if (!path || !(f = fopen(path, save ? "wb" : "rb"))) return;
+    if (save) { fwrite(host_store, 1, sizeof host_store, f); fwrite(host_blobs, 1, sizeof host_blobs, f); }
+    else if (fread(host_store, 1, sizeof host_store, f) != sizeof host_store
+             || fread(host_blobs, 1, sizeof host_blobs, f) != sizeof host_blobs) { fprintf(stderr, "%s: short\n", path); exit(1); }
+    fclose(f);
+}
 static int sysex_send(const uint8_t *p, uint32_t n)
 {
     uint32_t i;
@@ -189,6 +201,7 @@ static void platform_poll(void)                 /* one call = one millisecond */
     }
 #endif
     if (fm1_ms >= end_ms) {
+        host_flash(1);
         write_wav();
         exit(0);
     }
@@ -200,6 +213,7 @@ int main(int argc, char **argv)
     if (argc < 3) { fprintf(stderr, "usage: %s OUT script.txt | --params\n", argv[0]); return 1; }
     host_out = argv[1];
     host_blob_log = getenv("ORGIGS_BLOB_LOG") != 0;
+    host_flash(0);
 #if BOARD_SMK37
     fm1_in.wheel[0] = 512;              /* the pitch wheel rests in the middle */
     fm1_in.wheel[1] = 1023;             /* the mod wheel down (the Elite reads it backwards) */

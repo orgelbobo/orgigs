@@ -1,0 +1,25 @@
+# SUS IN: a sustain coming in holds the Elite's own keys (BOARD=smk37 tests/run_host.sh tests/elite_susin.txt; checked
+# by tests/elite_test.py). Buttons: 10 GLOBE. Pads 0..15 (ZONE: pad 12 = SUS IN). Keys: bit 12 = C4. The upper zone
+# listens and sends on channel 1.
+# --- SUS IN off: CC 64 127 on channel 1, C4 played and let go: it ends at once
+1000 midi 0xB0 64 127
+1100 keys 0x1000
+1200 keys 0
+1300 midi 0xB0 64 0
+# --- GLOBE: ZONE; pad 13: SUS IN on; the same: C4 holds until the CC 64 0
+1500 btn 10
+1600 pad 12 100
+1650 pad 12 0
+1700 shot
+2000 midi 0xB0 64 127
+2100 keys 0x1000
+2200 keys 0
+2300 midi 0xB0 64 0
+# --- the Elite's own pedal and the one coming in: the keys end when both are up
+2500 midi 0xB0 64 127
+2600 pedal 1023
+2700 keys 0x1000
+2800 keys 0
+2900 midi 0xB0 64 0
+3000 pedal 0
+3200 end

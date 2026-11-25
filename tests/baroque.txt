@@ -1,0 +1,33 @@
+# OrGigs 2: the baroque organ (tests/run_host.sh tests/baroque.txt): model 9 in the order; its own list (PRESETS to the
+# ORGANO PLENO, +14 from PRINZ 8' 4'), Werckmeister III; an eight-key chord makes the wind sag, then a scale shows the
+# mixture breaking back at the top.
+# Buttons: 2 FX 3 SEL; encoders: 1 ALGORITHM 2 KNOB1 6 PRESETS
+100 enc 1 8
+300 enc 6 13
+500 shot
+600 midi 0x90 48 100
+600 midi 0x90 52 90
+600 midi 0x90 55 90
+600 midi 0x90 60 90
+600 midi 0x90 64 90
+600 midi 0x90 67 90
+600 midi 0x90 72 90
+600 midi 0x90 76 90
+600 midi 0x92 36 100
+1600 shot
+2200 midi 0x80 48 0
+2200 midi 0x80 52 0
+2200 midi 0x80 55 0
+2200 midi 0x80 60 0
+2200 midi 0x80 64 0
+2200 midi 0x80 67 0
+2200 midi 0x80 72 0
+2200 midi 0x80 76 0
+2200 midi 0x82 36 0
+2500 midi 0x90 84 100
+2800 midi 0x80 84 0
+2900 midi 0x90 91 100
+3200 midi 0x80 91 0
+3300 midi 0x90 96 100
+3600 midi 0x80 96 0
+4500 end

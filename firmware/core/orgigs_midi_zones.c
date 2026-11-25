@@ -41,6 +41,10 @@
 #define ZX_MUTE   0x02u                 /* MIDI OUT off: the zone sends nothing (inside it still sounds) */
 #define ZX_CPL    0x04u                 /* coupled (the SMK-37's coupler): the panel's keys on one coupled zone play
                                            them all; a coupled pedal takes only the lowest note (ml_cpl) */
+#define ZX_IOCT   0x38u                 /* bits 3..5: the organ's own octave of the zone, -3..+3 (two's complement; 0 in
+                                           every setup of before) */
+#define ZX_SUSK   0x40u                 /* SUSTAIN IN HOLDS THE KEYS: CC 64 coming in on in_ch also holds the panel's keys
+                                           let go, as the panel's own pedal does (a pedal on the keyboard at the far end) */
 
 enum { CSEND_VELOCITY, CSEND_CC7, CSEND_CC11, ML_NCSEND };
 enum { KEYS_FOLLOW, KEYS_ZONES, ML_NKEYS };
@@ -64,6 +68,17 @@ typedef struct {                        /* one zone, as it is saved */
     uint8_t xf;                         /* ZX_...: (where the struct had its padding byte: setups keep their size) */
 } zone_t;
 typedef char zone_size[sizeof(zone_t) == 40u ? 1 : -1];   /* (the store's layout: as before xf) */
+
+static int32_t zone_ioct(const zone_t *z)      /* the octave the zone plays the organ in (OCTAVE above: MIDI out only) */
+{
+    int32_t v = (int32_t)(z->xf >> 3 & 7u);
+    return v >= 4 ? v - 8 : v;
+}
+static void zone_ioct_set(zone_t *z, int32_t v)
+{
+    v = v < -3 ? -3 : v > 3 ? 3 : v;
+    z->xf = (uint8_t)((z->xf & ~ZX_IOCT) | ((uint32_t)v & 7u) << 3);
+}
 
 typedef struct {                        /* the zones, as a performance setup keeps them */
     zone_t z[ORG_NMAN];
@@ -106,7 +121,8 @@ static struct {
     uint8_t zones[ML_SLOTS];            /* the zones that took it, bit = zone */
     uint8_t sus[ML_SLOTS];              /* released, but held by the sustain pedal */
     uint16_t pedal;                     /* sustain down, bit = MIDI-in channel */
-    uint8_t key_sus;                    /* the panel's own sustain pedal down (the SMK-37): it holds the keys let go */
+    uint8_t key_sus;                    /* what holds the panel's keys let go: KSUS_PANEL its own sustain pedal (the SMK-37),
+                                           KSUS_IN a CC 64 coming in on a ZX_SUSK zone */
     uint8_t int_ref[ORG_NMAN][ORG_NGEN];
     uint8_t out_ref[16][128];
     uint8_t pedal_note;                 /* the auto-pedal's note, 0xFF none */
@@ -231,7 +247,7 @@ static void zone_on(uint32_t zi, uint32_t slot, int32_t note, uint32_t in_vel)
         for (i = 0; i < n; i++) notes[i] = note + s8(&z->chord[i]);
     }
     if (!(z->flags & Z_NOINT))
-        for (i = 0; i < n; i++) int_on(zi, notes[i], slot);
+        for (i = 0; i < n; i++) int_on(zi, notes[i] + 12 * zone_ioct(z), slot);
     if (z->out_ch >= CH_OFF || (z->xf & ZX_MUTE)) return;
     vel = zone_vel(z, in_vel);
     for (i = 0; i < n; i++) {
@@ -273,6 +289,18 @@ static uint32_t ml_cpl(void)
     uint32_t zi, m = 0;
     for (zi = 0; zi < ORG_NMAN; zi++) if (zn.z[zi].xf & ZX_CPL) m |= 1u << zi;
     return m & (m - 1u) ? m : 0u;
+}
+
+/* the panel's keys held by a sustain: src KSUS_PANEL / KSUS_IN down or up; when neither holds, the keys let go end */
+enum { KSUS_PANEL = 1, KSUS_IN = 2 };
+static void ml_pedal_update(void);
+static void ml_key_sus(uint32_t src, uint32_t down)
+{
+    uint32_t s;
+    mls.key_sus = (uint8_t)(down ? mls.key_sus | src : mls.key_sus & ~src);
+    if (mls.key_sus) return;
+    for (s = 0; s < BOARD_NKEYS; s++) if (mls.src[s] != SRC_NONE && mls.sus[s]) { mls.sus[s] = 0; slot_off(s); }
+    ml_pedal_update();
 }
 
 /* auto-pedal: the lowest note held in the lower zone, if it lies in the pedal zone's range; a coupled pedal: the
@@ -506,9 +534,14 @@ static void ml_midi_in(uint8_t st, uint8_t d1, uint8_t d2)
                 org_par.drawbar[zi][d1 - 12u] = (uint8_t)((d2 * 8u + 63u) / 127u);
         if (!li && d1 != 123u && d1 != 120u) {}                     /* (FILTER CC IN: all notes off still acts) */
         else if (d1 == 1u) ml_strip_mod(d2);
-        else if (d1 == 11u) org_par.expression = d2;
-        else if (d1 == 64u) ml_sustain(ch, d2 >= 64u);
-        else if (d1 == 121u) ml_sustain(ch, 0);                     /* reset all controllers */
+        else if (d1 == 11u) org_par.expression = org_par.roller = d2;   /* (the roller: the romantic organ's) */
+        else if (d1 == 64u || d1 == 121u) {                        /* sustain; 121 reset all controllers: up */
+            uint32_t down = d1 == 64u && d2 >= 64u, susk = 0;
+            ml_sustain(ch, down);
+            for (zi = 0; zi < ORG_NMAN; zi++) if (li >> zi & 1u && zn.z[zi].xf & ZX_SUSK) susk = 1;
+            if (susk || (!down && mls.key_sus & KSUS_IN)) ml_key_sus(KSUS_IN, down);   /* SUS IN: the panel's keys too
+                                                                                     (up: whatever holds them now) */
+        }
         else if (d1 == 123u || d1 == 120u) {                        /* all notes off on this channel */
             uint32_t s;
             mls.pedal &= (uint16_t)~(1u << ch);
@@ -536,6 +569,7 @@ static void ml_panic(void)
     ml_release_all();                   /* note-offs for what we know we sent */
     for (s = 0; s < ML_SLOTS; s++) { mls.nin[s] = 0; mls.nout[s] = 0; mls.src[s] = SRC_NONE; mls.zones[s] = 0; mls.sus[s] = 0; }
     mls.pedal = 0;
+    mls.key_sus &= (uint8_t)~KSUS_IN;   /* (the panel's pedal: still where it is) */
     for (s = 0; s < ORG_NMAN; s++)
         for (n = 0; n < ORG_NGEN; n++) mls.int_ref[s][n] = 0;
     for (ch = 0; ch < 16u; ch++)
@@ -569,7 +603,8 @@ static void zones_sanitise(zones_t *p)
         if (z->harm_base > 7u) z->harm_base = 3;
         if (z->harm_send >= ML_NCSEND) z->harm_send = CSEND_VELOCITY;
         if (z->chord_n > ML_MAXCHORD) z->chord_n = 0;
-        if (z->xf > 7u) z->xf = 0;      /* (a padding byte before: anything else is off) */
+        if (z->xf & 0x80u) z->xf = 0;   /* (a padding byte before: anything else is off) */
+        else if (zone_ioct(z) < -3) zone_ioct_set(z, 0);
     }
     if (p->keys >= ML_NKEYS) p->keys = KEYS_FOLLOW;
     p->auto_pedal &= 1u;

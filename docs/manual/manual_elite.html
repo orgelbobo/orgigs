@@ -50,13 +50,21 @@ td:first-child { white-space: nowrap; }
 .cols { columns: 2; column-gap: 8mm; }
 .cols > * { break-inside: avoid; }
 .dept { font-size: 7.5pt; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.new { font: 600 7pt "Segoe UI", Arial, sans-serif; color: #a86400; text-transform: uppercase; letter-spacing: .04em; }
 .tag { display: inline-block; font: 600 7.5pt "Consolas", monospace; background: var(--dark); color: var(--amber); padding: 0.8pt 3pt; border-radius: 2px; }
 
 /* cover */
 .cover { page: cover; height: 297mm; width: 210mm; background: var(--dark); color: #eee; position: relative; overflow: hidden; }
 .cover .bars { position: absolute; left: 22mm; right: 22mm; top: 40mm; height: 95mm; display: flex; gap: 5mm; align-items: flex-start; }
-.cover .bar { flex: 1; border-radius: 1.5mm 1.5mm 0 0; position: relative; }
-.cover .bar::after { content: ""; position: absolute; left: -1mm; right: -1mm; bottom: -3mm; height: 3mm; background: #e9e4d6; border-radius: 0.6mm; }
+.cover .bar { flex: 1; position: relative;      /* OrGigs 2: a round shaft (shaded across, a shine), faint grooves, a cap */
+  background: linear-gradient(90deg, rgba(0,0,0,.58) 0%, rgba(0,0,0,.18) 16%, rgba(255,255,250,.08) 24%,
+      rgba(255,255,250,.42) 30%, rgba(255,255,250,.06) 37%, rgba(0,0,0,0) 52%, rgba(0,0,0,.22) 78%, rgba(0,0,0,.62) 100%),
+    repeating-linear-gradient(to top, transparent 0 7.6mm, rgba(0,0,0,.2) 7.6mm 7.95mm), var(--c); }
+.cover .bar::after { content: ""; position: absolute; left: -1.2mm; right: -1.2mm; bottom: -4.6mm; height: 4.6mm;
+  border-radius: 1.4mm; box-shadow: 0 1.2mm 1.6mm rgba(0,0,0,.65);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--c) 50%, #fff) 0%, var(--c) 45%, color-mix(in srgb, var(--c) 55%, #000) 100%); }
+.cover .bar::before { content: ""; position: absolute; left: 0; right: 0; bottom: -0.2mm; height: 0.4mm; z-index: 1;
+  background: rgba(255,255,255,.35); }
 .cover .t { position: absolute; left: 22mm; right: 22mm; top: 146mm; }
 .cover .t .pre { font: 600 9pt "Segoe UI", Arial, sans-serif; letter-spacing: .25em; text-transform: uppercase; color: var(--amber); }
 .cover .t h1 { break-before: auto; color: #fff; font-size: 46pt; line-height: 1.05; margin: 3mm 0 4mm; padding: 0; }
@@ -82,22 +90,22 @@ td:first-child { white-space: nowrap; }
 <!-- ============ COVER ============ -->
 <section class="cover">
   <div class="bars">
-    <div class="bar" style="height:100%;background:#8b4a26"></div>
-    <div class="bar" style="height:100%;background:#8b4a26"></div>
-    <div class="bar" style="height:100%;background:#efe9da"></div>
-    <div class="bar" style="height:58%;background:#efe9da"></div>
-    <div class="bar" style="height:30%;background:#2b2b30"></div>
-    <div class="bar" style="height:72%;background:#efe9da"></div>
-    <div class="bar" style="height:20%;background:#2b2b30"></div>
-    <div class="bar" style="height:44%;background:#2b2b30"></div>
-    <div class="bar" style="height:86%;background:#f2a51d"></div>
+    <div class="bar" style="height:100%;--c:#8b4a26"></div>
+    <div class="bar" style="height:100%;--c:#8b4a26"></div>
+    <div class="bar" style="height:100%;--c:#efe9da"></div>
+    <div class="bar" style="height:58%;--c:#efe9da"></div>
+    <div class="bar" style="height:30%;--c:#4a4a52"></div>
+    <div class="bar" style="height:72%;--c:#efe9da"></div>
+    <div class="bar" style="height:20%;--c:#4a4a52"></div>
+    <div class="bar" style="height:44%;--c:#4a4a52"></div>
+    <div class="bar" style="height:86%;--c:#f2a51d"></div>
   </div>
   <div class="t">
     <div class="pre">Owner's Manual</div>
     <h1><img class="logo" src="img/cover-logo.png" alt="OrGigs"><span class="model">Elite</span></h1>
     <div class="sub">Three-manual organ, pipe organ and free-reed workstation with effects, a MIDI mixer, three MIDI Zones and a SEQTRAK remote, for the M-VAVE SMK-37 Elite.</div>
   </div>
-  <div class="foot"><span>Firmware package SMK-37 Elite_674110</span><span>November 2026</span></div>
+  <div class="foot"><span>Firmware package SMK-37 Elite_674150</span><span>November 2026</span></div>
 </section>
 
 <!-- ============ CONTENTS ============ -->
@@ -108,7 +116,7 @@ td:first-child { white-space: nowrap; }
   <li><span class="n">2</span>Quick start<span class="s">Play in five minutes</span></li>
   <li><span class="n">3</span>The panel<span class="s">Every control at a glance</span></li>
   <li><span class="n">4</span>Playing the organ<span class="s">Drawbars, the five layouts, faders, the pedal, chord memory</span></li>
-  <li><span class="n">5</span>The eight instruments<span class="s">Models and departments</span></li>
+  <li><span class="n">5</span>The sixteen instruments<span class="s">Models and departments</span></li>
   <li><span class="n">6</span>Drawbars and stops<span class="s">What each drawbar means</span></li>
   <li><span class="n">7</span>Drawbar presets and performance setups<span class="s">Recall and save your sounds, back them up</span></li>
   <li><span class="n">8</span>Effects: the four FX pages<span class="s">FX, rotary, effect, master</span></li>
@@ -127,13 +135,13 @@ td:first-child { white-space: nowrap; }
 <!-- ============ 1 ============ -->
 <section>
 <h1><span class="num">1</span>Welcome</h1>
-<p class="lead">OrGigs turns the M-VAVE SMK-37 Elite into a complete organ: tonewheel and 1960s combo organs, baroque and cathedral pipe organs, and French musette and tango bandoneon reeds. It plays on three manuals, has a full effects rack, and works as a MIDI router, mixer and SEQTRAK remote.</p>
+<p class="lead">OrGigs turns the M-VAVE SMK-37 Elite into a complete drawbar organ: nine drawbars for each of two manuals and four pedal stops, on sixteen models from tonewheel and 1960s combo organs to four historical pipe organs and French musette and tango bandoneon reeds. It plays on three manuals, has a full effects rack, and works as a MIDI router, mixer and SEQTRAK remote.</p>
 
 <h3>Highlights</h3>
 <ul>
-  <li><b>84 free-running tone generators</b> from C1 to B7. Every key gets its own sound, and no note is ever cut off to make room for another (no voice stealing).</li>
-  <li><b>Eight instrument models</b> in three departments: Vintage &amp; Combo, Pipe, and Free Reed.</li>
   <li><b>Three manuals</b> with independent registrations: Upper (9 drawbars), Lower (9 drawbars) and Pedal (4 stops).</li>
+  <li><b>84 free-running tone generators</b> from C1 to B7. Every key gets its own sound, and no note is ever cut off to make room for another (no voice stealing).</li>
+  <li><b>Sixteen instrument models</b> in three departments: eight vintage and combo organs, four pipe organs from four centuries (each with its own stops and tuning), and four accordions.</li>
   <li><b>Real drawbar handling</b>: eight knobs and a fader hold the nine drawbars, and the 16 pads show them in colour and push them in or pull them out in one touch.</li>
   <li><b>Four panel layouts</b> for the stage: all pads on the drawbars, or the percussion, vibrato, rotary, drive, delay and the effect on pads in the colours of the screen, the MIDI switches of a zone, and the effect pages on the knobs while you play.</li>
   <li><b>A sustain or an expression pedal</b> on the pedal socket: it holds the notes, or it is the swell, for the organ and over MIDI. The Elite tells the two apart by itself.</li>
@@ -163,7 +171,7 @@ td:first-child { white-space: nowrap; }
   <li><b>Pull the drawbars.</b> <span class="k">K1</span>–<span class="k">K8</span> are drawbars 1–8, fader 1 is drawbar 9. A top pad pushes its drawbar all the way in, the pad below pulls it all the way out. Or press <span class="k">&lt;</span> and <span class="k">&gt;</span> for ready-made registrations, from the classic jazz lead to the Mixtur.</li>
   <li><b>Speed up the rotary.</b> Press <span class="k">REC</span>, or push the mod wheel up, to switch the rotary speaker between slow and fast, and listen to it ramp up. <span class="k">PLAY</span> brakes it to a stop.</li>
 </ol>
-<p>To try another instrument, hold <span class="k">SCALE</span> and press <span class="k">&lt;</span> or <span class="k">&gt;</span> (models 1–8). To keep what you've built, hold <span class="k">BT</span> and press a pad: the whole instrument is stored in that performance setup.</p>
+<p>To try another instrument, hold <span class="k">SCALE</span> and press <span class="k">&lt;</span> or <span class="k">&gt;</span> (models 1–16). To keep what you've built, hold <span class="k">BT</span> and press a pad: the whole instrument is stored in that performance setup.</p>
 </section>
 
 <!-- ============ 3 ============ -->
@@ -432,63 +440,104 @@ td:first-child { white-space: nowrap; }
 
 <!-- ============ 5 ============ -->
 <section>
-<h1><span class="num">5</span>The eight instruments</h1>
-<p class="lead">Choose a model with <span class="k">SCALE</span> + <span class="k">&lt;</span> / <span class="k">&gt;</span>, or hold <span class="k">&lt;</span> and <span class="k">&gt;</span> together and turn <span class="k">K2</span>. The model sets the waveforms, the meaning of the drawbars, and the attack and release.</p>
+<h1><span class="num">5</span>The sixteen instruments</h1>
+<p class="lead">Choose a model with <span class="k">SCALE</span> + <span class="k">&lt;</span> / <span class="k">&gt;</span>, or hold <span class="k">&lt;</span> and <span class="k">&gt;</span> together and turn <span class="k">K2</span>. The model sets the waveforms, what the drawbars are, the attack and release, the tuning, the character knob (<span class="k">K5</span> on the FX page) and what the expression pedal does.</p>
 
 <table class="wrap">
-<tr><th style="width:5%">#</th><th style="width:24%">Model</th><th>Character</th><th style="width:17%">Reverb in its setups</th></tr>
-<tr><td colspan="4" class="dept">Department I — Vintage &amp; Combo organs</td></tr>
-<tr><td>1</td><td><b>Tonewheel Organ</b> <span class="tag">WHEEL</span></td><td>Tonewheel sine tones with a touch of odd harmonics in the bass, key click, harmonic foldback, single-trigger percussion on the upper manual.</td><td>Spring</td></tr>
-<tr><td>2</td><td><b>Brit Combo</b> <span class="tag">BRIT</span></td><td>Triangle-and-pulse divider tone with bright highs and a snappy electronic attack.</td><td>Spring</td></tr>
-<tr><td>3</td><td><b>Italo Combo</b> <span class="tag">ITALO</span></td><td>Bright sawtooth/pulse combo bite of the sixties.</td><td>Spring</td></tr>
-<tr><td>4</td><td><b>Tokyo Combo</b> <span class="tag">TOKYO</span></td><td>Rich, punchy transistor combo tone.</td><td>Stage</td></tr>
-<tr><td colspan="4" class="dept">Department II — Pipe organs</td></tr>
-<tr><td>5</td><td><b>Baroque Organ</b> <span class="tag">BAROQ</span></td><td>Principals, flutes and reeds with pipe "chiff" at the attack and a slight natural detune between pipes.</td><td>Hall</td></tr>
-<tr><td>6</td><td><b>Cathedral Organ</b> <span class="tag">CATH</span></td><td>Slower, grander speech and a long release. Under chords of more than eight notes the wind sags a few cents flat and slightly softer, like a real wind chest.</td><td>Cathedral</td></tr>
-<tr><td colspan="4" class="dept">Department III — Free reeds</td></tr>
-<tr><td>7</td><td><b>Paris Musette</b> <span class="tag">MUSET</span></td><td>Accordion with a wet three-reed musette (one reed tuned up, one down), wooden cassotto body.</td><td>Stage</td></tr>
-<tr><td>8</td><td><b>Tango Bandoneon</b> <span class="tag">BANDO</span></td><td>Bandoneon reeds tuned closer together: less beating, a tighter, more serious tango tone.</td><td>Stage</td></tr>
+<tr><th style="width:5%">#</th><th style="width:23%">Model</th><th>Character</th><th style="width:19%">Character knob</th></tr>
+<tr><td colspan="4" class="dept">Department I — Vintage &amp; Combo organs (1–8)</td></tr>
+<tr><td>1</td><td><b>Tonewheel Organ</b> <span class="tag">WHEEL</span></td><td>Near-pure sine tones mixed by the drawbars, key click, the bass and top octaves folding back as on the original. Jazz, gospel, soul and rock.</td><td>Percussion 2nd / 3rd, fast / slow</td></tr>
+<tr><td>2</td><td><b>Brit Combo</b> <span class="tag">BRIT</span></td><td>The British transistor combo of the early sixties: hollow, slightly nasal, with a fine edge from the dividers.</td><td>—</td></tr>
+<tr><td>3</td><td><b>Italo Combo</b> <span class="tag">ITALO</span></td><td>The Italian combo: a bright sawtooth bite, present at once. Garage and psychedelic.</td><td>—</td></tr>
+<tr><td>4</td><td><b>Tokyo Combo</b> <span class="tag">TOKYO</span></td><td>The Japanese stage organ of the seventies: rounder, with a slightly bell-like synthetic sheen. Pads with chorus and delay.</td><td>—</td></tr>
+<tr><td>5</td><td><b>Osaka King</b> <span class="tag">OSAKA</span> <span class="new">new</span></td><td>A small Japanese transistor combo: hollow and soft, a clarinet made of transistors that sits modestly in a band.</td><td>—</td></tr>
+<tr><td>6</td><td><b>Il Castellano</b> <span class="tag">CASTL</span> <span class="new">new</span></td><td>An Italian combo with more snarl, a built-in mixture on drawbar 9 and its own bass section on the pedal (its fourth stop lets the bass ring on for almost a second).</td><td><span class="d">TONE</span>: a filter from dull to bright</td></tr>
+<tr><td>7</td><td><b>Dutch Rock</b> <span class="tag">DUTCH</span> <span class="new">new</span></td><td>A Dutch valve organ: warm and throaty, through its own valve amplifier and a small speaker, from friendly to hard.</td><td><span class="d">VALVE AMP</span>: warm to hard</td></tr>
+<tr><td>8</td><td><b>Playroom Organ</b> <span class="tag">PLAY</span> <span class="new">new</span></td><td>The toy chord organ of the seventies, the joker: plastic reeds blown by a little fan, every key a bit off. Full chords run out of wind and sag flat and softer; the motor flutters and hums.</td><td><span class="d">FAN SPEED</span>: a slow fan sounds low, late and tired</td></tr>
+<tr><td colspan="4" class="dept">Department II — Pipe organs (9–12), each with its own stops</td></tr>
+<tr><td>9</td><td><b>Baroque Organ</b> <span class="tag">BAROQ</span></td><td>North German, around 1690. Clear and transparent, every voice of a fugue audible; fast speech with chiff. Werckmeister III tuning; the wind breathes under full chords.</td><td><span class="d">CHIFF</span></td></tr>
+<tr><td>10</td><td><b>Cathedral Organ</b> <span class="tag">CATH</span></td><td>French symphonic, around 1870. Grand and orchestral: harmonic flute, gambe and voix céleste, bright French reeds, a steady wind, and the expression pedal as the swell box.</td><td><span class="d">CHIFF</span></td></tr>
+<tr><td>11</td><td><b>Renaissance Organ</b> <span class="tag">RENAI</span> <span class="new">new</span></td><td>Italian, around 1550. Soft, silvery principals on low wind, the ripieno built rank by rank, a voce umana that beats like a singing voice. Quarter-comma meantone.</td><td><span class="d">CHIFF</span> (barely any by nature)</td></tr>
+<tr><td>12</td><td><b>Romantic Organ</b> <span class="tag">ROMAN</span> <span class="new">new</span></td><td>German late romantic, around 1900. Dark, warm foundation stops that melt, soft strings, an oboe; the expression pedal is the crescendo roller.</td><td><span class="d">ACTION</span>: the pneumatic delay, 10–40 ms</td></tr>
+<tr><td colspan="4" class="dept">Department III — Free reeds (13–16)</td></tr>
+<tr><td>13</td><td><b>Paris Musette</b> <span class="tag">MUSET</span></td><td>The French musette accordion: three 8' reeds, one tuned up and one down, a wet sweet beating. Bal-musette and café.</td><td><span class="d">DETUNE</span>: the beating, narrower to wider</td></tr>
+<tr><td>14</td><td><b>Tango Bandoneon</b> <span class="tag">BANDO</span></td><td>The bandoneon of the tango: tuned dry, dark and urgent; the bellows make it brighter, not only louder.</td><td><span class="d">DETUNE</span></td></tr>
+<tr><td>15</td><td><b>Trossingen Bass</b> <span class="tag">TROSS</span> <span class="new">new</span></td><td>The German accordion: a clearer, sharper reed, tuned dry; the pedal is the bass side, bass stops from 16' to 2'.</td><td><span class="d">DETUNE</span></td></tr>
+<tr><td>16</td><td><b>Steirische</b> <span class="tag">STEIR</span> <span class="new">new</span></td><td>The Alpine button accordion: bright and wet, the beating wide; helicon basses on the pedal like a brass band.</td><td><span class="d">DETUNE</span></td></tr>
+</table>
+<p>The character knob is <span class="k">K5</span> on the FX page. On the tonewheel it is the percussion; the other vintage models without their own knob show <span class="d">PERC (WHEEL ONLY)</span>.</p>
+
+<h3>Tuning</h3>
+<p>Three models play in a tuning of their own: the baroque organ in Werckmeister III (the near keys calm, the far ones harsher), the renaissance organ in quarter-comma meantone (pure thirds in C, F, G, D and B flat; the far keys howl), and the Playroom with every key a few cents off, as its plastic reeds are. <span class="d">TUNING</span> on the lights page (<span class="k">SCALE</span> + <span class="k">GLOBE</span>, then <span class="k">K5</span>) sets <span class="d">EQUAL</span> for all of them, or back to <span class="d">HISTORIC</span>. Pipes and reeds also carry a small fixed detune per key; the vintage organs are exactly in tune, as dividers and tonewheels are.</p>
+
+<h3>The expression pedal per model</h3>
+<p>An expression pedal in the Elite's socket (chapter 4), or CC 11 coming in, does one of these, depending on the model:</p>
+<table class="wrap">
+<tr><th style="width:26%">Model</th><th>Expression (CC 11)</th></tr>
+<tr><td>Vintage, Baroque, Renaissance</td><td>The volume</td></tr>
+<tr><td>Cathedral</td><td>The swell box of the Récit: closed up to 20 dB softer and darker, open full and bright. Without a pedal the box is open</td></tr>
+<tr><td>Romantic</td><td>The crescendo roller and the swell box together: it adds stops to the ones drawn, from the softest strings to the full organ, and opens the box. Without a pedal the roller is off: only what is drawn sounds</td></tr>
+<tr><td>Free reeds</td><td>The bellows: louder and brighter</td></tr>
 </table>
 
 <h3>What changes with the department</h3>
 <table class="wrap">
 <tr><th style="width:22%">&nbsp;</th><th>Vintage &amp; Combo</th><th>Pipe</th><th>Free reed</th></tr>
-<tr><td>FX page, <span class="k">K5</span></td><td>Percussion (tonewheel)</td><td>Chiff (pipe attack noise)</td><td>Detune (musette width, in cents)</td></tr>
 <tr><td>FX page, <span class="k">K2</span></td><td>Scanner vibrato / chorus</td><td>Tremulant</td><td>Tremulant</td></tr>
 <tr><td><span class="k">NOTE RPT</span></td><td>Vibrato on / off</td><td>Tremulant on / off</td><td>Tremulant on / off</td></tr>
 <tr><td>FX page, <span class="k">K1</span> (drive)</td><td>The tube preamp itself</td><td>Tube saturation, blended in</td><td>Tube saturation, blended in</td></tr>
 <tr><td>Mod wheel / CC 1</td><td><span class="d">PITCH</span>: rotary slow / fast. <span class="d">ROTARY</span>: slow / brake / fast</td><td>Same as vintage</td><td>Bellows (volume and brightness)</td></tr>
 <tr><td>Pitch wheel</td><td><span class="d">PITCH</span>: bends the pitch, ±2 semitones. <span class="d">ROTARY</span>: up = rotary fast while held, down = tutti boost</td><td>Same as vintage</td><td>Bends the pitch</td></tr>
 </table>
-<p>The effects belong to the manuals, not to the model: changing the model keeps drive, vibrato, rotary and sends as they are; a performance setup stores them. The drawbars stay where they are too; press <span class="k">&lt;</span> / <span class="k">&gt;</span> to pick a registration (the first time a model is chosen, the list starts in its department's part).</p>
+<p>The effects belong to the manuals, not to the model: changing the model keeps drive, vibrato, rotary and sends as they are; a performance setup stores them. The drawbars stay where they are too; press <span class="k">&lt;</span> / <span class="k">&gt;</span> to pick a registration (chapter 7). Setups made with OrGigs 1.x keep their models: the models are stored under their own numbers, whatever their place in the list.</p>
 </section>
 
 <!-- ============ 6 ============ -->
 <section>
 <h1><span class="num">6</span>Drawbars and stops</h1>
-<p class="lead">Each manual has nine drawbars (0 = off, 8 = full). What they mean depends on the department. When you move one, the screen names it, for example <span class="d">Oktave 4' 6</span>.</p>
+<p class="lead">Each manual has nine drawbars (0 = off, 8 = full). What they are depends on the model: the vintage organs share the tonewheel footages, every pipe organ has its own nine stops, the free reeds share their reed ranks. When you move one, the screen names it, for example <span class="d">Oktave 4' 6</span>.</p>
 
+<h2>Vintage and free reeds</h2>
 <table>
-<tr><th style="width:6%">DB</th><th style="width:12%">Control</th><th>Vintage &amp; Combo</th><th>Pipe organ</th><th>Free reed</th></tr>
-<tr><td>1</td><td>K1</td><td>16'</td><td>Bourdon 16'</td><td>Bassoon 16'</td></tr>
-<tr><td>2</td><td>K2</td><td>5 1/3'</td><td>Prinzipal 8'</td><td>Sub-fifth 5 1/3'</td></tr>
-<tr><td>3</td><td>K3</td><td>8'</td><td>Rohrflöte 8'</td><td>Clarinet 8'</td></tr>
-<tr><td>4</td><td>K4</td><td>4'</td><td>Gambe / Vox Celeste 8'</td><td>Violin 8' (tuned up)</td></tr>
-<tr><td>5</td><td>K5</td><td>2 2/3'</td><td>Oktave 4'</td><td>Musette 8' (tuned down)</td></tr>
-<tr><td>6</td><td>K6</td><td>2'</td><td>Spitzflöte 4' + Nasat 2 2/3'</td><td>Piccolo 4'</td></tr>
-<tr><td>7</td><td>K7</td><td>1 3/5'</td><td>Superoktave 2' + Terz 1 3/5'</td><td>Bandoneon 4' (detuned)</td></tr>
-<tr><td>8</td><td>K8</td><td>1 1/3'</td><td>Mixtur IV</td><td>Sheen 2 2/3' + 2'</td></tr>
-<tr><td>9</td><td>Fader 1</td><td>1'</td><td>Trompete 8'</td><td>Valve &amp; air noise</td></tr>
+<tr><th style="width:6%">DB</th><th style="width:12%">Control</th><th>Vintage &amp; Combo</th><th>Free reed</th></tr>
+<tr><td>1</td><td><span class="k">K1</span></td><td>16'</td><td>Bassoon 16'</td></tr>
+<tr><td>2</td><td><span class="k">K2</span></td><td>5 1/3'</td><td>Sub-fifth 5 1/3'</td></tr>
+<tr><td>3</td><td><span class="k">K3</span></td><td>8'</td><td>Clarinet 8'</td></tr>
+<tr><td>4</td><td><span class="k">K4</span></td><td>4'</td><td>Violin 8' (tuned up)</td></tr>
+<tr><td>5</td><td><span class="k">K5</span></td><td>2 2/3'</td><td>Musette 8' (tuned down)</td></tr>
+<tr><td>6</td><td><span class="k">K6</span></td><td>2'</td><td>Piccolo 4'</td></tr>
+<tr><td>7</td><td><span class="k">K7</span></td><td>1 3/5'</td><td>Bandoneon 4' (detuned)</td></tr>
+<tr><td>8</td><td><span class="k">K8</span></td><td>1 1/3'</td><td>Sheen 2 2/3' + 2'</td></tr>
+<tr><td>9</td><td>Fader 1</td><td>1' (Il Castellano: Mixture IV)</td><td>Valve &amp; air noise</td></tr>
 </table>
 
+<h2>The pipe organs' stops</h2>
+<table class="wrap">
+<tr><th style="width:5%">DB</th><th>9 Baroque</th><th>10 Cathedral</th><th>11 Renaissance</th><th>12 Romantic</th></tr>
+<tr><td>1</td><td>Quintadena 16'</td><td>Bourdon 16'</td><td>Principale 8'</td><td>Bourdon 16'</td></tr>
+<tr><td>2</td><td>Prinzipal 8'</td><td>Montre 8'</td><td>Voce umana 8' (from c')</td><td>Prinzipal 8'</td></tr>
+<tr><td>3</td><td>Rohrflöte 8'</td><td>Flûte harmonique 8'</td><td>Ottava 4'</td><td>Gedackt 8'</td></tr>
+<tr><td>4</td><td>Oktave 4'</td><td>Gambe 8'</td><td>Flauto in VIII 4'</td><td>Salicional 8'</td></tr>
+<tr><td>5</td><td>Oktave 2'</td><td>Voix céleste 8'</td><td>Flauto in XII 2 2/3'</td><td>Aeoline 8'</td></tr>
+<tr><td>6</td><td>Sesquialtera II</td><td>Prestant 4'</td><td>XV 2'</td><td>Oktave 4'</td></tr>
+<tr><td>7</td><td>Mixtur IV</td><td>Plein-jeu IV</td><td>XIX 1 1/3'</td><td>Fugara 4'</td></tr>
+<tr><td>8</td><td>Regal 8'</td><td>Trompette 8'</td><td>XXII 1'</td><td>Mixtur III</td></tr>
+<tr><td>9</td><td>Trompete 8'</td><td>Clairon 4'</td><td>XXVI + XXIX</td><td>Oboe 8'</td></tr>
+</table>
+<p>The mixtures repeat at the top, as real ones do, so the full organ never gets shrill. Gambe and voix céleste beat against each other; salicional and aeoline melt into one soft string sound. The renaissance organ has no mixture block: its ripieno is a pyramid of single principal ranks, one drawbar each.</p>
+
 <h2>The pedal</h2>
-<p>When the manual is <span class="d">PEDAL</span>, <span class="k">K1</span>–<span class="k">K4</span> and pad columns 1–4 are its four stops:</p>
-<table>
-<tr><th style="width:12%">Knob</th><th style="width:22%">Stop</th><th>Sound</th></tr>
-<tr><td>K1</td><td>Sub 32'</td><td>The deep floor an octave below 16'</td></tr>
-<tr><td>K2</td><td>Bourdon 16'</td><td>The main bass</td></tr>
-<tr><td>K3</td><td>Octave 8'</td><td>Definition and pitch</td></tr>
-<tr><td>K4</td><td>Posaune 16'</td><td>A reed for weight and attack</td></tr>
+<p>When the manual is <span class="d">PEDAL</span>, <span class="k">K1</span>–<span class="k">K4</span> and pad columns 1–4 are its four stops. Most models have the standard set; the ones with a pedal of their own show its names:</p>
+<table class="wrap">
+<tr><th style="width:30%">Model</th><th>Stop 1</th><th>Stop 2</th><th>Stop 3</th><th>Stop 4</th></tr>
+<tr><td>Standard (vintage, Musette, Bandoneon)</td><td>Sub 32'</td><td>Bourdon 16'</td><td>Octave 8'</td><td>Posaune 16'</td></tr>
+<tr><td>Il Castellano</td><td>Bass 16'</td><td>Bass 8'</td><td>Bass 4'</td><td>Sustain (the bass rings on)</td></tr>
+<tr><td>Baroque</td><td>Prinzipal 16'</td><td>Subbass 16'</td><td>Oktave 8'</td><td>Posaune 16'</td></tr>
+<tr><td>Cathedral</td><td>Soubasse 32'</td><td>Contrebasse 16'</td><td>Flûte 8'</td><td>Bombarde 16'</td></tr>
+<tr><td>Renaissance</td><td>Contrabassi 16'</td><td>Principale 16'</td><td>Ottava 8'</td><td>XV 4'</td></tr>
+<tr><td>Romantic</td><td>Subbass 16'</td><td>Violon 16'</td><td>Oktavbass 8'</td><td>Posaune 16'</td></tr>
+<tr><td>Trossingen Bass</td><td>Bass 16'</td><td>Bass 8'</td><td>Bass 4'</td><td>Bass 2'</td></tr>
+<tr><td>Steirische</td><td>Helicon 16'</td><td>Helicon 8'</td><td>Bass 8'</td><td>Bass 4'</td></tr>
 </table>
 <p>The pedal is played from the keys (choose <span class="d">PEDAL</span> with <span class="k">KNOB BANK</span>), from an external pedalboard on its MIDI channel, or by the auto-pedal (chapter 10).</p>
 </section>
@@ -499,10 +548,10 @@ td:first-child { white-space: nowrap; }
 <p class="lead">Two kinds of memory: the drawbar list keeps registrations of one manual, performance setups keep the whole instrument.</p>
 
 <h2>The drawbar list</h2>
-<p>All models share one fixed list of registrations, sorted by department, and 16 user slots at its end. The pedal has its own list with 8 user slots. An entry holds only the drawbars (the pedal's four stops), nothing else.</p>
+<p>The vintage and free-reed models share one fixed list of registrations, sorted by department. Each pipe organ has its own list, made for its stops. Every list ends with the same 16 user slots. The pedal has one list for all models, with 8 user slots. An entry holds only the drawbars (the pedal's four stops), nothing else.</p>
 <ul>
   <li><b>Recall:</b> press <span class="k">&lt;</span> or <span class="k">&gt;</span> (the step comes when you let go). Faster: hold both and turn <span class="k">K1</span>. The screen shows the manual, the number and the name, for example <span class="d">UM 14 BRITISH HARD ROCK</span>; the top bar shows the number (<span class="d">P14</span>).</li>
-  <li><b>Where it starts:</b> each model remembers per manual where in the list it was. The first time, it starts in its department's part: vintage upper at <i>Classic Jazz Lead</i>, lower at <i>Lower Manual Comping</i>; pipe upper at <i>Prinzipal 8'</i>, lower at <i>Begleitung</i>; free reed upper at <i>Clarinet</i>, lower at <i>Bass Chords</i>.</li>
+  <li><b>Where it starts:</b> each model remembers per manual where in its list it was. The first time: vintage upper at <i>Classic Jazz Lead</i>, lower at <i>Lower Manual Comping</i>; free reed upper at <i>Clarinet</i>, lower at <i>Bass Chords</i>; Baroque <i>Prinz 8' 4'</i> / <i>Rohrflöte 8'</i>; Cathedral <i>Fonds 8'</i> / <i>Voix céleste</i>; Renaissance <i>Principale</i> / <i>Princ + Flauto</i>; Romantic <i>Grundstimmen 8'</i> / <i>Gedackt + Aeoline</i> (upper / lower).</li>
   <li><b>Save:</b> tap <span class="k">BT</span>. On a user slot, the drawbars of the manual go into it; on a factory entry, into the first free user slot: <span class="d">DRAWBARS SAVED UM USER 1</span>. When all user slots are taken, step to the one to overwrite.</li>
 </ul>
 <p>A star after the number in the top bar (<span class="d">P3*</span>) means the drawbars differ from the entry shown.</p>
@@ -512,10 +561,18 @@ td:first-child { white-space: nowrap; }
 <tr><td>1–12<br>Vintage: jazz, soul, gospel</td><td>Classic Jazz Lead <code>888000000</code>, Warm Jazz Comp <code>848000000</code>, Lower Manual Comping <code>008400000</code>, Hollow Funk <code>800000888</code>, Memphis Soul <code>888800000</code>, Whistle / Soul Solo <code>888000008</code>, Gospel Shouting <code>668848588</code>, Gospel Simmering <code>830000378</code>, Real Gospel <code>800000678</code>, Mellow R&amp;B Ballad <code>803600000</code>, Modern Jazz Solo <code>888400000</code>, Big Band Punch <code>888888000</code></td></tr>
 <tr><td>13–22<br>Vintage: rock, pop, reggae</td><td>Full Organ (All Out) <code>888888888</code>, British Hard Rock <code>888800000</code>, Baroque Rock Ballad <code>688600000</code>, Latin Rock Groove <code>886400000</code>, 60s Brit Soul <code>888880000</code>, Heavy Biker Rock <code>888686868</code>, Kingston Reggae Bubble <code>808000000</code>, Psychedelic Space Pad <code>008642000</code>, 70s Arena Rock <code>888888800</code>, 60s Transistor Combo <code>004888642</code></td></tr>
 <tr><td>23–36<br>Vintage: classical imitations</td><td>Stopped Flute 8', Dulciana 8', French Horn 8', Salicional 8', Flutes 8' &amp; 4', Oboe 8', Swell Diapason 8', Trumpet 8', Full Swell, Cello 8', Flute &amp; String 8', Clarinet 8', Theater Tibia 8', Vox Humana 8'</td></tr>
-<tr><td>37–55<br>Pipe</td><td>Prinzipal 8', Prinzipal 8' 4', Begleitung, Rohrflöte 8', Flöten 8' 4', Flöte 4', Gambe Celeste, Streicher, Pianissimo, Trio, Cornet, Bourdon 16' 8', Trompete 8', Trompete + Prinzipal, Choral, Mixtur, Plenum, Organo pleno, Tutti</td></tr>
+<tr><td>37–55<br>Pipe (OrGigs 1)</td><td>Prinzipal 8', Prinzipal 8' 4', Begleitung, Rohrflöte 8', Flöten 8' 4', Flöte 4', Gambe Celeste, Streicher, Pianissimo, Trio, Cornet, Bourdon 16' 8', Trompete 8', Trompete + Prinzipal, Choral, Mixtur, Plenum, Organo pleno, Tutti</td></tr>
 <tr><td>56–75<br>Free reed</td><td>Clarinet, Bass Chords, Musette, Violin, Bassoon, Piccolo, Organ, Bandoneon, Bando 4', Tango, Oboe, Accordion, Master, Harmonium, Bright, Dark, Soft, Whisper, Air, Full + Air</td></tr>
 <tr><td>76–91</td><td>USER 1–16</td></tr></table>
 <p>Numbers 1–36 are the 36 classic tonewheel registrations of the list <i>drawbar_presets_36</i>; 23–36 imitate classical organ stops on the tonewheels.</p>
+
+<p>The vintage and free-reed models turn through all of it; 37–55 are the pipe registrations of OrGigs 1, on these models plain drawbar settings.</p>
+<h3>The pipe organs' own lists</h3>
+<table class="wrap"><tr><th style="width:16%">Model</th><th>Registrations, then USER 1–16</th></tr>
+<tr><td>9 Baroque<br>1–16</td><td>Prinzipal 8', Prinz 8' 4', Rohrflöte 8', Rohrfl + Okt 4', Quintadena 16', Trio, Sesquialtera, Regal, Regal + Rohrfl, Trompete 8', Tromp + Prinz, Choral, Prinz 8' 4' 2', Plenum, Organo pleno, Tutti</td></tr>
+<tr><td>10 Cathedral<br>1–15</td><td>Montre 8', Flûte harmonique, Gambe, Voix céleste, Flûte + Céleste, Fonds 8', Fonds 16' 8', Fonds 8' 4', Flûte + Prestant, Trompette 8', Trompette + Fonds, Plein-jeu, Anches, Grand choeur, Tutti</td></tr>
+<tr><td>11 Renaissance<br>1–12</td><td>Principale, Voce umana, Principale piano, Princ + Ottava, Princ + XV, Flauto in VIII, Princ + Flauto, Flauti, Princ + Flauti, Ripieno a 4, Ripieno, Tiratutti</td></tr>
+<tr><td>12 Romantic<br>1–15</td><td>Aeoline, Salicional, Streicher 8', Gedackt, Gedackt + Aeoline, Prinzipal 8', Grundstimmen 8', Grundst 16' 8', Oboe, Oboe + Gedackt, Prinz 8' 4', Mezzoforte, Forte, Plenum, Tutti</td></tr></table>
 
 <h3>The pedal's list</h3>
 <table class="wrap"><tr><th style="width:16%">Numbers</th><th>Registrations (Sub 32', Bourdon 16', Octave 8', Posaune 16')</th></tr>
@@ -537,7 +594,7 @@ td:first-child { white-space: nowrap; }
 <ul>
   <li>The instrument model, and all drawbars of all three manuals, including the pedal stops</li>
   <li>The effects of each manual: drive, vibrato or chorus, tremulant, rotary on or off, delay send and reverb send</li>
-  <li>The shared effects: percussion, chiff / detune, delay time and feedback, reverb room; the coupler</li>
+  <li>The shared effects: the character knob (percussion, chiff, detune, tone, valve amp, action or fan), delay time and feedback, reverb room; the coupler</li>
   <li>The MIDI mixer's 16 volumes</li>
   <li>The manual, the octave and the places in the drawbar list shown</li>
   <li>The complete MIDI Zones: channels, ranges, transpose, velocity, filters, the clone, harmonic and chord settings, and whether YST is on</li>
@@ -762,11 +819,12 @@ Elite (USB MIDI out) ──▶ MIDI host ──▶ synth, sequencer (USB or 5-pi
     <p>The bars show the key range of each zone over the whole MIDI range (C-1 to G9), with its in and out channels (<span class="d">1>1</span>). The zone you edit is amber. Here the lower zone takes everything up to E3 and the upper zone F3 and up: a split for an external keyboard. The pedal is played by the auto-pedal. The pads hold the switches, drawn as they sit at the bottom of the screen.</p>
     <table><tr><th style="width:12%">Knob</th><th>Value</th><th style="width:12%">Knob</th><th>Value</th></tr>
     <tr><td>K1</td><td>MIDI-in channel 1–16, OFF</td><td>K5</td><td>Transpose, ±24 semitones</td></tr>
-    <tr><td>K2</td><td>MIDI-out channel 1–16, OFF</td><td>K6</td><td>Octave, ±3</td></tr>
+    <tr><td>K2</td><td>MIDI-out channel 1–16, OFF</td><td>K6</td><td>Octave of the MIDI out, ±3. <span class="k">SCALE</span> + <span class="k">K6</span>: the <span class="d">ORGAN OCTAVE</span>, ±3</td></tr>
     <tr><td>K3</td><td>Lowest key</td><td>K7</td><td>Fixed velocity 1–127</td></tr>
     <tr><td>K4</td><td>Highest key</td><td>K8</td><td><span class="d">BEND</span>, for all zones: <span class="d">PITCH</span> or <span class="d">ROTARY</span> (chapter 4)</td></tr></table>
   </div>
 </div>
+<p><b>Two octaves.</b> <span class="d">OCTAVE</span> shifts only what the zone sends out. The <span class="d">ORGAN OCTAVE</span> shifts what the zone plays on the organ inside, for example the lower manual an octave down for a left hand that sits too high. When it is set, the cell reads <span class="d">OCT/ORG</span>, the two values side by side. Each zone has its own, and a setup stores it.</p>
 <table class="wrap"><tr><th style="width:9%">Pad</th><th style="width:9%">Screen</th><th>Switch (green: on, for this zone)</th></tr>
 <tr><td>1</td><td><span class="d">VEL</span></td><td>Velocity through: the velocity of the note goes out. Off: the fixed velocity</td></tr>
 <tr><td>2</td><td><span class="d">FCCO</span></td><td>Filter CC out: controllers and aftertouch are not sent on</td></tr>
@@ -780,7 +838,8 @@ Elite (USB MIDI out) ──▶ MIDI host ──▶ synth, sequencer (USB or 5-pi
 <tr><td>9</td><td><span class="d">KZN</span></td><td>The Elite's keys play by the zone ranges (on), or follow the manual chosen with <span class="k">KNOB BANK</span> (off)</td></tr>
 <tr><td>10</td><td><span class="d">AUT</span></td><td>Auto-pedal: the pedal zone plays the lowest note held in the lower zone (within the pedal zone's range)</td></tr>
 <tr><td>11</td><td><span class="d">FCCI</span></td><td>Filter CC in: controllers and pitch bend coming in on the zone's channel don't touch the organ (drawbars, rotary, swell, sustain, bend); they still go out unless <span class="d">FCCO</span> is on</td></tr>
-<tr><td>12</td><td><span class="d">MOUT</span></td><td>MIDI out of the zone on/off. Off: the zone sends nothing at all (notes, controllers, program changes), the organ still plays. Handy to silence a synth for a song without touching its channel</td></tr></table>
+<tr><td>12</td><td><span class="d">MOUT</span></td><td>MIDI out of the zone on/off. Off: the zone sends nothing at all (notes, controllers, program changes), the organ still plays. Handy to silence a synth for a song without touching its channel</td></tr>
+<tr><td>13</td><td><span class="d">SUS IN</span></td><td>Sustain in holds the keys: a sustain pedal coming in on the zone's channel (CC 64, e.g. the pedal on the keyboard you play through the Elite) also holds the Elite's own keys, inside and on MIDI out, as a pedal in the Elite's socket would. Off by default</td></tr></table>
 <p>Leaving the out channel at <span class="d">OFF</span> makes a zone internal only; switching <span class="d">INT</span> off makes it MIDI only. Notes on a channel no zone listens to are dropped, unless <span class="d">THR</span> is on.</p>
 
 <h3>Example: a split on the Elite's keys</h3>
@@ -922,7 +981,7 @@ Elite (USB MIDI out) ──▶ MIDI host ──▶ synth, sequencer (USB or 5-pi
 <div class="note warn"><p><b>During installation</b> don't unplug the Elite. If the write is cut off anyway, plug it in again and press <b>Install</b>: it goes on where it stopped.</p></div>
 
 <h2>Without a browser</h2>
-<p>OrGigs's source also has an installer script, <code>tools/fm1_install.py</code> (Python 3.12 with <code>mido</code> and <code>python-rtmidi</code>). In the source folder, <code>py -3.12 tools\fm1_install.py --info</code> only reads and shows the running firmware, for example <code>SMK-37 Elite_674110 [running]</code>; <code>py -3.12 tools\fm1_install.py orgigs-1.1-smk37-elite.fwsc</code> installs a package.</p>
+<p>OrGigs's source also has an installer script, <code>tools/fm1_install.py</code> (Python 3.12 with <code>mido</code> and <code>python-rtmidi</code>). In the source folder, <code>py -3.12 tools\fm1_install.py --info</code> only reads and shows the running firmware, for example <code>SMK-37 Elite_674150 [running]</code>; <code>py -3.12 tools\fm1_install.py orgigs-1.5-smk37-elite.fwsc</code> installs a package.</p>
 
 <h2>Going back to the original firmware</h2>
 <ul>
@@ -938,23 +997,23 @@ Elite (USB MIDI out) ──▶ MIDI host ──▶ synth, sequencer (USB or 5-pi
 <h1><span class="num">14</span>Specifications and limits</h1>
 <table class="wrap"><tr><th style="width:30%">Item</th><th>Value</th></tr>
 <tr><td>Tone generation</td><td>84 free-running generators, C1–B7; full polyphony, no voice stealing</td></tr>
-<tr><td>Waveforms</td><td>8 wavetables, each in 4 band-limited versions (no aliasing up to B7)</td></tr>
-<tr><td>Models</td><td>8, in 3 departments</td></tr>
+<tr><td>Waveforms</td><td>20 wavetables, each in 4 band-limited versions (no aliasing up to B7)</td></tr>
+<tr><td>Models</td><td>16, in 3 departments: 8 vintage &amp; combo, 4 pipe organs, 4 free reeds; historic tunings (Werckmeister III, quarter-comma meantone) or equal</td></tr>
 <tr><td>Manuals</td><td>Upper 9 drawbars, Lower 9 drawbars, Pedal 4 stops</td></tr>
 <tr><td>Keyboard</td><td>37 keys (C3–C6) with velocity (MIDI out), octave −2…+3</td></tr>
 <tr><td>Controls</td><td>8 knobs, 4 faders, 16 RGB pads, pitch and mod wheels, 18 buttons</td></tr>
 <tr><td>Effects</td><td>Per manual: drive / limiter / cassotto, scanner vibrato &amp; chorus or tremulant, rotary on/off, delay and reverb sends. Shared: percussion, two-rotor rotary with 4 cabinets (2 user), stereo delay up to 1 s, 4 reverbs up to 7.5 s. Insert: chorus, wah-wah, auto-wah, flanger, phaser, ring modulator, amp. Master: 3-band EQ, compressor</td></tr>
 <tr><td>Audio</td><td>44.1 kHz stereo, 256-sample blocks (5.8 ms)</td></tr>
-<tr><td>Memory</td><td>16 performance setups; a drawbar list of 75 registrations + 16 user slots, a pedal list of 24 + 8; kept across power-off</td></tr>
+<tr><td>Memory</td><td>16 performance setups; a drawbar list of 75 registrations, the pipe organs' own lists of 12–16, 16 user slots, a pedal list of 24 + 8; kept across power-off</td></tr>
 <tr><td>MIDI mixer</td><td>16 channels: volume (per setup), pan, reverb, delay, mute, solo</td></tr>
 <tr><td>MIDI</td><td>USB MIDI in and out; 3 zones with channel, range, transpose, velocity, filters; cloner, 9-channel harmonic mapper, chord memory per zone; up to 48 incoming notes held at once</td></tr>
 <tr><td>SEQTRAK</td><td>11 tracks, 2424 sounds by name and category, track select both ways, mute, 8 parameters + FM</td></tr>
-<tr><td>Firmware package</td><td>SMK-37 Elite_674110</td></tr></table>
+<tr><td>Firmware package</td><td>SMK-37 Elite_674150</td></tr></table>
 
 <h2>Known limits</h2>
 <ul>
   <li><b>MIDI in and out are USB only</b>, over the one USB port. No Bluetooth MIDI and no DIN MIDI: for DIN gear use a MIDI host with <span class="d">TRS</span> on.</li>
-  <li><b>The pedal socket</b> takes a sustain pedal (a switch), not an expression pedal.</li>
+  <li><b>The pedal socket</b> takes one pedal: a sustain pedal or an expression pedal (TRS), not both.</li>
   <li><b>The organ isn't velocity sensitive</b>, like a real one. The keys' velocity goes out over MIDI.</li>
   <li><b>The button lights</b> are on or off; they can't glow dimly.</li>
 </ul>

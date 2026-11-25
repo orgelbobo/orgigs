@@ -35,6 +35,7 @@ WHERE = {
     ("ORGAN", "SPACE"): ("FX: SEL + KNOB4", "FX K8"),
     ("ORGAN", "EXPR"): ("CC 11 in", "the pedal (an expression pedal); CC 11 in"),
     ("ORGAN", "BEND"): ("MIDI ZONE: SEL + KNOB4", "ZONE K8"),
+    ("ORGAN", "TUNING"): ("LIGHTS (SEL + GLOBE): SEL + KNOB1", "LIGHTS (SCALE + GLOBE): K5"),
     ("MIDI", "IN CH"): ("MIDI ZONE: KNOB1", "ZONE K1"),
     ("MIDI", "OUT CH"): ("MIDI ZONE: SEL + KNOB1", "ZONE K2"),
     ("MIDI", "LOWEST"): ("MIDI ZONE: KNOB2; LRN", "ZONE K3; pad 5 (LRN)"),

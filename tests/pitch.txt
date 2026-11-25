@@ -9,8 +9,8 @@
 120 enc 5 -10
 200 keys 0x10000
 1400 keys 0
-# bandoneon (model 8): A4 again; the reeds sit at +-6 cents (centre rank alone first)
-1500 enc 1 7
+# bandoneon (model 14 in the order): A4 again; the reeds sit at +-6 cents (centre rank alone first)
+1500 enc 1 13
 1600 btn 4
 1610 enc 2 -8
 1610 enc 3 -8

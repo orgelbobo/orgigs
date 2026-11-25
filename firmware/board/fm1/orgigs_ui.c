@@ -11,13 +11,15 @@
  *                             HOME SAVE ARP  SEQ  PLAY REC
  *
  * Everywhere:
- *   SELECT enc    manual (zone)             ALGORITHM enc  model 1..8       PRESETS enc  the drawbar list
+ *   SELECT enc    manual (zone)             ALGORITHM enc  model 1..15      PRESETS enc  the drawbar list
  *   SAVE          tap: store the drawbars of the manual into a user slot; held + one of the 16 white keys:
  *                 store the whole instrument into that performance setup
  *   SEL           held + one of the 16 white keys: recall that performance setup; SEL + HOME: panic;
  *                 SEL + GLO: the lights
- *   PLAY / REC    rotary brake / rotary slow-fast (SEL + REC: the focused manual through the rotary or not)
- *   OCT- OCT+     octave of the FM-1's keys
+ *   PLAY / REC    rotary brake / rotary slow-fast (SEL + REC: the focused manual through the rotary or not;
+ *                 SEL + PLAY on the ZONE screen: SUS IN, a sustain coming in on the zone's channel holds the keys)
+ *   OCT- OCT+     octave of the FM-1's keys (SEL + them on the ZONE screen: the zone's ORGAN OCTAVE, the organ's
+ *                 own; the zone's OCTAVE is MIDI out only)
  *   FX            the effects screen (again: back); SEL + FX the insert effect, again the master
  *                                                        GLO   the MIDI zones (again: the next screen)
  *   HOME          on the drawbars: the MIDI mixer (again: back); elsewhere back to the drawbars
@@ -86,8 +88,9 @@ static void knob_mix(uint32_t k, int32_t st) { ctl_mix(ui.mix_row * 4u + k, st);
    the key-scan interrupt wait out the rest (the frames cost nothing) */
 static const uint16_t LT_NS[LT_LEVELS] = {500, 1000, 2000, 3000, 3000, 3000, 3000, 3000, 3000, 0};
 static const uint8_t LT_DUTY[LT_LEVELS] = {0, 0, 0, 0, 1, 2, 3, 4, 6, 8};
-static void knob_light(uint32_t k, int32_t st)
+static void knob_light(uint32_t k, int32_t st)   /* SEL + KNOB1: the tuning */
 {
+    if (ui.shift) { if (k == 0u) ctl_tuning(st); return; }
     if (k == 0u) { st0.lt_keys = (uint8_t)clampi((int32_t)st0.lt_keys + st, 0, LT_N - 1); ctl_say("KEYS LIGHT", LT_NAME[st0.lt_keys]); }
     else if (k == 1u) { st0.lt_btns = (uint8_t)clampi((int32_t)st0.lt_btns + st, 0, LT_N - 1); ctl_say("BUTTONS LIGHT", LT_NAME[st0.lt_btns]); }
     else if (k == 2u) { st0.lt_level = (uint8_t)clampi((int32_t)st0.lt_level + st, 0, LT_LEVELS - 1); ctl_say_int("DIM LEVEL", st0.lt_level + 1, 0); }
@@ -250,6 +253,7 @@ static void set_mode(uint32_t m)
 #define C_HGREEN RGB(52, 178, 84)
 #define C_HRED RGB(214, 56, 42)
 #define C_HYELLOW RGB(244, 196, 36)
+#include "../look.c"                    /* OrGigs 2's look: the glass, drawbars, lamps, knobs, keycaps */
 
 static uint16_t bar_colour(uint32_t dept, uint32_t d)
 {
@@ -258,8 +262,12 @@ static uint16_t bar_colour(uint32_t dept, uint32_t d)
         return (d == 4u || d == 6u || d == 7u) ? C_DARKB : C_IVORY;
     }
     if (dept == DEPT_PIPE) {
-        static const uint8_t FAM[9] = {1, 0, 1, 2, 0, 1, 0, 0, 2};
-        return FAM[d] == 0 ? C_PRN : FAM[d] == 1 ? C_FLT : C_STR;
+        static const uint8_t FAM[5][9] = {{1, 0, 1, 2, 0, 1, 0, 0, 2}, {0, 2, 0, 1, 1, 0, 0, 0, 0},   /* (the renaissance's, */
+                                          {1, 0, 1, 2, 2, 0, 2, 0, 2}, {1, 0, 1, 0, 0, 1, 0, 2, 2},   /* the romantic's, baroque's, */
+                                          {1, 0, 1, 2, 2, 0, 0, 2, 2}};                               /* the cathedral's) */
+        uint32_t f = FAM[org_par.model == MODEL_RENAISSANCE ? 1 : org_par.model == MODEL_ROMANTIC ? 2
+                         : org_par.model == MODEL_BAROQUE ? 3 : org_par.model == MODEL_CATHEDRAL ? 4 : 0][d];
+        return f == 0 ? C_PRN : f == 1 ? C_FLT : C_STR;
     }
     return d == 8u ? C_MUT : (d == 3u || d == 4u || d == 6u) ? C_REED : C_IVORY;
 }
@@ -300,13 +308,15 @@ static void draw_bat(void)
 static void draw_top_bar(const char *tag, const char *b1, uint16_t c1, const char *b2, const char *right, uint16_t cr)
 {
     int32_t x;
-    cv_begin(240, 24, C_BG);
+    int32_t rx = bat_ok() ? 216 : 236;
+    lk_begin(240, 24, 0, 0, C_BG);
     x = cv_text(4, 4, &FONT_S, tag, C_ACC) + 6;
-    cv_rect(x - 2, 3, text_w_s(b1) + 4, 18, C_GRID);
-    x = cv_text(x, 4, &FONT_S, b1, c1) + 7;
-    cv_rect(x - 2, 3, text_w_s(b2) + 4, 18, C_ACC);
-    cv_text(x, 4, &FONT_S, b2, C_BLACK);
-    cv_text((bat_ok() ? 216 : 236) - text_w_s(right), 4, &FONT_S, right, cr);
+    x = lk_badge(x, b1, RGB(60, 60, 70), RGB(44, 44, 52), c1) + 9;
+    x = lk_badge(x, b2, RGB(255, 200, 100), C_ACC, C_BLACK) + 6;
+    for (cv_sq = 0; cv_sq < 2u && rx - text_w_s(right) < x; cv_sq++)   /* the right-hand text squeezed, else left out */
+        ;
+    if (rx - text_w_s(right) >= x) cv_text(rx - text_w_s(right), 4, &FONT_S, right, cr);
+    cv_sq = 0;
     if (bat_ok()) draw_bat();
     cv_rect(0, 23, 240, 1, C_GRID);
     cv_blit(0, 0);
@@ -314,7 +324,7 @@ static void draw_top_bar(const char *tag, const char *b1, uint16_t c1, const cha
 
 static char *model_tag(char *p)
 {
-    *p++ = (char)('1' + org_par.model); *p++ = ' ';
+    p = org_fmt(p, (int32_t)org_model_pos(org_par.model) + 1, 0); *p++ = ' ';   /* (1 .. 15, in their order) */
     return cat(p, ORG_MODELS[org_par.model].tag);
 }
 
@@ -324,24 +334,23 @@ static void draw_bars(void)
     uint32_t man = mls.focus, dept = dept_now(), n = man == MAN_PEDAL ? ORG_NDB_PEDAL : ORG_NDB, half, d;
     for (half = 0; half < 2u; half++) {
         int32_t oy = (int32_t)half * 64;
-        cv_begin(240, 64, C_BG);
+        lk_begin(240, 64, 0, 24 + (uint32_t)oy, C_BG);
         for (d = 0; d < n; d++) {
             int32_t cw = man == MAN_PEDAL ? 56 : 26, x = (man == MAN_PEDAL ? 8 : 4) + (int32_t)d * cw, bw = cw - 8;
-            int32_t lvl = org_par.drawbar[man][d], len = 8 + lvl * 11, y;
+            int32_t lvl = org_par.drawbar[man][d];
             uint16_t c = man == MAN_PEDAL ? (d == 3u ? C_STR : C_BROWN) : bar_colour(dept, d);
             uint32_t sel = man == MAN_PEDAL || GRP_DB[ui.grp][0] == d || GRP_DB[ui.grp][1] == d ||
                            GRP_DB[ui.grp][2] == d || GRP_DB[ui.grp][3] == d;
-            cv_rect(x + bw / 2 - 1, 2 - oy, 2, 100, C_GRID);              /* the slot */
-            cv_rect(x, 2 - oy, bw, len, c);                                 /* the bar */
-            for (y = 1; y <= lvl; y++)                                      /* the steps */
-                cv_rect(x + 2, 2 + 8 + y * 11 - 2 - oy, bw - 4, 1, C_BG);
-            cv_rect(x - 1, 2 + len - oy, bw + 2, 6, sel ? C_ACC : C_TXT);  /* the handle */
+            lk_drawbar(x, -oy, bw, (uint32_t)lvl, c);
             {
                 char s[4];
                 s[0] = (char)('0' + lvl); s[1] = 0;
-                cv_text(x + bw / 2 - 4, 106 - oy, &FONT_S, s, sel ? C_ACC : C_MUT);
+                cv_ctext(x + bw / 2, 105 - oy, 38, &FONT_S, s, sel ? C_ACC : C_MUT);
             }
-            if (sel) cv_rect(x - 2, 124 - oy, bw + 4, 3, C_ACC);           /* the bracket: what the knobs hold */
+            if (sel) {                                                      /* the bracket: what the knobs hold */
+                lk_glow(Q4(x + bw / 2), Q4(124 - oy), Q4(14), C_ACC, 38);
+                cv_rect(x - 2, 123 - oy, bw + 4, 2, C_ACC);
+            }
         }
         cv_blit(0, 24 + (uint32_t)oy);
     }
@@ -352,7 +361,7 @@ static void draw_mini(void)
 {
     uint32_t i, j, d, x = 4;
     char s[8];
-    cv_begin(240, 28, C_BG);
+    lk_begin(240, 28, 0, 152, C_BG);
     cv_rect(0, 0, 240, 1, C_GRID);
     for (i = 0, j = 0; i < 3u; i++) {
         uint32_t n = i == MAN_PEDAL ? ORG_NDB_PEDAL : ORG_NDB;
@@ -361,9 +370,7 @@ static void draw_mini(void)
         x = j ? 90 : 4;
         cv_text((int32_t)x, 6, &FONT_S, T[i], C_MUT);
         for (d = 0; d < n; d++) {
-            int32_t h = org_par.drawbar[i][d] * 3;
-            cv_rect((int32_t)(x + 22 + d * 7), 3, 5, 24, C_GRID);
-            cv_rect((int32_t)(x + 22 + d * 7), 3, 5, h, i == MAN_PEDAL ? C_BROWN : C_IVORY);
+            lk_minibar((int32_t)(x + 22 + d * 7), 3, org_par.drawbar[i][d], i == MAN_PEDAL ? C_BROWN : C_IVORY);
         }
         j++;
     }
@@ -371,48 +378,27 @@ static void draw_mini(void)
     s[0] = 'S'; org_fmt(s + 1, (int32_t)st0.setup + 1, 0);
     cv_text(220, 6, &FONT_S, s, C_MUT);
     if (ctl_msg_on()) {                                                       /* the last change, over the strip */
-        cv_rect(0, 1, 240, 27, C_ACC);
-        cv_text(4, 6, &FONT_S, ctl.msg, C_BLACK);
+        lk_rrect(1, 2, 238, 25, 5, RGB(255, 200, 100), C_ACC, 255);
+        cv_text(5, 6, &FONT_S, ctl.msg, C_BLACK);
     }
     cv_blit(0, 152);
 }
 
-/* a rocker tab, 36 x 52: the name on the tab (lit in its colour when on), the setting underneath */
+/* a switch, 36 wide: its name, a lamp (lit in its colour when on), the setting underneath */
 static void draw_tab(int32_t x, uint16_t col, uint32_t on, const char *lab, const char *val)
 {
-    cv_rect(x, 4, 36, 52, on ? col : C_GRID);
-    cv_rect(x + 2, 28, 32, 26, C_BG);
-    cv_text(x + 18 - text_w_s(lab) / 2, 7, &FONT_S, lab, on ? C_BLACK : C_MUT);
-    cv_text(x + 18 - text_w_s(val) / 2, 33, &FONT_S, val, on ? col : C_MUT);
+    lk_switch(x, 4, 36, col, on, lab, val);
 }
 
-/* a knob arc of radius r around (cx, cy): the track from 7 to 5 o'clock, the value lit, a cap and a pointer */
+/* a knob of radius r around (cx, cy): a ring of lamps from 7 to 5 o'clock, the value lit, a cap and a pointer */
 static void draw_knob_at(int32_t cx, int32_t cy, int32_t r, uint16_t col, uint32_t v)
 {
-    const int32_t N = 72;
-    int32_t i, rr, dy, cap = r - 7;
-    for (i = 0; i <= N; i++) {
-        uint32_t ph = 0xA0000000u + (uint32_t)i * (0xC0000000u / (uint32_t)N);
-        int32_t sn = org_sin(ph), cs = org_sin(ph + 0x40000000u);
-        uint16_t c = (uint32_t)i * 127u <= v * (uint32_t)N && v ? col : C_GRID;
-        for (rr = r - 3; rr <= r; rr++) cv_pset(cx + ((rr * sn) >> 15), cy - ((rr * cs) >> 15), c);
-    }
-    for (dy = -cap; dy <= cap; dy++) {                  /* the cap */
-        int32_t dx = 0;
-        while ((dx + 1) * (dx + 1) + dy * dy <= cap * cap) dx++;
-        cv_rect(cx - dx, cy + dy, 2 * dx + 1, 1, C_DARKB);
-    }
-    {
-        uint32_t ph = 0xA0000000u + v * (0xC0000000u / 127u);
-        int32_t sn = org_sin(ph), cs = org_sin(ph + 0x40000000u);
-        cv_line(cx + ((3 * sn) >> 15), cy - ((3 * cs) >> 15), cx + ((cap * sn) >> 15), cy - ((cap * cs) >> 15), C_TXT);
-        cv_line(cx + ((3 * sn) >> 15) + 1, cy - ((3 * cs) >> 15), cx + ((cap * sn) >> 15) + 1, cy - ((cap * cs) >> 15), C_TXT);
-    }
+    lk_knob(Q4(cx), Q4(cy), Q4(r - 2), Q4(r / 2), r > 12 ? 11u : 9u, v, col, 1, C_TXT);
 }
 static void draw_knob(int32_t cx, uint16_t col, uint32_t v, const char *lab)
 {
     draw_knob_at(cx, 22, 17, col, v);
-    cv_text(cx - text_w_s(lab) / 2, 42, &FONT_S, lab, C_TXT);
+    cv_ctext(cx, 42, 38, &FONT_S, lab, C_TXT);
 }
 
 /* the panel strip: three tonewheel-organ tabs (switches) and three knobs, in the tonewheel-organ colours */
@@ -422,7 +408,7 @@ static void draw_bottom(void)
     static const char *const LES_TAG[3] = {"SLOW", "BRK", "FAST"};
     uint32_t dept = dept_now(), m = mls.focus;
     char n[8];
-    cv_begin(240, 60, C_BG);
+    lk_begin(240, 60, 0, 180, C_BG);
     cv_rect(0, 0, 240, 1, C_GRID);
     if (dept == DEPT_VINTAGE)
         draw_tab(2, C_HGREEN, org_par.vib[m] != 0u, org_par.vib[m] >= VIB_C1 ? "CHO" : "VIB", VIB_NAME[org_par.vib[m]]);
@@ -461,13 +447,13 @@ static void cells_set(cells_t *c, uint32_t i, const char *lab, const char *val)
 static void draw_cells(uint32_t y, const cells_t *c)
 {
     uint32_t i;
-    cv_begin(240, 36, C_BG);
+    lk_begin(240, 36, 0, y, C_BG);
     for (i = 0; i < 4u; i++) {
         int32_t x = (int32_t)i * 60;
         uint16_t vc = !c->val[i][0] ? C_MUT : c->lit ? (c->col[i] ? c->col[i] : C_ACC) : C_TXT;
         if (i) cv_rect(x, 2, 1, 32, C_GRID);
-        cv_text(x + 30 - text_w_s(c->lab[i]) / 2, 1, &FONT_S, c->lab[i], c->lit ? C_TXT : C_MUT);
-        cv_text(x + 30 - text_w_s(c->val[i]) / 2, 18, &FONT_S, c->val[i], vc);
+        cv_ctext(x + 30, 1, 58, &FONT_S, c->lab[i], c->lit ? C_TXT : C_MUT);
+        cv_ctext(x + 30, 18, 58, &FONT_S, c->val[i], vc);
     }
     if (c->lit) cv_rect(0, 35, 240, 1, C_ACC);
     cv_blit(0, y);
@@ -477,14 +463,11 @@ static void draw_cells(uint32_t y, const cells_t *c)
 static void draw_btnmap(const btnmap_t *b)
 {
     uint32_t i;
-    cv_begin(240, 60, C_BG);
+    lk_begin(240, 60, 0, 180, C_BG);
     cv_rect(0, 0, 240, 1, C_GRID);
     for (i = 0; i < 12u; i++) {
         int32_t x = (int32_t)(i % 6u) * 40, y = 4 + (int32_t)(i / 6u) * 28;
-        uint32_t any = b->lab[i][0] != 0;
-        cv_rect(x + 1, y, 38, 26, b->on[i] ? C_ACC : any ? C_GRID : C_BG);
-        if (!b->on[i] && any) cv_rect(x + 2, y + 1, 36, 24, C_BG);
-        cv_text(x + 20 - text_w_s(b->lab[i]) / 2, y + 5, &FONT_S, b->lab[i], b->on[i] ? C_BLACK : C_TXT);
+        if (b->lab[i][0]) lk_key(x + 1, y, 38, 25, b->lab[i], b->on[i], C_TXT);
     }
     cv_blit(0, 180);
 }
@@ -517,10 +500,10 @@ static void btn_common(btnmap_t *b)
 /* the line over the buttons: the last change, else a hint */
 static void draw_msgline(const char *hint)
 {
-    cv_begin(240, 20, C_BG);
+    lk_begin(240, 20, 0, 160, C_BG);
     if (ctl_msg_on()) {
-        cv_rect(0, 0, 240, 20, C_ACC);
-        cv_text(4, 2, &FONT_S, ctl.msg, C_BLACK);
+        lk_rrect(1, 0, 238, 20, 5, RGB(255, 200, 100), C_ACC, 255);
+        cv_text(5, 2, &FONT_S, ctl.msg, C_BLACK);
     } else {
         cv_text(4, 2, &FONT_S, hint, C_MUT);
     }
@@ -539,7 +522,13 @@ static void fx_cells(cells_t *sel)
     char s[12];
     memset(sel, 0, sizeof *sel);
     sel->lit = 1;
-    if (dept == DEPT_VINTAGE) cells_set(sel, 0, "PERC", org_par.model == MODEL_B3 ? PERC_TAG[org_par.perc] : "WHL ONLY");
+    if (ORG_MODELS[org_par.model].knob != KNOB_DEPT) {
+        org_fmt(s, org_par.character, 0);
+        if (ORG_MODELS[org_par.model].knob == KNOB_ACTION) cat(org_fmt(s, 10 + (int32_t)org_par.character * 30 / 127, 0), "ms");
+        if (ORG_MODELS[org_par.model].knob == KNOB_FAN) cat(org_fmt(s, (int32_t)org_par.character * 100 / 127, 0), "%");
+        cells_set(sel, 0, ORG_MODELS[org_par.model].knob == KNOB_TONE ? "TONE" : ORG_MODELS[org_par.model].knob == KNOB_AMP ? "AMP"
+                          : ORG_MODELS[org_par.model].knob == KNOB_FAN ? "FAN" : "ACTION", s);
+    } else if (dept == DEPT_VINTAGE) cells_set(sel, 0, "PERC", org_par.model == MODEL_B3 ? PERC_TAG[org_par.perc] : "WHL ONLY");
     else { org_fmt(s, org_par.character, 0); cells_set(sel, 0, dept == DEPT_PIPE ? "CHIFF" : "DETUNE", s); }
     org_fmt(s, org_par.delay_fb, 0);
     cells_set(sel, 1, "FEEDBK", s);
@@ -559,17 +548,17 @@ static void draw_fx_grid(void)
     const char *head[4] = {"DRIVE", dept == DEPT_VINTAGE ? "VIB" : "TREM", "DELAY", "REVERB"};
     for (half = 0; half < 4u; half++) {     /* 136 rows: four canvases of 34 (the canvas holds 64) */
         int32_t oy = (int32_t)half * 34;
-        cv_begin(240, 34, C_BG);
+        lk_begin(240, 34, 0, 24u + (uint32_t)oy, C_BG);
         cv_oy = -oy;
-        for (k = 0; k < 4u; k++) cv_text(28 + (int32_t)k * 53 + 26 - text_w_s(head[k]) / 2, 0, &FONT_S, head[k], C_MUT);
+        for (k = 0; k < 4u; k++) cv_ctext(28 + (int32_t)k * 53 + 26, 0, 50, &FONT_S, head[k], C_MUT);
         for (m = 0; m < ORG_NMAN; m++) {
             int32_t y = 16 + (int32_t)m * 40;
             uint32_t f = m == mls.focus;
             if (y + 40 <= oy || y >= oy + 34) continue;
-            if (f) cv_rect(0, y, 240, 40, RGB(30, 26, 20));
-            cv_rect(0, y, 240, 1, C_GRID);
+            if (f) lk_focus(1, y, 238, 40);
+            else if (m) lk_rect(4, y, 232, 1, C_GRID, 200);
             cv_text(3, y + 3, &FONT_S, MAN_TAG[m], f ? C_ACC : C_TXT);
-            cv_text(3, y + 21, &FONT_S, "L", org_par.les_on[m] ? C_HYELLOW : C_GRID);
+            lk_lamp(Q4(10), Q4(y + 28), Q4(2.5), C_HYELLOW, org_par.les_on[m]);   /* its rotary cabinet on */
             for (k = 0; k < 4u; k++) {
                 int32_t x = 28 + (int32_t)k * 53;
                 uint32_t v = k == 0u ? org_par.drive[m] : k == 2u ? org_par.dsend[m] : k == 3u ? org_par.rsend[m]
@@ -577,8 +566,8 @@ static void draw_fx_grid(void)
                 char s[8];
                 if (k == 1u && dept == DEPT_VINTAGE) cat(s, VIB_NAME[org_par.vib[m]]);
                 else org_fmt(s, (int32_t)v, 0);
-                draw_knob_at(x + 14, y + 20, 13, f ? COL[k] : C_MUT, v);
-                cv_text(x + 30, y + 12, &FONT_S, s, f ? COL[k] : C_TXT);
+                lk_knob(Q4(x + 14), Q4(y + 20), Q4(11), Q4(7), 9, v, COL[k], f, f ? C_TXT : C_MUT);
+                lk_ltext(x + 29, y + 12, 24, s, f ? COL[k] : C_TXT);
             }
         }
         cv_oy = 0;
@@ -618,16 +607,14 @@ static void draw_vis_ins(void)
 {
     uint32_t t = ins_shown(), on = fxi_st.type != FXI_OFF, i;
     char s[16];
-    cv_begin(240, 64, C_BG);
+    lk_begin(240, 64, 0, 24, C_BG);
     cv_text(4, 0, &FONT_L, FXI_NAME[t], on ? C_ACC : C_MUT);
     cat(cat(s, on ? "ON " : "OFF "), on ? MAN_BADGE[fxi_st.man] : "");
     cv_text(236 - text_w_s(s), 8, &FONT_S, s, on ? C_TXT : C_MUT);
     for (i = 1; i < FXI_N; i++) {
         int32_t x = 2 + (int32_t)(i - 1u) * 34;
         uint32_t cur = i == t;
-        cv_rect(x, 40, 32, 22, cur ? (on ? C_ACC : C_DARKB) : C_GRID);
-        if (!cur) cv_rect(x + 1, 41, 30, 20, C_BG);
-        cv_text(x + 16 - text_w_s(FXI_TAG[i]) / 2, 43, &FONT_S, FXI_TAG[i], cur && on ? C_BLACK : C_TXT);
+        lk_choice(x + 16, 38, 32, FXI_TAG[i], cur, on ? C_ACC : C_TXT, C_MUT);
     }
     cv_blit(0, 24);
 }
@@ -683,18 +670,24 @@ static void draw_vis_mst(void)
     uint32_t i;
     int32_t gr = mst_gr10(), w = -gr * 130 / 200;    /* the bar: 20 dB over 130 px */
     char s[16], *p;
-    cv_begin(240, 64, C_BG);
+    lk_begin(240, 64, 0, 24, C_BG);
     for (i = 0; i < 2u; i++) {
         uint32_t on = i ? mst_st.comp_on : mst_st.eq_on, held = i == ui.mst_comp;
         int32_t x = 2 + (int32_t)i * 119;
-        cv_rect(x, 0, 117, 22, on ? C_ACC : held ? C_DARKB : C_GRID);
-        if (!on) cv_rect(x + 1, 1, 115, 20, C_BG);
-        cv_text(x + 58 - text_w_s(NAME[i]) / 2, 3, &FONT_S, NAME[i], on ? C_BLACK : held ? C_TXT : C_MUT);
+        if (held) lk_focus(x, 0, 117, 22);
+        lk_lamp(Q4(x + 12), Q4(11), Q4(6), C_ACC, on);
+        cv_text(x + 26, 3, &FONT_S, NAME[i], on || held ? C_TXT : C_MUT);
     }
     cv_text(2, 30, &FONT_S, "GAIN", C_MUT);
-    if (w > 130) w = 130;
-    cv_rect(44, 34, 130, 10, C_GRID);
-    if (mst_st.comp_on && w > 0) cv_rect(174 - w, 34, w, 10, C_HRED);
+    for (i = 0; i < 20u; i++) {                 /* the cut, a row of lamps: 1 dB each */
+        int32_t lx = 46 + (int32_t)i * 7;
+        uint16_t c = i < 12u ? C_HYELLOW : C_HRED;
+        if (mst_st.comp_on && (int32_t)i * 13 / 2 < w) {
+            lk_glow(Q4(lx + 2), Q4(38), Q4(4), c, 70);
+            lk_rrect(lx, 33, 5, 10, 1, LK_LIGHT(c, 64), c, 255);
+        } else
+            lk_rrect(lx, 33, 5, 10, 1, lk_mul(c, 51), lk_mul(c, 38), 255);
+    }
     p = s;
     if (gr < 0) *p++ = '-';
     p = org_fmt(p, -gr / 10, 0); *p++ = '.'; *p++ = (char)('0' + -gr % 10); cat(p, "dB");
@@ -717,20 +710,19 @@ static void draw_mix_grid(void)
     uint32_t half, r, c, used = ml_used_channels();
     for (half = 0; half < 4u; half++) {     /* four canvases of 34 rows */
         int32_t oy = (int32_t)half * 34;
-        cv_begin(240, 34, C_BG);
+        lk_begin(240, 34, 0, 24u + (uint32_t)oy, C_BG);
         cv_oy = -oy;
         for (r = 0; r < 4u; r++) {
             int32_t y = (int32_t)r * 34;
             uint32_t f = r == ui.mix_row;
             if (y + 34 <= oy || y >= oy + 34) continue;
-            if (f) cv_rect(0, y, 240, 34, RGB(30, 26, 20));
+            if (f) lk_focus(1, y, 238, 34);
             for (c = 0; c < 4u; c++) {
                 uint32_t ch = r * 4u + c;
                 int32_t x = (int32_t)c * 60;
                 char s[8];
                 uint16_t lc = used >> ch & 1u ? C_CH_ON : C_MUT;
-                if (c) cv_rect(x, y + 2, 1, 30, C_GRID);
-                draw_knob_at(x + 15, y + 17, 12, f ? C_ACC : C_DARKB, ml_mix[ch]);
+                lk_knob(Q4(x + 15), Q4(y + 17), Q4(11), Q4(6), 9, ml_mix[ch], f ? C_ACC : C_CH_ON, f, f ? C_TXT : C_MUT);
                 mix_label(s, ch);
                 cv_text(x + 31, y + 1, &FONT_S, s, lc);
                 org_fmt(s, ml_mix[ch], 0);
@@ -754,11 +746,14 @@ static void mix_btnmap(btnmap_t *b)
 }
 
 /* ---- the lights */
-static void light_cells(cells_t *top)
+static void light_cells(cells_t *top, cells_t *sel)
 {
     char s[8];
     memset(top, 0, sizeof *top);
-    top->lit = 1;
+    memset(sel, 0, sizeof *sel);
+    top->lit = !ui.shift;
+    sel->lit = (uint8_t)ui.shift;
+    cells_set(sel, 0, "TUNING", TUNING_NAME[org_par.equal & 1u]);
     cells_set(top, 0, "KEYS", LT_NAME[st0.lt_keys]);
     cells_set(top, 1, "BUTTONS", LT_NAME[st0.lt_btns]);
     org_fmt(s, st0.lt_level + 1, 0);
@@ -793,7 +788,8 @@ static void midi_cells(cells_t *top, cells_t *sel)
         org_fmt(s, z->vel, 0); cells_set(top, 3, "VEL", s);
         ch_name(s, z->out_ch); cells_set(sel, 0, "OUT CH", s);
         note_name(s, z->hi); cells_set(sel, 1, "HIGHEST", s);
-        org_fmt(s, z->octave, 1); cells_set(sel, 2, "OCTAVE", s);
+        if (zone_ioct(z)) { char *q = org_fmt(s, z->octave, 1); *q++ = '/'; org_fmt(q, zone_ioct(z), 1); cells_set(sel, 2, "OCT/ORG", s); }
+        else { org_fmt(s, z->octave, 1); cells_set(sel, 2, "OCTAVE", s); }
         cells_set(sel, 3, "BEND", CTL_NAME[ml_ctl_mode]);
         break;
     case MS_CLONE:
@@ -834,6 +830,7 @@ static void midi_btnmap(btnmap_t *b)
             btn_set(b, BTN_EDIT, ml_rate_safe ? "TRS" : "USB", ml_rate_safe);
             btn_set(b, BTN_ARP, zn.keys == KEYS_ZONES ? "K:ZN" : "K:FL", zn.keys == KEYS_ZONES);
             btn_set(b, BTN_SEQ, "AUTO", zn.auto_pedal);
+            btn_set(b, BTN_PLAY, "SUS", z->xf & ZX_SUSK);
         } else {
             btn_set(b, BTN_ENV, "VEL", z->flags & Z_VELTHRU);
             btn_set(b, BTN_LFO, "CC-F", z->flags & Z_NOCC);
@@ -872,7 +869,7 @@ static void draw_vis_zone(void)
 {
     uint32_t zi, o;
     static const char *const T[3] = {"UP", "LO", "PD"};
-    cv_begin(240, 64, C_BG);
+    lk_begin(240, 64, 0, 24, C_BG);
     for (o = 0; o <= 10u; o++) cv_rect(24 + (int32_t)(o * 12u * 212u / 128u), 0, 1, 50, C_GRID);   /* the Cs */
     for (zi = 0; zi < ORG_NMAN; zi++) {
         const zone_t *z = &zn.z[zi];
@@ -881,7 +878,7 @@ static void draw_vis_zone(void)
         uint16_t c = zi == mls.focus ? C_ACC : live ? C_CH_ON : C_DARKB;
         char s[24], *p;
         cv_text(2, y - 1, &FONT_S, T[zi], zi == mls.focus ? C_ACC : C_MUT);
-        cv_rect(x0, y + 1, x1 - x0, 13, c);
+        lk_rrect(x0, y + 1, x1 - x0, 13, 3, LK_LIGHT(c, 80), lk_mul(c, 200), 255);
         p = s;
         if (zi == MAN_PEDAL && zn.auto_pedal) p = cat(p, "AUTO");
         else { p = ch_name(p, z->in_ch); }
@@ -899,19 +896,21 @@ static void draw_vis_clone(void)
 {
     const zone_t *z = &zn.z[mls.focus];
     uint32_t ch;
-    cv_begin(240, 64, C_BG);
+    lk_begin(240, 64, 0, 24, C_BG);
     for (ch = 0; ch < 16u; ch++) {
         int32_t x = (int32_t)(ch % 8u) * 30, y = (int32_t)(ch / 8u) * 32;
         uint32_t on = z->clone_mask >> ch & 1u, main = ch == z->out_ch;
         uint32_t act = mls.act_ms[ch] && fm1_ms - mls.act_ms[ch] < 150u;
         char s[4];
-        cv_rect(x + 1, y + 1, 28, 30, ch == ui.clone_cur ? C_ACC : act ? C_WHITE : C_GRID);
-        cv_rect(x + 3, y + 3, 24, 26, main ? C_DARKB : on ? C_CH_ON : C_BG);
+        lk_rrect(x + 1, y + 1, 28, 30, 5, ch == ui.clone_cur ? C_ACC : act ? C_WHITE : RGB(70, 70, 80),
+                 ch == ui.clone_cur ? C_ACC : act ? C_WHITE : C_GRID, 255);
+        lk_rrect(x + 3, y + 3, 24, 26, 3, main ? C_DARKB : on ? LK_LIGHT(C_CH_ON, 60) : RGB(26, 24, 26),
+                 main ? C_DARKB : on ? lk_mul(C_CH_ON, 190) : RGB(14, 13, 15), 255);
         org_fmt(s, (int32_t)ch + 1, 0);
-        cv_text(x + 15 - text_w_s(s) / 2, y + 2, &FONT_S, s, on ? C_BLACK : C_MUT);
-        if (on && z->clone_oct[ch]) { org_fmt(s, z->clone_oct[ch], 1); cv_text(x + 15 - text_w_s(s) / 2, y + 15, &FONT_S, s, C_BLACK); }
-        else if (main) cv_text(x + 15 - text_w_s(MAN_TAG[mls.focus]) / 2, y + 15, &FONT_S, MAN_TAG[mls.focus], C_TXT);
-        else if (yst_ch_tag(ch)) cv_text(x + 15 - text_w_s(yst_ch_tag(ch)) / 2, y + 15, &FONT_S, yst_ch_tag(ch), on ? C_BLACK : C_MUT);
+        cv_ctext(x + 15, y + 2, 28, &FONT_S, s, on ? C_BLACK : C_MUT);
+        if (on && z->clone_oct[ch]) { org_fmt(s, z->clone_oct[ch], 1); cv_ctext(x + 15, y + 15, 28, &FONT_S, s, C_BLACK); }
+        else if (main) cv_ctext(x + 15, y + 15, 28, &FONT_S, MAN_TAG[mls.focus], C_TXT);
+        else if (yst_ch_tag(ch)) cv_ctext(x + 15, y + 15, 28, &FONT_S, yst_ch_tag(ch), on ? C_BLACK : C_MUT);
     }
     cv_blit(0, 24);
 }
@@ -921,7 +920,7 @@ static void draw_vis_harm(void)
     static const char *const FT[9] = {"16", "5", "8", "4", "2", "2", "1", "1", "1"};
     const zone_t *z = &zn.z[mls.focus];
     uint32_t f;
-    cv_begin(240, 64, C_BG);
+    lk_begin(240, 64, 0, 24, C_BG);
     if (mls.focus == MAN_PEDAL) {
         cv_text(4, 24, &FONT_S, "NOT FOR THE PEDAL", C_MUT);
     } else {
@@ -929,12 +928,12 @@ static void draw_vis_harm(void)
             int32_t x = 4 + (int32_t)f * 26, ch = z->harm_base + (int32_t)f;
             uint32_t on = z->harm_mask >> f & 1u, db = org_par.drawbar[mls.focus][f];
             char s[4];
-            cv_rect(x, 0, 24, 20, on ? C_CH_ON : C_GRID);
-            cv_text(x + 12 - text_w_s(FT[f]) / 2, 2, &FONT_S, FT[f], on ? C_BLACK : C_MUT);
+            lk_rrect(x, 0, 24, 20, 4, on ? LK_LIGHT(C_CH_ON, 60) : RGB(58, 58, 66), on ? lk_mul(C_CH_ON, 190) : RGB(30, 30, 36), 255);
+            cv_ctext(x + 12, 2, 22, &FONT_S, FT[f], on ? C_BLACK : C_MUT);
             org_fmt(s, ch + 1, 0);
-            cv_text(x + 12 - text_w_s(s) / 2, 22, &FONT_S, s, ch > 15 ? C_STR : C_TXT);
-            cv_rect(x + 4, 40, 16, 24, C_GRID);
-            cv_rect(x + 4, 40, 16, (int32_t)db * 3, bar_colour(dept_now(), f));
+            cv_ctext(x + 12, 22, 22, &FONT_S, s, ch > 15 ? C_STR : C_TXT);
+            lk_rect(x + 11, 40, 2, 24, C_BLACK, 255);
+            lk_drawbar_part(x + 4, 40, 16, (int32_t)db * 3, bar_colour(dept_now(), f));
         }
     }
     cv_blit(0, 24);
@@ -945,7 +944,7 @@ static void draw_vis_yst(void)          /* the SEQTRAK's selected track: its nam
     const yst_trk_t *k = &yst.t[yst.cur];
     const char *cat_n, *nm = yst_sound(yst.cur, &cat_n);
     char s[40], *p;
-    cv_begin(240, 64, C_BG);
+    lk_begin(240, 64, 0, 24, C_BG);
     if (!yst.on) {                              /* off, looking, or nobody answered: what to do, and the count */
         static const char HX[] = "0123456789ABCDEF";
         uint32_t i;
@@ -988,7 +987,7 @@ static void draw_vis_chord(void)
     const zone_t *z = &zn.z[mls.focus];
     uint32_t k, w = 0, lit = 0, i;
     for (i = 0; i < z->chord_n && i < ML_MAXCHORD; i++) if (z->chord[i] >= 0 && z->chord[i] < 25) lit |= 1u << z->chord[i];
-    cv_begin(240, 64, C_BG);
+    lk_begin(240, 64, 0, 24, C_BG);
     for (k = 0; k < 25u; k++) {                 /* two octaves from C: the chord over its lowest note */
         uint32_t black = (0x54Au >> (k % 12u)) & 1u;
         if (black) continue;
@@ -1094,7 +1093,7 @@ static void ui_draw(void)
             h |= 1u;
             if (h != drawn[R_VIS]) { drawn[R_VIS] = h; draw_mix_grid(); }
         } else if (ui.mode == MODE_LIGHT) {
-            light_cells(&top);
+            light_cells(&top, &sel);
             light_btnmap(&bm);
             cat(b, "LIGHTS");
             hint = BOARD_LIGHT_HINT;
@@ -1102,6 +1101,8 @@ static void ui_draw(void)
             if (h != drawn[R_TOP]) { drawn[R_TOP] = h; draw_top_bar(tag, "PANEL", C_TXT, b, r, C_MUT); }
             h = hash_mem(18u, &top, sizeof top) | 1u;
             if (h != drawn[R_ROW1]) { drawn[R_ROW1] = h; draw_cells(60, &top); }
+            h = hash_mem(19u, &sel, sizeof sel) | 1u;
+            if (h != drawn[R_ROW2]) { drawn[R_ROW2] = h; draw_cells(96, &sel); }
         } else {
             uint32_t act = 0, ch;
             const zone_t *z = &zn.z[mls.focus];
@@ -1252,7 +1253,15 @@ static void ui_buttons(uint32_t b, uint32_t rel)
         ui.save_used = 1;                       /* (SAVE's release stores no drawbars) */
         return;
     }
-    if (b & (1u << BTN_OCT_DOWN | 1u << BTN_OCT_UP)) ctl_octave(b >> BTN_OCT_DOWN & 1u, b >> BTN_OCT_UP & 1u);
+    if (b & (1u << BTN_OCT_DOWN | 1u << BTN_OCT_UP)) {
+        if (midi && ui.ms == MS_ZONE && ui.shift) {    /* SEL + OCT- / OCT+ on ZONE: the zone's ORGAN OCTAVE */
+            zone_t *z = &zn.z[m];
+            ml_release_all();
+            zone_ioct_set(z, zone_ioct(z) + (int32_t)(b >> BTN_OCT_UP & 1u) - (int32_t)(b >> BTN_OCT_DOWN & 1u));
+            ctl_say_int("ORGAN OCTAVE", zone_ioct(z), 1);
+            touched();
+        } else ctl_octave(b >> BTN_OCT_DOWN & 1u, b >> BTN_OCT_UP & 1u);
+    }
     if (b & 1u << BTN_SAVE && !ui.save_used) ctl_say("TAP: DRAWBARS  +KEY: SETUP", 0);
     if (rel & 1u << BTN_SAVE && !ui.save_used) {
         char s[24], *p = s;
@@ -1325,7 +1334,15 @@ static void ui_buttons(uint32_t b, uint32_t rel)
         if (midi) midi_switch(4);
         else ctl_coupler_toggle();
     }
-    if (b & 1u << BTN_PLAY) ctl_leslie_brake();
+    if (b & 1u << BTN_PLAY) {
+        if (midi && ui.ms == MS_ZONE && ui.shift) {    /* SEL + PLAY on ZONE: SUS IN, a sustain coming in holds the keys */
+            zone_t *z = &zn.z[m];
+            z->xf ^= ZX_SUSK;
+            if (!(z->xf & ZX_SUSK)) ml_key_sus(KSUS_IN, 0);
+            ctl_say("SUSTAIN IN HOLDS KEYS", z->xf & ZX_SUSK ? "ON" : "OFF");
+            touched();
+        } else ctl_leslie_brake();
+    }
     if (b & 1u << BTN_REC) {
         if (ui.shift) les_toggle();
         else ctl_leslie_fast();
@@ -1402,7 +1419,7 @@ static void ui_step(void)
             if (yst_on) yst_select((uint32_t)clampi((int32_t)yst.cur + st, 0, YST_NTRK - 1));
             else focus_set((uint32_t)clampi((int32_t)mls.focus + st, 0, 2));
         }
-        if ((st = fm1_enc_take(ENC_ALGORITHM)) != 0) set_model((int32_t)org_par.model + st);
+        if ((st = fm1_enc_take(ENC_ALGORITHM)) != 0) ctl_model_step(st);
         if ((st = fm1_enc_take(ENC_PRESETS)) != 0) { if (yst_on) yst_browse(st); else ctl_preset_step(st); }
     }
 

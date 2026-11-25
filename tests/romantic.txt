@@ -1,0 +1,62 @@
+# OrGigs 2: the romantic organ (tests/run_host.sh tests/romantic.txt): model 12 in the order; PRESETS to its AEOLINE,
+# a chord held while CC 11 (an expression pedal over MIDI) moves the crescendo roller from 0 to 127 and back: the
+# strings, flutes and principals, 4' and oboe, mixture and trombone come in; then FX: its knob is the pneumatic ACTION.
+# Buttons: 2 FX 3 SEL; encoders: 1 ALGORITHM 2 KNOB1 6 PRESETS
+100 enc 1 11
+200 midi 0xB0 11 0
+300 enc 6 -6
+500 shot
+600 midi 0x90 48 100
+600 midi 0x90 55 90
+600 midi 0x90 64 90
+600 midi 0x90 67 90
+600 midi 0x92 36 100
+1500 shot
+1600 midi 0xB0 11 0
+1660 midi 0xB0 11 4
+1720 midi 0xB0 11 8
+1780 midi 0xB0 11 12
+1840 midi 0xB0 11 16
+1900 midi 0xB0 11 20
+1960 midi 0xB0 11 24
+2020 midi 0xB0 11 28
+2080 midi 0xB0 11 32
+2140 midi 0xB0 11 36
+2200 midi 0xB0 11 40
+2260 midi 0xB0 11 44
+2320 midi 0xB0 11 48
+2380 midi 0xB0 11 52
+2440 midi 0xB0 11 56
+2500 midi 0xB0 11 60
+2560 midi 0xB0 11 64
+2620 midi 0xB0 11 68
+2680 midi 0xB0 11 72
+2740 midi 0xB0 11 76
+2800 midi 0xB0 11 80
+2860 midi 0xB0 11 84
+2920 midi 0xB0 11 88
+2980 midi 0xB0 11 92
+3040 midi 0xB0 11 96
+3100 midi 0xB0 11 100
+3160 midi 0xB0 11 104
+3220 midi 0xB0 11 108
+3280 midi 0xB0 11 112
+3340 midi 0xB0 11 116
+3400 midi 0xB0 11 120
+3460 midi 0xB0 11 124
+3520 midi 0xB0 11 127
+3700 midi 0xB0 11 127
+4000 shot
+4600 midi 0xB0 11 0
+5500 midi 0x80 48 0
+5500 midi 0x80 55 0
+5500 midi 0x80 64 0
+5500 midi 0x80 67 0
+5500 midi 0x82 36 0
+6000 btn 2
+6100 down 3
+6150 enc 2 20
+6300 shot
+6350 up 3
+6400 btn 2
+6500 end

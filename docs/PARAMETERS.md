@@ -19,7 +19,7 @@ formats them, so this list is what the firmware does.
 
 | Value | Name | Range | Step | Start | Per | Kept | CC | FM-1 | Elite | How often |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| MODEL | MODEL | 1 .. 8 | 1 | 1 | one | setup |  | ALGORITHM | SCALE + < >; < + > held K2 |  |
+| MODEL | MODEL | 1 .. 16 | 1 | 1 | one | setup |  | ALGORITHM | SCALE + < >; < + > held K2 |  |
 | DB | DRAWBARS 1-9 | 0 .. 8 | 1 | 0 | per manual | setup | 12 | PLAY: KNOB1-4 (ENV LFO EDIT the four) | K1-K8, fader 1 (drawbar 9), the pads (layouts A, B) |  |
 | PERC | PERCUSSION | OFF .. 4TH SLOW | 1 | OFF | one | setup |  | FX: SEL + KNOB1 | FX K5; pad 3 (live switches) |  |
 | CHIFF | CHIFF / MUSETTE DETUNE | 0 .. 127 | 2 | 0 | one | setup |  | FX: SEL + KNOB1 (pipes, reeds) | FX K5 (pipes, reeds) |  |
@@ -37,6 +37,7 @@ formats them, so this list is what the firmware does.
 | SPACE | REVERB | SPRING .. CATHEDRAL | 1 | SPRING | one | setup |  | FX: SEL + KNOB4 | FX K8 |  |
 | EXPR | EXPRESSION | 0 .. 127 | 1 | 127 | one | not kept | 11 | CC 11 in | the pedal (an expression pedal); CC 11 in |  |
 | BEND | BEND + MOD | PITCH .. ROTARY | 1 | PITCH | one | device |  | MIDI ZONE: SEL + KNOB4 | ZONE K8 |  |
+| TUNING | TUNING | HISTORIC .. EQUAL | 1 | HISTORIC | one | device |  | LIGHTS (SEL + GLOBE): SEL + KNOB1 | LIGHTS (SCALE + GLOBE): K5 |  |
 
 ## MIDI
 
@@ -163,4 +164,4 @@ formats them, so this list is what the firmware does.
 | AM | LEVEL SWING % | 0% .. 200% | 5 | 100% | one | flash (cabinets) |  | - | ROTARY page: SCALE + K3 |  |
 | WIDTH | STEREO WIDTH % | 0% .. 150% | 5 | 100% | one | flash (cabinets) |  | - | ROTARY page: SCALE + K4 |  |
 
-93 values: 81 on both boards, 12 on the Elite only.
+94 values: 82 on both boards, 12 on the Elite only.

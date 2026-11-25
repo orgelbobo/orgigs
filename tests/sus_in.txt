@@ -1,0 +1,18 @@
+# SUS IN on the FM-1 (tests/run_host.sh tests/sus_in.txt): SEL + PLAY on the ZONE screen; a sustain coming in on the
+# zone's channel then holds the FM-1's own keys. Buttons: 3 SEL 7 GLO 12 PLAY. Keys: bit 7 = C4.
+# --- off: CC 64 127 on channel 1, C4 played and let go: it ends at once
+1000 midi 0xB0 64 127
+1100 keys 0x80
+1200 keys 0
+1300 midi 0xB0 64 0
+# --- GLO: ZONE; SEL + PLAY: SUS IN on; the same: C4 holds until CC 64 0
+1500 btn 7
+1600 down 3
+1700 btn 12
+1800 up 3
+1900 shot
+2000 midi 0xB0 64 127
+2100 keys 0x80
+2200 keys 0
+2300 midi 0xB0 64 0
+2500 end

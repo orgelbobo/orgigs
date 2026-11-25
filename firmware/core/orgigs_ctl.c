@@ -93,11 +93,19 @@ static void set_model(int32_t m)
 #ifdef BOARD_SPLASH
     {
         char t[12];
-        org_fmt(cat(t, "MODEL "), m + 1, 0);
+        org_fmt(cat(t, "MODEL "), (int32_t)org_model_pos((uint32_t)m) + 1, 0);
         board_splash(t, md->name, 0);
     }
 #endif
     touched();
+}
+
+static void ctl_model_step(int32_t st)  /* the next or the previous model, in their order (MODEL_ORDER) */
+{
+    int32_t i = (int32_t)org_model_pos(org_par.model) + st;
+    if (i < 0) i = 0;
+    if (i >= (int32_t)ORG_NMODEL) i = ORG_NMODEL - 1;
+    set_model(MODEL_ORDER[i]);
 }
 
 static void set_leslie(uint32_t s) { org_par.leslie = (uint8_t)s; }
@@ -185,8 +193,8 @@ static void ctl_drawbar(uint32_t d, int32_t steps)
     v = clampi((int32_t)org_par.drawbar[m][d] + steps, 0, 8);
     org_par.drawbar[m][d] = (uint8_t)v;
     p = s;
-    if (m == MAN_PEDAL) p = cat(p, PEDAL_LABEL[d]);
-    else { const char *q = DB_FOOT[dept_now()][d]; while (*q && p < s + 17) *p++ = *q++; }
+    if (m == MAN_PEDAL) p = cat(p, org_ped_label(org_par.model, d));
+    else { const char *q = org_db_foot(org_par.model, d); while (*q && p < s + 17) *p++ = *q++; }
     *p++ = ' ';
     org_fmt(p, v, 0);
     ctl_say(s, 0);
@@ -195,10 +203,16 @@ static void ctl_drawbar(uint32_t d, int32_t steps)
 
 /* ---- the effects: KNOB steps on the focused manual, or the shared ones (the plain ones, drive, the sends, the delay
    and the reverb's room, step through the parameter table: orgigs_params.c) */
-static void ctl_character(int32_t st)  /* tonewheel: percussion; pipes: chiff; reeds: the musette's detune */
+static void ctl_character(int32_t st)  /* tonewheel: percussion; pipes: chiff; reeds: the musette's detune; the
+                                           Il Castellano: TONE; the Dutch Rock: its valve AMP; the Playroom: its FAN */
 {
-    uint32_t dept = dept_now();
-    if (dept == DEPT_VINTAGE) {
+    uint32_t dept = dept_now(), knob = ORG_MODELS[org_par.model].knob;
+    if (knob != KNOB_DEPT) {
+        org_par.character = (uint8_t)clampi((int32_t)org_par.character + st * 2, 0, 127);
+        if (knob == KNOB_ACTION) ctl_say_int("ACTION DELAY MS", 10 + (int32_t)org_par.character * 30 / 127, 0);
+        else if (knob == KNOB_FAN) ctl_say_int("FAN SPEED %", (int32_t)org_par.character * 100 / 127, 0);
+        else ctl_say_int(knob == KNOB_TONE ? "TONE" : "VALVE AMP", org_par.character, 0);
+    } else if (dept == DEPT_VINTAGE) {
         org_par.perc = (uint8_t)clampi((int32_t)org_par.perc + st, 0, (int32_t)ctl_nperc - 1);
         ctl_say(org_par.model == MODEL_B3 ? "PERCUSSION" : "PERC (WHEEL ONLY)", PERC_NAME[org_par.perc]);
     } else {
@@ -245,6 +259,13 @@ static void ctl_bend_mode(int32_t st)  /* what bend and CC 1 do on the organs (e
     org_par.bend = 0; org_par.boost = 0; ctl.kick = 0;
     set_leslie(ctl.leslie_user);
     ctl_say("BEND + MOD", ml_ctl_mode == CTL_PITCH ? "PITCH + SLOW/FAST" : "ROTARY KICK/TUTTI");
+}
+
+static void ctl_tuning(int32_t st)     /* the historic temperaments (the renaissance organ's meantone) or equal for all */
+{
+    org_par.equal = st > 0 ? 1u : 0u;
+    ctl_say("TUNING", org_par.equal ? "EQUAL FOR ALL" : "HISTORIC");
+    touched();
 }
 
 /* ---- the switches */

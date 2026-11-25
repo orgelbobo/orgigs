@@ -1,0 +1,16 @@
+# FM-1: the ORGAN OCTAVE (tests/run_host.sh tests/organ_oct.txt): GLO: ZONE of the upper manual; C4 over MIDI plays,
+# then SEL + OCT-: the zone plays the organ an octave down (OCTAVE, SEL + KNOB3, stays MIDI out only), C4 again.
+# Buttons: 0 OCT- 1 OCT+ 3 SEL 7 GLO
+300 btn 7
+500 midi 0x90 60 100
+1300 midi 0x80 60 0
+1600 down 3
+1700 btn 0
+1800 shot
+1850 up 3
+2000 midi 0x90 60 100
+2800 midi 0x80 60 0
+3000 down 3
+3100 btn 1
+3200 up 3
+3600 end

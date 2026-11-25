@@ -198,7 +198,125 @@ The user collects further wishes while playing v3 on the FM-1.
 - Charge indicator (Elite) and battery display (FM-1): core/orgigs_bat.c for both boards; a bolt in the symbol
   while the keyboard is on a USB host (computer, SEQTRAK; a plain charger does not show); no BATTERY LOW while
   charging. FM-1: symbol, SEL shows "BAT n%" and (for now) the raw reading, to set its divider (BOARD_BAT_SCALE,
-  6600 like the Elite until measured). Built.
+  6600 like the Elite until measured). Built. Measured 2026-11-20: a full FM-1 reads 624 off the cable (628 on a
+  charger), 88 % with 6600; BOARD_BAT_SCALE 6810 for the FM-1, full = 100 %. 0 % (3.40 V) is still an estimate.
 - V2 (Merkposten): the screen's look, all elements consistent: drawbars, buttons/tabs, knobs, lamps. Either a
   more realistic drawbar (rounded, shaded, "smoky" glass) or a mix of real faders with single LED lamps as on old
   organs. Proposals in the chat of 2026-11-17; mock-ups to choose from before building.
+- V2 look chosen (2026-11-17): Varela Round as the font, everything as proposal C, the FX screens' 2 x 6 keys as
+  in A (real and smoky). Mock-ups in the design canvas.
+- V2 look built (2026-11-19, branch v2-models; on the Elite, runs smoothly, user OK): the font (tools/gen_font_ttf.py, labels squeezed
+  into their boxes by cv_ctext), firmware/board/look.c (glass, drawbars, lamps, ring knobs, keycaps, pads),
+  tools/gen_look.py (the glass and the shaft curves). Both boards, all screens; both devices run it smoothly (user OK). Open: the YST browser and the welcome screen as they are, the manuals' pictures.
+
+## 2026-11-19: five more models for OrGigs 2 (built, not committed)
+- 9 OSAKA KING (after a Japanese transistor combo of the 60s), 10 IL CASTELLANO (an Italian combo: drawbar 9 is a
+  MIXTURE IV, SEL + KNOB 1 its TONE filter 1.5 to 10 kHz, the pedal its bass section BASS16 / 8 / 4 / SUSTAIN with
+  a 0.9 s release), 11 DUTCH ROCK (a Dutch valve organ: SEL + KNOB 1 the built-in VALVE AMP from warm to hard into
+  a small 3 kHz speaker; SPRING reverb as its default room), 12 TROSSINGEN BASS (a German accordion with a dry
+  reed and the bass side's registers BASS16 / 8 / 4 / 2 on the pedal), 13 STEIRISCHE (the Styrian button
+  accordion: wet tuning, 16 cents; helicon bass reeds on pedal 1-2). Model names: the user's for 9-11, proposals
+  for 12 and 13.
+- Five new wavetables (40 KB of the pool, 60 KB left); the models 1-8 sound bit-identical. The store keeps its
+  size (a longer one would not load): the drawbar preset shown per model is kept for models 1-8 only.
+- Open: the user listens (~/orgigs/v2-models/*.wav); the manuals; factory setups that use the new models; the
+  Steirische's bellows shake (the tremulant now) and push/pull; the DSP load on the hardware.
+
+## 2026-11-19: Merkposten for the next release: the short text
+- Card on the hub, README, manuals, at-a-glance: after "It's an organ." the sentence starts with the drawbars:
+  "Nine drawbars, three manuals with 84 free-running ..." or "2 x 9 + 4 drawbars" (a set for each manual).
+  With 13 models the count in the text changes too.
+- Later: promote OrGigs, maybe a YouTube video.
+
+## 2026-11-20: 1.1 published, V1 closed
+- OrGigs 1.1 published (tag v1.1, GitHub release, site): the Elite's expression pedal, the FM-1's insert effect,
+  master, battery display (calibrated) and welcome screen, the charging bolt, Elite hints that fit. Both devices on it.
+- V1 closed: main takes only bug fixes (1.1.x) from now on; main merged into v2-models, which becomes 2.0.
+
+## 2026-11-20: OrGigs 2, a freely mappable surface (concept, decided)
+- The factory layouts A-D become data (control -> function -> behaviour -> colour), run by one mapping engine;
+  user layouts use the same format and start as a copy of a factory one. Targets: the parameter table, a new
+  action table (setup recall, panic, brake, chord, ...), MIDI out (CC, note, PC). Behaviours by control type
+  (momentary, toggle, set value, step / cycle, radio group, range and curve, pickup); a second level with SCALE,
+  long press; no double tap. Pad colours on / off from a palette.
+- Decided by the user: 4 USER layouts are enough; user layouts set NO screen contents (only pads, faders,
+  knobs on the play level; the special pages stay fixed). Fixed anchors never mappable: volume, panic, HOME,
+  back to the factory layout.
+- Editing: in the browser over Web MIDI / SysEx (the site), on the device only a learn mode. FM-1: same
+  engine, browser editor only.
+- Order: inventory -> assignment sheets -> engine + factory layouts as tables (all tests unchanged) -> USER
+  layouts + learn -> browser editor.
+
+## 2026-11-21: four pipe organs (from the synthesis spec: renaissance, baroque, French symphonic, German romantic)
+- Built: model 14, the Italian renaissance organ: its own soft principal wave, the ripieno on the nine drawbars
+  (Principale 8', Voce umana 8' from c' at +2 Hz, Ottava, Flauto in VIII, Flauto in XII, XV, XIX, XXII, XXVI + XXIX),
+  barely any chiff, quarter-comma meantone; its own drawbar list (12). TUNING on the LIGHTS page (Elite K5, FM-1
+  SEL + KNOB1): HISTORIC / EQUAL for all, kept in a free bit of the device settings (store unchanged).
+- The models are chosen and numbered by department (vintage 1-7, pipes 8-10, reeds 11-14); setups keep the
+  model's own number, so OrGigs 1 still reads them.
+- Next: the romantic organ (the crescendo roller on the expression pedal), then sharpen the baroque (Werckmeister,
+  wind sag, no gamba) and the cathedral (harmonic flute, French reeds, a swell box): asks the user first, as both
+  change how models of 1.1 sound.
+
+## 2026-11-22: Merkposten for the next release (2.0)
+- Hub card picture: no logo and name, but a screenshot of the main screen (as most cards do), the drawbars pulled as
+  on the card's and the manuals' cover picture (not only the first three, as in the manual now).
+- The SMK-37 Pro (and MKE-P37): the same keyboard; publish the Pro package too (built as orgigs_fm1-smk37.fwsc,
+  identity SMK-37 Pro_...: each name needs its own package, M-VAVE's updater takes back only the unit's own), marked
+  untested, and ask for testers. Check first what a Pro's stock firmware reports (the installer's V016 check).
+- The hub card shows "Elite only: install the -smk37-elite package on an Elite, never on a Pro ..." prominently: not
+  from our fmhub.json, README or release notes; ask the hub to change it (mail by the user) once a Pro package exists.
+- Colours that link screen and pads (2026-11-23, from testing): finding the right pad should be easier. Use more
+  colours that match between a switch on the screen and its pad (as some pages already do: ZONE switches, layout B's
+  strip, the mixer's mute / solo), so a pad is found by its colour, not by counting. Think about a colour code that
+  fits the look of the other screens and the pad lights, or a colour scheme for the whole project (screens, pads,
+  button LEDs, manuals, site, card), usability first: a colour means one kind of thing everywhere (e.g. manual,
+  switch on / off, page, danger), readable on the pads' LEDs and on the screen, safe for colour-blind players.
+  Goes with the V2 look (2026-11-17) and the free mapping (2026-11-20).
+- Name of the live switch on pad 8 (2026-11-24, user): "EFFECT" should read "INSERT FX": the switches beside it
+  (drive, delay, rotary, ...) are effects too, so "EFFECT" alone does not say which. In the live-switch strip on the
+  screen, the pad labels, the hints and the manuals. Version 2 is enough.
+- Expression pedal with a type switch (2026-11-24, user): an expression pedal with a type or polarity switch
+  (one maker's wiring / "other") seemed not to respond on the Elite under 1.5, apparently until set to the maker's. Not
+  reconstructed (the user is no longer sure how it was): wait until it comes up again or is reported, then check the
+  PED reading in both positions and decide on a manual line (which position) or a fix.
+- TRS MIDI between the Elite and the FM-1 (2026-11-25, user): connect the two with a stereo jack cable, the Elite's
+  MIDI out to the FM-1's MIDI in. Today: the FM-1's TRS MIDI IN is in the firmware (src/midi_uart.c, from the
+  platform: into the zones like USB) but never tested on hardware; the Elite's TRS MIDI OUT is not driven by OrGigs
+  (USB only, as the manual says). Three parts: find the Elite's jack (which pin, which UART; from the stock firmware)
+  and send the zones' MIDI out there too (paced as TRS-SAFE); test the FM-1's input with a real cable; check type A
+  or B on both (a plain stereo cable only works if both use the same).
+
+## 2026-11-24: release 1.5 (decided with the user)
+- 1.5 = v2-models as it is (the 16 models, the V2 look, ORGAN OCTAVE, SUS IN, the Elite simulator), without the free
+  mapping (that stays 2.0, with the colour code). No new features, only finishing.
+- Content: manuals (new models, ORGAN OCTAVE, SUS IN, screenshots in the new look, PDFs and at-a-glance sheets
+  again); the short text (drawbars first, 16 models) in README, card, manuals; hub card picture = main screen
+  screenshot; the simulators on the site (try/ FM-1, try/elite/ Elite) and the Elite's own play link in fmhub.json;
+  the Pro package, marked untested, with a call for testers.
+- Safety: settings and setups of 1.1 read right by 1.5 (a 1.1 backup in a test); all tests, all packages, both
+  devices for the user's OK.
+- Publish (on the user's OK, push needs a token): v2-models onto main, identity 674150, tag v1.5, GitHub release,
+  site; the hub mail by the user.
+- Later (not 1.5): the roller's stages on the screen.
+- Merkposten (user, 2026-11-24): the hub's SMK-37 device page does not show the at-a-glance sheet (the FM-1 home
+  screen does), it only links on to our installer. So the installer page (web/installer.html) should show the
+  at-a-glance sheet for the chosen device (FM-1 / Elite), so people get some information before installing.
+  Candidate for 1.5, it goes with the site work.
+
+## 2026-11-24: wish: a small MIDI looper (user)
+Six tracks, up to 32 bars, recording quantized and unquantized, playing back on the manuals or over MIDI. First
+thoughts (to discuss, nothing decided):
+- Memory: the events go to the app RAM (96 KiB, .data+.bss 60.8 KB in 1.5: ~35 KB free; stacks are elsewhere), not
+  the pool (3 KB left). One event in 4 bytes (16-bit tick at 384 PPQN: 32 bars of 4/4 = 49 152 ticks; note + on/off;
+  velocity; the track gives channel and target): a shared 24 KB buffer = ~6 000 events = ~3 000 notes for all six.
+- Quantize on playback, never on recording: the takes stay as played, the grid (1/8, 1/16, triplets, strength) per
+  track can be changed or switched off afterwards.
+- Targets per track: upper, lower, pedal (the organ, with the live keys sharing the generators) or a MIDI channel
+  (e.g. the SEQTRAK or a second keyboard).
+- Clock: own tempo, or follow MIDI clock in (the SEQTRAK's), so the drums and the organ loops stay together.
+- Open: also record sustain, swell, rotary speed (more events); overdub with undo of the last pass; length set by the
+  first take; kept over power-off (flash) or not; the Elite's pads/transport (REC, PLAY are rotary today: the free
+  mapping); the FM-1 maybe play/record only.
+- 2026-11-24, the user's answers: clock INT and EXT (MIDI clock); controls too (automation); overdub; length
+  FIXED / FIT / FREE; export instead of keeping; both devices. Concept for 2.0: docs/LOOPER.md.

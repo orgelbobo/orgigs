@@ -1,0 +1,54 @@
+# OrGigs 2: the renaissance organ (tests/run_host.sh tests/renaissance.txt): model 11 with setup 1's drawbars (Principale,
+# Voce umana, Ottava), then its own list (PRESETS), RIPIENO; a chord below and above c' (the voce umana from c' up);
+# LIGHTS (SEL + GLO): SEL + KNOB1 sets the tuning EQUAL, the same chord again, then back to HISTORIC.
+# Buttons: 3 SEL 7 GLO 8 HOME; encoders: 1 ALGORITHM 2 KNOB1 6 PRESETS
+100 enc 1 10
+300 midi 0x90 48 100
+300 midi 0x90 52 90
+300 midi 0x90 55 90
+300 midi 0x92 36 100
+600 shot
+1500 midi 0x80 48 0
+1500 midi 0x80 52 0
+1500 midi 0x80 55 0
+1600 midi 0x90 60 100
+1600 midi 0x90 64 90
+1600 midi 0x90 67 90
+2000 shot
+3000 midi 0x80 60 0
+3000 midi 0x80 64 0
+3000 midi 0x80 67 0
+3000 midi 0x82 36 0
+3200 enc 6 10
+3400 shot
+3500 midi 0x90 60 100
+3500 midi 0x90 64 90
+3500 midi 0x90 67 90
+3500 midi 0x90 72 80
+3500 midi 0x92 36 100
+5000 midi 0x80 60 0
+5000 midi 0x80 64 0
+5000 midi 0x80 67 0
+5000 midi 0x80 72 0
+5000 midi 0x82 36 0
+5300 down 3
+5350 btn 7
+5400 up 3
+5500 down 3
+5550 enc 2 1
+5700 shot
+5750 up 3
+5800 midi 0x90 60 100
+5800 midi 0x90 64 90
+5800 midi 0x90 67 90
+5800 midi 0x90 72 80
+7300 midi 0x80 60 0
+7300 midi 0x80 64 0
+7300 midi 0x80 67 0
+7300 midi 0x80 72 0
+7500 down 3
+7550 enc 2 -1
+7600 up 3
+7700 btn 8
+8000 shot
+8200 end

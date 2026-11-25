@@ -138,9 +138,11 @@ static void intro_frame(uint32_t t)
         /* the drawbars, growing down from the top */
         if (grow)
             for (d = 0; d < 9u; d++) {
-                int32_t x = 12 + (int32_t)d * 25, len = (INTRO_LEN[d] * grow) >> 10;
-                cv_rect(x, 0, 18, len, intro_bar_colour(d));
-                cv_rect(x - 2, len, 22, 5, C_IVORY);                    /* the handle */
+                int32_t x = 12 + (int32_t)d * 25, len = (INTRO_LEN[d] * grow) >> 10, g;
+                uint16_t c = intro_bar_colour(d);
+                lk_shaft(x, 0, 18, len, c);                              /* OrGigs 2: round, no numbers */
+                for (g = len - 13; g > 0; g -= 11) lk_rect(x + 1, g, 16, 1, C_BLACK, 60);   /* faint grooves */
+                lk_cap(x, len, 18, c);
             }
         cv_oy = 0;
         cv_blit(0, half * 60u);

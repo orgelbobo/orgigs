@@ -1,0 +1,84 @@
+# OrGigs 2: the five new models (tests/run_host.sh tests/models2.txt): each plays a chord over MIDI ch 1 and a bass
+# note on ch 3 (the pedal) with setup 1's registration; ALGORITHM (enc 1) steps the model. Shots: the FX screen.
+# Encoders: 0 SELECT 1 ALGORITHM 2..5 KNOB1..4 6 PRESETS; buttons: 2 FX 3 SEL
+# --- model 9: OSAKA KING
+100 enc 1 4
+300 midi 0x90 60 100
+300 midi 0x90 64 90
+300 midi 0x90 67 90
+300 midi 0x90 72 80
+300 midi 0x92 36 100
+600 shot
+2500 midi 0x80 60 0
+2500 midi 0x80 64 0
+2500 midi 0x80 67 0
+2500 midi 0x80 72 0
+2500 midi 0x82 36 0
+# --- model 10: IL CASTELLANO
+3100 enc 1 1
+3300 midi 0x90 60 100
+3300 midi 0x90 64 90
+3300 midi 0x90 67 90
+3300 midi 0x90 72 80
+3300 midi 0x92 36 100
+3600 shot
+3900 btn 2
+4000 down 3
+4050 enc 2 -40
+4200 shot
+4700 enc 2 60
+4900 shot
+4950 up 3
+5000 btn 2
+5500 midi 0x80 60 0
+5500 midi 0x80 64 0
+5500 midi 0x80 67 0
+5500 midi 0x80 72 0
+5500 midi 0x82 36 0
+# --- model 11: DUTCH ROCK
+6100 enc 1 1
+6300 midi 0x90 60 100
+6300 midi 0x90 64 90
+6300 midi 0x90 67 90
+6300 midi 0x90 72 80
+6300 midi 0x92 36 100
+6600 shot
+6900 btn 2
+7000 down 3
+7050 enc 2 40
+7200 shot
+7950 up 3
+8000 btn 2
+8500 midi 0x80 60 0
+8500 midi 0x80 64 0
+8500 midi 0x80 67 0
+8500 midi 0x80 72 0
+8500 midi 0x82 36 0
+# --- model 12: TROSSINGEN BASS
+9100 enc 1 8
+9300 midi 0x90 60 100
+9300 midi 0x90 64 90
+9300 midi 0x90 67 90
+9300 midi 0x90 72 80
+9300 midi 0x92 36 100
+9600 shot
+11500 midi 0x80 60 0
+11500 midi 0x80 64 0
+11500 midi 0x80 67 0
+11500 midi 0x80 72 0
+11500 midi 0x82 36 0
+# --- model 13: STEIRISCHE
+12100 enc 1 1
+12300 midi 0x90 60 100
+12300 midi 0x90 64 90
+12300 midi 0x90 67 90
+12300 midi 0x90 72 80
+12300 midi 0x92 36 100
+12600 shot
+14500 midi 0x80 60 0
+14500 midi 0x80 64 0
+14500 midi 0x80 67 0
+14500 midi 0x80 72 0
+14500 midi 0x82 36 0
+15100 shot
+15600 end

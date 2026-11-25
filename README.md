@@ -1,17 +1,21 @@
 # OrGigs
 
-**It's an organ.** Three manuals with 84 free-running tone generators and no voice stealing, eight models from
-tonewheel and combo organs to pipe organs and free reeds, drawbars, percussion, rotary, drive, delay and reverb,
-16 performance setups, three MIDI zones and Yamaha SEQTRAK control. Firmware for the **M-VAVE SMK-37 Elite** and the
-**M-VAVE FM-1**, built on [Dinghy](https://github.com/zvenson/dinghy) (Felucca / SLOOP's platform). Free and open
-source, GPL-3.0.
+**It's an organ.** Nine drawbars for each of two manuals and four for the pedal, 84 free-running tone generators with
+no voice stealing, sixteen models from tonewheel and combo organs to four historical pipe organs and free reeds,
+percussion, rotary, drive, delay and reverb, 16 performance setups, three MIDI zones and Yamaha SEQTRAK control.
+Firmware for the **M-VAVE SMK-37 Elite** and the **M-VAVE FM-1**, built on [Dinghy](https://github.com/zvenson/dinghy)
+(Felucca / SLOOP's platform). Free and open source, GPL-3.0.
 
 | | SMK-37 Elite | FM-1 |
 | --- | --- | --- |
 | Install (Chrome, Edge or Firefox, over USB; Windows, first install on the Elite: Firefox) | [orgelbobo.github.io/orgigs/install](https://orgelbobo.github.io/orgigs/install/) | the same page, or [The Firmware Hub](https://thefirmwarehub.com) |
 | Manual | [PDF](docs/manual/OrGigs_Elite_Manual.pdf) | [PDF](docs/manual/OrGigs_FM-1_Manual.pdf) |
 | At a glance | [PDF](docs/manual/OrGigs_Elite_At_a_glance.pdf) | [PDF](docs/manual/OrGigs_FM-1_At_a_glance.pdf) |
-| Try it in the browser | | [orgelbobo.github.io/orgigs/try](https://orgelbobo.github.io/orgigs/try/) |
+| Try it in the browser | [orgelbobo.github.io/orgigs/try/elite](https://orgelbobo.github.io/orgigs/try/elite/) | [orgelbobo.github.io/orgigs/try](https://orgelbobo.github.io/orgigs/try/) |
+
+**SMK-37 Pro: testers wanted.** The Pro is the same keyboard as the Elite under another name. The install page has a
+package for it too, but OrGigs is not tested on a Pro yet: if you have one, please try it and
+[tell us](https://github.com/orgelbobo/orgigs/issues) how it went.
 
 Installing custom firmware is at your own risk. The way back: M-VAVE's updater, or any firmware from The Firmware Hub;
 if a keyboard doesn't start, hold **OCT−** while switching it on (USB rescue mode).
@@ -22,7 +26,7 @@ if a keyboard doesn't start, hold **OCT−** while switching it on (USB rescue m
 firmware/src/orgigs.c             the app: picks the board, includes core and board (one compilation unit, as Dinghy builds)
 firmware/src/                     Dinghy's platform: boot, USB, screen, flash, updater
 firmware/core/                    the same on every board:
-  orgigs_dsp.c/.h                 84 free-running generators, 8 models, 3 manuals          (audio interrupt)
+  orgigs_dsp.c/.h                 84 free-running generators, 16 models, 3 manuals         (audio interrupt)
   orgigs_fx.c                     per manual: drive/cassotto, vibrato/tremulant, insert, sends; shared: rotary, delay, reverb, master (audio interrupt)
   orgigs_midi_zones.c             3 MIDI zones: router, cloner, 9-ch harmonic, chord memory (main loop)
   orgigs_presets.c                the drawbar list, 16 performance setups, the settings in flash (main loop)
@@ -75,7 +79,7 @@ whatever plays. If it does, try `PULSE_LATENCY_MSEC=60 ./emulator build/orgigs_f
 
 The build refuses what would brick the FM-1 (64-bit division, chip ROM calls, RAM over budget, register access
 outside `hal/`). Installing firmware is at your own risk; the way back: hold **OCT-** at power-on (USB rescue),
-or [The Firmware Hub](https://thefirmwarehub.com). The package identity is `FM-1_674XYZ` (674, "ORG", and the version: 1.1 is `FM-1_674110`): check the hub
+or [The Firmware Hub](https://thefirmwarehub.com). The package identity is `FM-1_674XYZ` (674, "ORG", and the version: 1.5 is `FM-1_674150`): check the hub
 that nobody else uses it before you publish a release.
 
 ## Playing it

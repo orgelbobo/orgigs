@@ -1,6 +1,6 @@
-Terminus Font (ter-u16n.bdf)
-Copyright (C) 2020 Dimitar Toshkov Zhekov
-Source: https://github.com/retro-vault/font-vault (source/fonts/terminus)
+Varela Round (VarelaRound-Regular.ttf), rendered into firmware/gen/felucca_font.h by tools/gen_font_ttf.py
+Copyright 2023 The Varela Round Project Authors (https://github.com/alefalefalef/Varela-Round-Hebrew/),
+with Reserved Font Names 'Varela' and 'Varela Round'.
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
 This license is copied below, and is also available with a FAQ at:

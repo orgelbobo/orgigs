@@ -52,9 +52,10 @@ enum { PK_SETUP, PK_DEVICE, PK_FX, PK_MASTER, PK_NONE };
 typedef struct { par_t p; const char *const *list; uint16_t off; uint8_t per, keep, cc, flags; } opar_t;   /* list: PU_LIST's names */
 enum { PR_MODEL, PR_DRAWBAR, PR_PERC, PR_CHAR, PR_COUPLER, PR_OCTAVE,
        PR_DRIVE, PR_VIB, PR_TREM, PR_ROTARY, PR_DSEND, PR_RSEND,
-       PR_SPEED, PR_DLY_TIME, PR_DLY_FB, PR_REV, PR_EXPR, PR_BEND_MODE,
+       PR_SPEED, PR_DLY_TIME, PR_DLY_FB, PR_REV, PR_EXPR, PR_BEND_MODE, PR_TUNING,
        PR_IN_CH, PR_OUT_CH, PR_LO, PR_HI, PR_TRANSP, PR_ZOCT, PR_VEL, PR_MIX, PR_N };
 static const char *const OFF_ON[2] = {"OFF", "ON"};
+static const char *const TUNING_NAME[2] = {"HISTORIC", "EQUAL"};   /* the models' own temperaments, or equal for all */
 #define OPA(f) (uint16_t)__builtin_offsetof(org_params_t, f)
 static const opar_t OPAR[PR_N] = {
     [PR_MODEL] = {{"MODEL", "MODEL", 1, ORG_NMODEL, 1, 1, PU_NUM}, 0, 0, PER_ONE, PK_SETUP, 0, OP_OWN},
@@ -75,6 +76,7 @@ static const opar_t OPAR[PR_N] = {
     [PR_REV] = {{"SPACE", "REVERB", 0, ORG_NREV - 1, 1, 0, PU_LIST}, REV_NAME, OPA(rev_mode), PER_ONE, PK_SETUP, 0, 0},
     [PR_EXPR] = {{"EXPR", "EXPRESSION", 0, 127, 1, 127, PU_NUM}, 0, 0, PER_ONE, PK_NONE, 11, OP_OWN},
     [PR_BEND_MODE] = {{"BEND", "BEND + MOD", 0, CTL_N - 1, 1, 0, PU_LIST}, CTL_NAME, 0, PER_ONE, PK_DEVICE, 0, OP_OWN},
+    [PR_TUNING] = {{"TUNING", "TUNING", 0, 1, 1, 0, PU_LIST}, TUNING_NAME, 0, PER_ONE, PK_DEVICE, 0, OP_OWN},
     [PR_IN_CH] = {{"IN CH", "MIDI IN CH", 0, CH_OFF, 1, 0, PU_CH}, 0, 0, PER_MAN, PK_SETUP, 0, OP_OWN},
     [PR_OUT_CH] = {{"OUT CH", "MIDI OUT CH", 0, CH_OFF, 1, 0, PU_CH}, 0, 0, PER_MAN, PK_SETUP, 0, OP_OWN},
     [PR_LO] = {{"LOWEST", "LOWEST KEY", 0, 127, 1, 0, PU_NOTE}, 0, 0, PER_MAN, PK_SETUP, 0, OP_OWN},

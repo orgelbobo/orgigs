@@ -4,7 +4,14 @@
 #define SIM_MAX_FRAMES 8192u
 static int16_t sim_audio_buf[2u * SIM_MAX_FRAMES];
 
-EMSCRIPTEN_KEEPALIVE void sim_init(void) { app_init(); }
+EMSCRIPTEN_KEEPALIVE void sim_init(void)
+{
+#if BOARD_SMK37
+    fm1_in.wheel[0] = 512;              /* the pitch wheel rests in the middle */
+    fm1_in.wheel[1] = 1023;             /* the mod wheel down (the Elite reads it backwards) */
+#endif
+    app_init();
+}
 
 /* one pass of the main loop, at the browser's clock */
 EMSCRIPTEN_KEEPALIVE void sim_step(uint32_t now_ms) { fm1_ms = now_ms; ui_step(); }
@@ -38,7 +45,19 @@ EMSCRIPTEN_KEEPALIVE uint8_t *sim_leds(void)    /* the LEDs, the backlight as gl
 EMSCRIPTEN_KEEPALIVE uint8_t *sim_store(void) { return host_store; }
 EMSCRIPTEN_KEEPALIVE uint32_t sim_store_len(void) { return sizeof host_store; }
 
+#if BOARD_SMK37
+/* the Elite: 37 keys (lo = C3..C4+ bits 0..31, hi = bits 32..36), the velocity of the next keys, pads, faders, wheels,
+   the pedal socket; the pads' colours (16 x r,g,b) */
+EMSCRIPTEN_KEEPALIVE void sim_keys37(uint32_t lo, uint32_t hi) { host_keys((uint64_t)hi << 32 | lo); }
+EMSCRIPTEN_KEEPALIVE void sim_vel(uint32_t v) { host_vel = v < 1u ? 1u : v > 127u ? 127u : v; }
+EMSCRIPTEN_KEEPALIVE void sim_pad(uint32_t pad, uint32_t vel) { host_pad(pad, vel > 127u ? 127u : vel); }
+EMSCRIPTEN_KEEPALIVE void sim_fader(uint32_t f, uint32_t v) { if (f < 4u) fm1_in.fader[f] = (uint8_t)(v > 127u ? 127u : v); }
+EMSCRIPTEN_KEEPALIVE void sim_wheel(uint32_t w, uint32_t raw) { if (w < 2u) fm1_in.wheel[w] = (uint16_t)(raw > 1023u ? 1023u : raw); }
+EMSCRIPTEN_KEEPALIVE void sim_pedal(uint32_t raw) { fm1_in.pedal = (uint16_t)(raw > 1023u ? 1023u : raw); }
+EMSCRIPTEN_KEEPALIVE uint8_t *sim_padrgb(void) { return &host_padrgb[0][0]; }
+#else
 EMSCRIPTEN_KEEPALIVE void sim_keys(uint32_t mask) { host_keys(mask); }
+#endif
 EMSCRIPTEN_KEEPALIVE void sim_button(uint32_t id, int down) { host_button(id, down); }
 EMSCRIPTEN_KEEPALIVE void sim_enc(uint32_t id, int32_t steps) { if (id < FM1_NENC) host_enc[id] += steps; }
 EMSCRIPTEN_KEEPALIVE void sim_midi_in(int st, int d1, int d2) { host_midi_in((uint8_t)st, (uint8_t)d1, (uint8_t)d2); }

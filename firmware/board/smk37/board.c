@@ -642,12 +642,20 @@ static void smk_master_pickup(void)     /* fader 4: the volume everywhere (hal: 
 
 /* ---- the MIDI area: 8 knobs, the zone's switches on the pads, ARP / PATCH the screens */
 static void smk_zone_pad(uint32_t pad)  /* pads 1..5 the zone's switches, 6..10 midi_switch's second ones, 11 the
-                                           zone's FILTER CC IN, 12 its MIDI OUT */
+                                           zone's FILTER CC IN, 12 its MIDI OUT, 13 SUS IN */
 {
     uint32_t sh = ui.shift;
     if (pad == 10u) { smk_fcci_toggle(); return; }
     if (pad == 11u) { smk_mout_toggle(); return; }
-    if (pad > 11u) return;
+    if (pad == 12u) {                   /* SUS IN: a sustain coming in on the zone's channel holds the keys too */
+        zone_t *z = &zn.z[mls.focus];
+        z->xf ^= ZX_SUSK;
+        if (!(z->xf & ZX_SUSK)) ml_key_sus(KSUS_IN, 0);
+        ctl_say("SUSTAIN IN HOLDS KEYS", z->xf & ZX_SUSK ? "ON" : "OFF");
+        touched();
+        return;
+    }
+    if (pad > 12u) return;
     ui.shift = pad >= 5u;
     midi_switch(pad % 5u);
     ui.shift = sh;
@@ -660,7 +668,8 @@ static void smk_knob_midi(uint32_t f, int32_t st)   /* K1..K8 on a MIDI screen (
         yst_step(yst.cur, ui.shift && f < 4u ? YP_ALG + f : YP_CUTOFF + f, st);
         return;
     }
-    if (ui.ms == MS_ZONE) { ui.shift = f & 1u; knob_midi(f >> 1, st); }   /* in out, lowest highest, transp octave, vel bend */
+    if (ui.ms == MS_ZONE && sh && f == 5u) { ui.shift = 0; knob_midi(4u, st); }   /* SCALE + K6: the ORGAN OCTAVE */
+    else if (ui.ms == MS_ZONE) { ui.shift = f & 1u; knob_midi(f >> 1, st); }   /* in out, lowest highest, transp octave, vel bend */
     else if (ui.ms == MS_CLONE && f < 2u) { ui.shift = 0; knob_midi(f ? 0u : 1u, st); }   /* K1 the octave, K2 the channel */
     else if (ui.ms == MS_HARM && f < 2u) { ui.shift = 0; knob_midi(f, st); }               /* K1 the channels, K2 what is sent */
     ui.shift = sh;
@@ -723,7 +732,7 @@ static uint32_t smk_lr(void)            /* 1 = both are held */
             mx.par = (uint8_t)((mx.par + MXP_N + (uint32_t)st) % MXP_N);
             ctl_say("MIXER", MXP_NAME[mx.par]);
         } else if (smk_yst()) yst_browse_kit(st);
-        else if (ui.shift) set_model((int32_t)org_par.model + st);
+        else if (ui.shift) ctl_model_step(st);
         else ctl_preset_step(st);
     }
     if (!now) both = 0;
@@ -741,12 +750,8 @@ static uint16_t ped_rest = 0xFFFFu;
 static uint8_t ped_down;
 static void smk_sustain(uint32_t down)
 {
-    uint32_t s, ch, m = zn.z[mls.focus].flags & Z_NOCC ? 0u : zone_ctl_mask(&zn.z[mls.focus], 0);
-    mls.key_sus = (uint8_t)down;
-    if (!down) {
-        for (s = 0; s < BOARD_NKEYS; s++) if (mls.src[s] != SRC_NONE && mls.sus[s]) { mls.sus[s] = 0; slot_off(s); }
-        ml_pedal_update();
-    }
+    uint32_t ch, m = zn.z[mls.focus].flags & Z_NOCC ? 0u : zone_ctl_mask(&zn.z[mls.focus], 0);
+    ml_key_sus(KSUS_PANEL, down);       /* (a sustain coming in may still hold them: SUS IN) */
     for (ch = 0; ch < 16u; ch++) if (m >> ch & 1u) ml_q(0xB0u | ch, 64, down ? 127u : 0u);
 }
 #define PED_MID_LO 150u                 /* AUTO: between these, an expression pedal (a sustain pedal reads its ends) */
@@ -757,8 +762,9 @@ static void smk_swell(uint32_t v)       /* v: the pedal's travel, 0..127 */
     uint32_t e = PED_MIN + (v * (127u - PED_MIN) + 63u) / 127u, ch;
     uint32_t m = zn.z[mls.focus].flags & Z_NOCC ? 0u : zone_ctl_mask(&zn.z[mls.focus], 0);
     org_par.expression = (uint8_t)e;
+    org_par.roller = (uint8_t)v;        /* (the romantic organ's crescendo roller: the pedal's whole travel) */
     for (ch = 0; ch < 16u; ch++) if (m >> ch & 1u) ml_q(0xB0u | ch, 11, e);
-    ctl_say_int("SWELL %", (int32_t)(v * 100u / 127u), 0);
+    ctl_say_int(org_par.model == MODEL_ROMANTIC ? "CRESCENDO %" : "SWELL %", (int32_t)(v * 100u / 127u), 0);
 }
 static void smk_swell_tick(uint32_t r)
 {
@@ -912,7 +918,7 @@ static uint32_t smk_controls(void)      /* pads, faders, wheels; on the drawbars
     }
     if (smk_lr() && ui.mode != MODE_MIDI && ui.mode != MODE_MIX) {                 /* < + > held: K1 the drawbar list, K2 the model, K3 the layout */
         if ((st = fm1_enc_take(0)) != 0) { ctl_preset_step(st); lr_turned = 1; }
-        if ((st = fm1_enc_take(1)) != 0) { set_model((int32_t)org_par.model + st); lr_turned = 1; }
+        if ((st = fm1_enc_take(1)) != 0) { ctl_model_step(st); lr_turned = 1; }
         if ((st = fm1_enc_take(2)) != 0) { pnl_layout_step(st, 0); lr_turned = 1; }   /* (A and D the ends; active at once) */
         for (f = 3; f < 8u; f++) (void)fm1_enc_take(f);
         return 1;
@@ -938,9 +944,9 @@ static uint32_t smk_controls(void)      /* pads, faders, wheels; on the drawbars
             if ((st = fm1_enc_take(f)) != 0) smk_knob_midi(f, st);
         return 1;
     }
-    if (ui.mode == MODE_LIGHT) {                            /* the lights: K1..K3 (knob_light) */
+    if (ui.mode == MODE_LIGHT) {                            /* the lights: K1..K3, K5 the tuning (knob_light) */
         for (f = 0; f < 8u; f++)
-            if ((st = fm1_enc_take(f)) != 0 && f < 3u) knob_light(f, st);
+            if ((st = fm1_enc_take(f)) != 0 && (f < 3u || f == 4u)) knob_light(f, st);
         return 1;
     }
     if (!play) { (void)fm1_enc_take(ENC_MASTER); return 0; }   /* (K1 has no job off the drawbars) */

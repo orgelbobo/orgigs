@@ -78,11 +78,11 @@ td:first-child { white-space: nowrap; }
     <h1>OrGigs <span>FM-1</span> at a glance</h1>
     <p>A three-manual organ and a MIDI router for the M-VAVE FM-1.</p>
   </div>
-  <div class="id">package FM-1_674110<br>GPL-3.0-only</div>
+  <div class="id">package FM-1_674150<br>GPL-3.0-only</div>
 </header>
 
 <table class="glance">
-<tr><td>Sound</td><td>84 free-running tone generators (C1–B7): every key sounds, no voice stealing. 8 models in 3 departments: tonewheel and three combo organs, baroque and cathedral pipe organs, musette and bandoneon reeds</td></tr>
+<tr><td>Sound</td><td>84 free-running tone generators (C1–B7): every key sounds, no voice stealing. 16 models in 3 departments: eight vintage and combo organs, four pipe organs from four centuries, four accordions</td></tr>
 <tr><td>Manuals</td><td>Upper (9 drawbars), Lower (9 drawbars), Pedal (4 stops). Coupler II/I, split and auto-pedal by MIDI zones</td></tr>
 <tr><td>Effects</td><td>Per manual: drive, scanner vibrato / chorus or tremulant, rotary on / off, delay and reverb sends. Shared: percussion, two-rotor rotary, stereo ping-pong delay (to 1 s), 4 reverbs (spring, stage, hall, cathedral), an insert slot (7 effects), master EQ and compressor</td></tr>
 <tr><td>Memory</td><td>16 performance setups (the whole instrument, one per white key); a drawbar list of 75 registrations + 16 user slots; all kept after power-off; backup over USB</td></tr>
@@ -92,7 +92,7 @@ td:first-child { white-space: nowrap; }
 <h2><span class="n">1</span>Three rules on every screen</h2>
 <table>
 <tr><td><span class="k">SELECT</span></td><td>the manual (and its MIDI zone): <span class="d">UPPER</span> <span class="d">LOWER</span> <span class="d">PEDAL</span></td>
-    <td><span class="k">ALGORITHM</span></td><td>the model 1–8</td></tr>
+    <td><span class="k">ALGORITHM</span></td><td>the model 1–16</td></tr>
 <tr><td><span class="k">PRESETS</span></td><td>the drawbar list of that manual</td>
     <td><span class="k">MASTER</span></td><td>the output volume</td></tr>
 </table>
@@ -132,7 +132,7 @@ td:first-child { white-space: nowrap; }
 <h2><span class="n">4</span>The FX screen <span class="k">FX</span></h2>
 <table>
 <tr><th>Knob</th><th>Turn: the manual's</th><th>SEL + turn: shared</th></tr>
-<tr><td>KNOB 1</td><td>drive</td><td>percussion / chiff / detune</td></tr>
+<tr><td>KNOB 1</td><td>drive</td><td>the model's character knob</td></tr>
 <tr><td>KNOB 2</td><td>vibrato &amp; chorus or tremulant</td><td>delay feedback</td></tr>
 <tr><td>KNOB 3</td><td>delay send</td><td>delay time 20–1000 ms</td></tr>
 <tr><td>KNOB 4</td><td>reverb send</td><td>reverb room</td></tr>
@@ -161,18 +161,18 @@ td:first-child { white-space: nowrap; }
 
 <div class="two">
 <div>
-<h2><span class="n">6</span>The eight models <span class="k">ALGORITHM</span></h2>
+<h2><span class="n">6</span>The 16 models <span class="k">ALGORITHM</span></h2>
 <table>
-<tr><td>1 <span class="tag">WHEEL</span></td><td>Tonewheel Organ: key click, percussion on the upper manual</td></tr>
-<tr><td>2 <span class="tag">BRIT</span></td><td>Brit Combo: bright divider tone</td></tr>
-<tr><td>3 <span class="tag">ITALO</span></td><td>Italo Combo: sixties saw / pulse bite</td></tr>
-<tr><td>4 <span class="tag">TOKYO</span></td><td>Tokyo Combo: rich transistor tone</td></tr>
-<tr><td>5 <span class="tag">BAROQ</span></td><td>Baroque Organ: principals, flutes, reeds, chiff</td></tr>
-<tr><td>6 <span class="tag">CATH</span></td><td>Cathedral Organ: grand speech, sagging wind</td></tr>
-<tr><td>7 <span class="tag">MUSET</span></td><td>Paris Musette: wet three-reed accordion</td></tr>
-<tr><td>8 <span class="tag">BANDO</span></td><td>Tango Bandoneon: tighter, darker reeds</td></tr>
+<tr><td>1 <span class="tag">WHEEL</span></td><td>Tonewheel: click, percussion</td><td>9 <span class="tag">BAROQ</span></td><td>Baroque: clear, chiff, Werckmeister</td></tr>
+<tr><td>2 <span class="tag">BRIT</span></td><td>Brit Combo: hollow divider tone</td><td>10 <span class="tag">CATH</span></td><td>Cathedral: French, swell box</td></tr>
+<tr><td>3 <span class="tag">ITALO</span></td><td>Italo Combo: saw / pulse bite</td><td>11 <span class="tag">RENAI</span></td><td>Renaissance: ripieno, meantone</td></tr>
+<tr><td>4 <span class="tag">TOKYO</span></td><td>Tokyo Combo: round transistor</td><td>12 <span class="tag">ROMAN</span></td><td>Romantic: dark, crescendo roller</td></tr>
+<tr><td>5 <span class="tag">OSAKA</span></td><td>Osaka King: hollow, soft</td><td>13 <span class="tag">MUSET</span></td><td>Paris Musette: wet, three reeds</td></tr>
+<tr><td>6 <span class="tag">CASTL</span></td><td>Il Castellano: snarl, TONE</td><td>14 <span class="tag">BANDO</span></td><td>Tango Bandoneon: dry, dark</td></tr>
+<tr><td>7 <span class="tag">DUTCH</span></td><td>Dutch Rock: valve AMP</td><td>15 <span class="tag">TROSS</span></td><td>Trossingen: dry, bass side</td></tr>
+<tr><td>8 <span class="tag">PLAY</span></td><td>Playroom: toy organ, FAN</td><td>16 <span class="tag">STEIR</span></td><td>Steirische: wet, helicon bass</td></tr>
 </table>
-<p>Changing the model keeps the effects and the drawbars; <span class="k">PRESETS</span> picks a registration.</p>
+<p>Changing the model keeps the effects and the drawbars; <span class="k">PRESETS</span> picks a registration (the pipe organs have their own lists). FX, <span class="k">SEL</span> + <span class="k">KNOB 1</span>: the model's character knob.</p>
 </div>
 <div>
 <h2><span class="n">7</span>The 16 factory setups <span class="k">SEL</span> + key</h2>

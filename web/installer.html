@@ -31,6 +31,12 @@
   details { margin-top: 12px; color: var(--dim); font-size: 13px; }
   pre { white-space: pre-wrap; margin: 6px 0 0; font-size: 12px; }
   a { color: var(--acc); }
+  .glance { width: min(900px, calc(100vw - 32px)); margin-left: 50%; transform: translateX(-50%); }
+  .tabs { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 0 0 10px; }
+  .tabs button { background: none; color: var(--acc); border: 1px solid var(--acc); padding: 4px 14px; font-weight: 500; }
+  .tabs button[aria-pressed="true"] { background: var(--acc); color: #fff; }
+  .tabs a { margin-left: auto; font-size: 14px; }
+  #sheet { width: 100%; height: min(1270px, 85vh); border: 1px solid var(--line); border-radius: 6px; background: #fff; }
 </style>
 </head>
 <body>
@@ -40,12 +46,27 @@
 
   <p>Installs OrGigs on an <b>M-VAVE SMK-37 Elite</b> or an <b>M-VAVE FM-1</b> over USB, right from this page. The page
     finds out which of the two is connected and picks its package.</p>
+  <p><b>It's an organ.</b> Nine drawbars for each of two manuals and four for the pedal, 84 free-running tone generators
+    with no voice stealing, sixteen models from tonewheel and combo organs to four historical pipe organs and free
+    reeds, percussion, rotary, drive, delay and reverb, 16 performance setups, three MIDI zones and Yamaha SEQTRAK
+    control. Try it first in the browser: <a href="../try/elite/">SMK-37 Elite</a> · <a href="../try/">FM-1</a>.</p>
 
   <div class="box">
     <button id="go" disabled>Install</button>
     <progress id="bar" max="100" value="0"></progress>
     <div id="status"></div>
     <details><summary>Details</summary><pre id="log"></pre></details>
+  </div>
+
+  <h2>At a glance</h2>
+  <div class="glance">
+    <div class="tabs">
+      <button type="button" id="tab-elite" aria-pressed="true">SMK-37 Elite</button>
+      <button type="button" id="tab-fm1" aria-pressed="false">FM-1</button>
+      <a id="sheetpdf" href="../docs/OrGigs_Elite_At_a_glance.pdf" target="_blank" rel="noopener">Open the PDF</a>
+      <a id="manpdf" href="../docs/OrGigs_Elite_Manual.pdf" target="_blank" rel="noopener" style="margin-left:0">Manual</a>
+    </div>
+    <iframe id="sheet" title="OrGigs at a glance"></iframe>
   </div>
 
   <h2>Before you start</h2>
@@ -68,7 +89,10 @@
       older one with M-VAVE's updater first. The stock firmware, or another custom one, clears OrGigs's settings when it
       starts: make a backup first (manual, chapter 7). OrGigs never touches the Elite's Bluetooth pairing or its key and
       pad calibration.</p>
-    <p style="margin:0">The SMK-37 Pro and MKE-P37 are the same keyboard under other names, but OrGigs is tested only on the Elite.</p>
+    <p style="margin:0"><b>SMK-37 Pro:</b> the same keyboard under another name, and it gets its own package, but OrGigs is
+      not tested on a Pro yet: testers wanted. The page asks before it installs; please
+      <a href="https://github.com/orgelbobo/orgigs/issues" target="_blank" rel="noopener">tell us</a> how it went (the
+      same way back as above, if anything goes wrong). The MKE-P37 has no package yet.</p>
   </div>
 
   <h2>Going back</h2>
@@ -124,6 +148,21 @@ let writing = false;
 const lock = (on) => { writing = on; $("go").disabled = on || !navigator.requestMIDIAccess; };
 window.addEventListener("beforeunload", (e) => { if (writing) { e.preventDefault(); e.returnValue = TEXT.leave; } });
 
+// the at-a-glance sheet: the Elite's first (the hub's SMK-37 page leads here), ?device=fm1 for the FM-1; it
+// follows the keyboard the installer finds
+const SHEETS = { elite: ["OrGigs_Elite_At_a_glance.pdf", "OrGigs_Elite_Manual.pdf"],
+                 fm1: ["OrGigs_FM-1_At_a_glance.pdf", "OrGigs_FM-1_Manual.pdf"] };
+function showSheet(dev) {
+  if (!SHEETS[dev]) return;
+  const [sheet, manual] = SHEETS[dev].map((f) => "../docs/" + f);
+  for (const d in SHEETS) $("tab-" + d).setAttribute("aria-pressed", String(d === dev));
+  $("sheetpdf").href = sheet;
+  $("manpdf").href = manual;
+  if ($("sheet").dataset.src !== sheet) { $("sheet").dataset.src = sheet; $("sheet").src = sheet + "#view=FitH"; }
+}
+for (const d in SHEETS) $("tab-" + d).addEventListener("click", () => showSheet(d));
+showSheet(new URLSearchParams(location.search).get("device") === "fm1" ? "fm1" : "elite");
+
 $("ver").textContent = `Version ${meta.version} · packages: ${meta.packages.map((p) => p.product).join(", ")}`;
 if (!navigator.requestMIDIAccess) say("nomidi");
 else $("go").disabled = false;
@@ -164,12 +203,15 @@ $("go").addEventListener("click", async () => {
     log(`found ${dev.id.text} on ${dev.name}`);
     const entry = packageFor(meta.packages, dev.id.model);
     if (!entry) { say("nopkg", dev.id.text); return; }
+    showSheet(entry.product.startsWith("FM-1") ? "fm1" : "elite");
     if (!IS_OTA(dev.id) && needsStockUpdate(dev.id)) { say("needV016", dev.id.text); return; }
     const image = await imageFor(entry);
     if (IS_OTA(dev.id)) { say((await up.resume(image, step, entry.product)) ? "done" : "stopped"); return; }
     if (WIN_CHROMIUM && stockSmk(dev.id) && !confirm(`${dev.id.text} (M-VAVE's firmware) is connected. On Windows, Chrome and Edge `
         + "freeze when it switches to update mode: use Firefox for this install. Try here anyway?")) { say("winChrome"); return; }
-    if (dev.id.text !== entry.product && !confirm(`${dev.id.text} is connected. Install OrGigs (${entry.product}) on it?`)) { say(""); return; }
+    if (/^SMK-37 Pro_/.test(entry.product) && !confirm(`${dev.id.text} is connected. OrGigs is not tested on an SMK-37 Pro `
+        + "yet: it is the Elite's firmware under the Pro's name. Install it and tell us how it went?")) { say(""); return; }
+    else if (dev.id.text !== entry.product && !/^SMK-37 Pro_/.test(entry.product) && !confirm(`${dev.id.text} is connected. Install OrGigs (${entry.product}) on it?`)) { say(""); return; }
     await up.install(image, entry.product, step);
   } catch (e) {
     if (e && e.code && TEXT[e.code]) say(e.code, e.detail || "");

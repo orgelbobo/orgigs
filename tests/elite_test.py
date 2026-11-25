@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 """The SMK-37 Elite's panel on the host build (tests/elite_pads.txt, tests/elite_midi.txt): the keys only play;
 setups, the cloner's channels and the harmonic drawbars are on the pads; the MIDI area (8 knobs, ARP / PATCH the
-screens, the zone's switches on the pads, chord capture); the chord memory on CHORD (tests/elite_chord.txt); the mixer (tests/elite_mix.txt); FX and the Leslie cabinets (tests/elite_fx.txt); the delay's echoes after a short note (tests/elite_delay.txt); the insert effects CHORUS, WAH (tests/elite_chorus.txt, tests/elite_wah.txt), AUTO-WAH (tests/elite_autowah.txt), FLANGER (tests/elite_flanger.txt), PHASER (tests/elite_phaser.txt), RING MOD (tests/elite_ring.txt), AMP (tests/elite_amp.txt); the MASTER page's EQ and compressor (tests/elite_master.txt); the YST sound browser (tests/elite_ysb.txt, < + > K4 K5: tests/elite_ysb_quick.txt, a kit track: tests/elite_ysb_kit.txt); panic and the lights (tests/elite_panel.txt); layout B DRAWBARS + PADS (tests/elite_layout.txt); the sustain pedal (tests/elite_sustain.txt); an expression pedal, the swell (tests/elite_swell.txt, AUTO: tests/elite_swell_auto.txt); layout C KNOBS + 16 PADS (tests/elite_layout_c.txt); layout D SOUND DESIGN (tests/elite_layout_d.txt); the zone's FILTER CC IN (tests/elite_ccin.txt).
+screens, the zone's switches on the pads, chord capture); the chord memory on CHORD (tests/elite_chord.txt); the mixer (tests/elite_mix.txt); FX and the Leslie cabinets (tests/elite_fx.txt); the delay's echoes after a short note (tests/elite_delay.txt); the insert effects CHORUS, WAH (tests/elite_chorus.txt, tests/elite_wah.txt), AUTO-WAH (tests/elite_autowah.txt), FLANGER (tests/elite_flanger.txt), PHASER (tests/elite_phaser.txt), RING MOD (tests/elite_ring.txt), AMP (tests/elite_amp.txt); the MASTER page's EQ and compressor (tests/elite_master.txt); the YST sound browser (tests/elite_ysb.txt, < + > K4 K5: tests/elite_ysb_quick.txt, a kit track: tests/elite_ysb_kit.txt); panic and the lights (tests/elite_panel.txt); layout B DRAWBARS + PADS (tests/elite_layout.txt); the sustain pedal (tests/elite_sustain.txt); an expression pedal, the swell (tests/elite_swell.txt, AUTO: tests/elite_swell_auto.txt); layout C KNOBS + 16 PADS (tests/elite_layout_c.txt); layout D SOUND DESIGN (tests/elite_layout_d.txt); the zone's FILTER CC IN (tests/elite_ccin.txt); SUS IN, a sustain coming in holds the keys (tests/elite_susin.txt).
 
   tests/elite_test.py
 """
@@ -62,8 +62,8 @@ def main():
     m = run("elite_midi.txt")
     check(midi(m, 1200, 1210, "91  60"), "MIDI ZONE: K2 = the out channel (a key plays channel 2)")
     z = pads(m, 1500)
-    check(z and z[0] != z[3] and z[3] == z[1] and z[10] == z[1] and z[11] == z[0] and z[12] == "0,0,0",
-          "ZONE: the switches on pads 1..12 (VEL on, INT switched off, FCCI off, MIDI OUT on)")
+    check(z and z[0] != z[3] and z[3] == z[1] and z[10] == z[1] and z[11] == z[0] and z[12] == z[1] and z[13] == "0,0,0",
+          "ZONE: the switches on pads 1..13 (VEL on, INT switched off, FCCI off, MIDI OUT on, SUS IN off)")
     check(pads(m, 3200)[3] == z[0], "ZONE: pad 4 again: the internal sound on")
     c = pads(m, 2100)
     check(c and c[0] != "0,0,0" and c[2] == "0,0,0", "ARP from ZONE: around to CHORD (pad 1 capture lit)")
@@ -357,6 +357,12 @@ def main():
     check(not midi(ci, 1200, 1200, "80  60") and midi(ci, 1300, 1300, "80  60"), "CC IN off: sustain on channel 1 holds the note")
     check(midi(ci, 2200, 2200, "80  60") and midi(ci, 2100, 2100, "B0  64 127"),
           "FILTER CC IN (ZONE pad 11): the sustain holds nothing inside, it still goes out")
+    si = run("elite_susin.txt")
+    check(midi(si, 1200, 1200, "80  60"), "SUS IN off: a sustain coming in does not hold the Elite's keys")
+    check(not midi(si, 2200, 2299, "80  60") and midi(si, 2300, 2300, "80  60"),
+          "SUS IN (ZONE pad 13): CC 64 on the zone's channel holds the Elite's key until it lifts")
+    check(not midi(si, 2800, 2999, "80  60") and midi(si, 3000, 3000, "80  60"),
+          "SUS IN and the Elite's own pedal: the key ends when both are up")
     print("elite tests passed")
 
 

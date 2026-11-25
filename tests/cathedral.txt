@@ -1,0 +1,25 @@
+# OrGigs 2: the cathedral organ (tests/run_host.sh tests/cathedral.txt): model 10 in the order; its own list (PRESETS
+# to the GRAND CHOEUR, +2 from the PLEIN-JEU); a chord while CC 11 closes the recit's swell box (-20 dB, 700 Hz) and opens it again.
+# Buttons: 2 FX 3 SEL; encoders: 1 ALGORITHM 2 KNOB1 6 PRESETS
+100 enc 1 9
+300 enc 6 2
+500 shot
+600 midi 0x90 48 100
+600 midi 0x90 55 90
+600 midi 0x90 64 90
+600 midi 0x90 67 90
+600 midi 0x92 36 100
+1500 shot
+1600 midi 0xB0 11 96
+1700 midi 0xB0 11 64
+1800 midi 0xB0 11 32
+1900 midi 0xB0 11 0
+2600 shot
+2700 midi 0xB0 11 64
+2800 midi 0xB0 11 127
+3400 midi 0x80 48 0
+3400 midi 0x80 55 0
+3400 midi 0x80 64 0
+3400 midi 0x80 67 0
+3400 midi 0x82 36 0
+4500 end

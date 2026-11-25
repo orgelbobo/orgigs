@@ -1,0 +1,17 @@
+# The Elite's ORGAN OCTAVE (BOARD=smk37 tests/run_host.sh tests/elite_organ_oct.txt): GLOBE: ZONE of the focused
+# manual; C4 plays, then SCALE + K6 -1: the zone plays the organ an octave down (OCTAVE alone stays MIDI out only), C4 again.
+# Buttons: 8 SCALE 10 GLOBE. Encoders 0..7 = K1..K8. Keys: bit 12 = C4.
+300 btn 10
+500 keys 0x1000
+1300 keys 0
+1600 down 8
+1700 enc 5 -1
+1800 up 8
+1900 shot
+2000 keys 0x1000
+2800 keys 0
+3000 down 8
+3100 enc 5 1
+3200 up 8
+3300 shot
+3600 end

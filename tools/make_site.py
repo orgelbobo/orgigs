@@ -4,14 +4,16 @@
 
   index.html                  the start page: both editions, links
   install/index.html          web/installer.html with fm1pkg.js, fm1ota.js and the packages' list inlined
-  firmware/orgigs-VER.fwsc    the FM-1 package, orgigs-VER-smk37-elite.fwsc the Elite's (+ LICENSE, LICENSING.md:
+  firmware/orgigs-VER.fwsc    the FM-1 package, orgigs-VER-smk37-elite.fwsc the Elite's, -smk37-pro the Pro's (untested;
+                              + LICENSE, LICENSING.md:
                               the packages hold JieLi SDK files under Apache-2.0, see LICENSING.md)
   try/                        the FM-1 browser simulator (sim/web, built by sim/build_wasm.sh)
+  try/elite/                  the Elite's (sim/web/elite, built by sim/build_wasm.sh elite)
   docs/                       the manuals and the at-a-glance sheets (PDF), the card images
 
   tools/make_site.py [--version X.Y] [OUT_DIR]      (default: dev, build/site)
 
-Build the packages first (./build.sh and ./build.sh --board smk37 --model elite, with --release X.Y for --version X.Y). Nothing is uploaded."""
+Build the packages first (./build.sh, ./build.sh --board smk37 --model elite and ./build.sh --board smk37, with --release X.Y for --version X.Y). Nothing is uploaded."""
 import argparse
 import json
 import re
@@ -25,7 +27,9 @@ import fm1_install as I  # noqa: E402
 
 # the editions on the site: (build file, published suffix, model the package must carry); a release's files carry
 # its version (./build.sh --release X.Y: build/orgigs_fm1-X.Y.fwsc)
-PACKAGES = [("build/orgigs_fm1{v}-smk37-elite.fwsc", "-smk37-elite", "SMK-37 Elite"), ("build/orgigs_fm1{v}.fwsc", "", "FM-1")]
+# the SMK-37 Pro's package (the same keyboard under another name) is not tested on a Pro yet: testers wanted
+PACKAGES = [("build/orgigs_fm1{v}-smk37-elite.fwsc", "-smk37-elite", "SMK-37 Elite"), ("build/orgigs_fm1{v}.fwsc", "", "FM-1"),
+            ("build/orgigs_fm1{v}-smk37.fwsc", "-smk37-pro", "SMK-37 Pro")]
 DOCS = ["OrGigs_Elite_Manual.pdf", "OrGigs_Elite_At_a_glance.pdf", "OrGigs_FM-1_Manual.pdf", "OrGigs_FM-1_At_a_glance.pdf"]
 
 
@@ -44,9 +48,9 @@ def package(path, suffix, model, version):
     return product, raw, f"orgigs-{re.sub(r'[^A-Za-z0-9.-]', '-', version)}{suffix}.fwsc"
 
 
-ORGAN = ("A three-manual organ with 84 free-running tone generators and no voice stealing: eight models from "
-         "tonewheel and combo organs to pipe organs and free reeds, drawbars, percussion, rotary, drive, delay and reverb, "
-         "16 performance setups, three MIDI zones and Yamaha SEQTRAK control.")
+ORGAN = ("Nine drawbars for each of two manuals and four for the pedal, 84 free-running tone generators with no voice "
+         "stealing, sixteen models from tonewheel and combo organs to four historical pipe organs and free reeds, "
+         "percussion, rotary, drive, delay and reverb, 16 performance setups, three MIDI zones and Yamaha SEQTRAK control.")
 
 START = """<!doctype html>
 <!-- SPDX-License-Identifier: GPL-3.0-only -->
@@ -82,17 +86,21 @@ START = """<!doctype html>
   <p class="lead">It's an organ. Free and open source (GPL-3.0), for the M-VAVE SMK-37 Elite and FM-1. Version VERSION.</p>
   <div class="eds">
     <div class="ed">
-      <img src="docs/card-elite.png" alt="The OrGigs welcome screen on the SMK-37 Elite">
+      <img src="docs/card-elite.png" alt="The OrGigs drawbar screen on the SMK-37 Elite">
       <h2>SMK-37 Elite</h2>
       <p>ORGAN</p>
-      <div class="links"><a class="main" href="install/">Install</a><a href="docs/OrGigs_Elite_Manual.pdf">Manual</a>
+      <div class="links"><a class="main" href="install/">Install</a><a href="try/elite/">Try it</a>
+        <a href="docs/OrGigs_Elite_Manual.pdf">Manual</a>
         <a href="docs/OrGigs_Elite_At_a_glance.pdf">At a glance</a></div>
+      <p class="small">Also for the <b>SMK-37 Pro</b>, the same keyboard under another name: its package is not tested on
+        a Pro yet. If you have one, please try it and <a href="https://github.com/orgelbobo/orgigs/issues">tell us</a>
+        how it went.</p>
     </div>
     <div class="ed">
-      <img src="docs/card-fm1.png" alt="The OrGigs welcome screen on the FM-1">
+      <img src="docs/card-fm1.png" alt="The OrGigs drawbar screen on the FM-1">
       <h2>FM-1</h2>
       <p>ORGAN</p>
-      <div class="links"><a class="main" href="install/">Install</a><a href="try/">Try it</a>
+      <div class="links"><a class="main" href="install/?device=fm1">Install</a><a href="try/">Try it</a>
         <a href="docs/OrGigs_FM-1_Manual.pdf">Manual</a><a href="docs/OrGigs_FM-1_At_a_glance.pdf">At a glance</a></div>
     </div>
   </div>
@@ -114,9 +122,10 @@ def main(argv=None):
     v = "" if a.version == "dev" else "-" + a.version
     pkgs = [package(p.format(v=v), s, m, a.version) for p, s, m in PACKAGES]
     sim = ROOT / "sim/web"
-    for f in ("index.html", "sim.js", "orgigs_sim.js"):
-        if not (sim / f).exists():
-            raise SystemExit(f"{sim / f}: missing (sim/build_wasm.sh)")
+    for d, arg in (("", ""), ("elite/", " elite")):
+        for f in ("index.html", "sim.js", "orgigs_sim.js"):
+            if not (sim / d / f).exists():
+                raise SystemExit(f"{sim / d / f}: missing (sim/build_wasm.sh{arg})")
     for d in DOCS:
         if not (ROOT / "docs/manual" / d).exists():
             raise SystemExit(f"docs/manual/{d}: missing (docs/manual/build_pdf.sh)")
@@ -130,15 +139,16 @@ def main(argv=None):
     html = html.replace("/*LIB*/", lib).replace("/*META*/", meta)
 
     shutil.rmtree(out, ignore_errors=True)
-    for d in ("install", "firmware", "try", "docs"):
+    for d in ("install", "firmware", "try/elite", "docs"):
         (out / d).mkdir(parents=True)
     (out / "install/index.html").write_text(html, encoding="utf-8")
     for _, raw, n in pkgs:
         (out / "firmware" / n).write_bytes(raw)
     for doc in ("LICENSE", "LICENSING.md"):
         shutil.copy(ROOT / doc, out / "firmware" / doc)
-    for f in ("index.html", "sim.js", "orgigs_sim.js"):
-        shutil.copy(sim / f, out / "try" / f)
+    for d in ("", "elite/"):
+        for f in ("index.html", "sim.js", "orgigs_sim.js"):
+            shutil.copy(sim / d / f, out / "try" / d / f)
     for d in DOCS:
         shutil.copy(ROOT / "docs/manual" / d, out / "docs" / d)
     for c in ("card-elite.png", "card-fm1.png"):
@@ -146,7 +156,7 @@ def main(argv=None):
     files = ", ".join(f'<a href="firmware/{n}">{n}</a> ({p})' for p, _, n in pkgs)
     page = START.replace("VERSION", a.version).replace("FILES", files).replace("ORGAN", ORGAN)
     (out / "index.html").write_text(page, encoding="utf-8")
-    print(f"site: {out}: index.html, install/ ({len(html)} B), try/, docs/ ({len(DOCS)} PDFs), "
+    print(f"site: {out}: index.html, install/ ({len(html)} B), try/ + try/elite/, docs/ ({len(DOCS)} PDFs), "
           + ", ".join(f"firmware/{n} ({p})" for p, _, n in pkgs))
 
 

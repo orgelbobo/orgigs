@@ -93,7 +93,57 @@ SPECTRA["PIPE_STRING_REED"] = [(0.8 / h ** 0.6 * (1 + 1.5 * math.exp(-((h - 7) /
 _acc = dft_of(lambda x: pulse(x, 0.33, 0.035), NH)
 SPECTRA["ACCORDION_REED"] = [(a * (1 + 0.8 * math.exp(-((h - 7) / 3.5) ** 2)), p) for h, (a, p) in enumerate(_acc, 1)]
 
-WAVES = ["TONEWHEEL", "VOX", "FARFISA", "YAMAHA_YC", "PIPE_PRINCIPAL", "PIPE_FLUTE", "PIPE_STRING_REED", "ACCORDION_REED"]
+# ---- OrGigs 2
+# 9 Osaka King (a Japanese transistor combo): a hollow square with soft edges, a little triangle body
+SPECTRA["OSAKA"] = dft_of(lambda x: 0.7 * pulse(x, 0.5, 0.06) + 0.3 * tri(x), NH)
+# 10 Il Castellano (an Italian combo): buzzier than the Italo, a narrow pulse on a saw (its TONE knob is the filter)
+SPECTRA["CASTELLANO"] = dft_of(lambda x: 0.55 * saw(x) + 0.6 * pulse(x, 0.16, 0.01), NH)
+# 11 Dutch Rock (a Dutch valve organ): an uneven square from the valve dividers, a formant around the 3rd and 4th
+_dr = dft_of(lambda x: pulse(x, 0.42, 0.08), NH)
+SPECTRA["DUTCH"] = [(a * (1 + 0.6 * math.exp(-((h - 3.5) / 1.5) ** 2)) / (1 + h / 24), p) for h, (a, p) in enumerate(_dr, 1)]
+# 12 dry free reed (the German accordions): a narrower pulse, its presence higher than the musette reed's
+_dry = dft_of(lambda x: pulse(x, 0.27, 0.025), NH)
+SPECTRA["REED_DRY"] = [(a * (1 + 0.9 * math.exp(-((h - 10) / 4.0) ** 2)), p) for h, (a, p) in enumerate(_dry, 1)]
+# 13 helicon bass (the Steirische's bass reeds): wide, brassy, a strong formant around the 5th to 8th
+_hel = dft_of(lambda x: pulse(x, 0.2, 0.02), NH)
+SPECTRA["HELIKON"] = [(a * (1 + 1.6 * math.exp(-((h - 6) / 2.5) ** 2)), p) for h, (a, p) in enumerate(_hel, 1)]
+
+# 14 Italian renaissance principal (wide, lead-rich pipes on low wind): a strong fundamental, the partials falling as
+# 1/n^1.6 and damped above the 6th: soft, silvery, no edge
+SPECTRA["PIPE_RENAIS"] = [(h ** -1.6 * (1.0 if h <= 6 else math.exp(-(h - 6) / 1.8)) if h <= 24 else 0.0, 0.0)
+                          for h in range(1, NH + 1)]
+
+# 15..17 the German romantic organ: everything dark and round, the spectrum falling off early (its warmth sits low)
+# its principal: a strong fundamental, 1/n^1.5, damped above the 4th
+SPECTRA["PIPE_ROMANTIC"] = [(h ** -1.5 * (1.0 if h <= 4 else math.exp(-(h - 4) / 2.5)) if h <= 20 else 0.0, 0.0)
+                            for h in range(1, NH + 1)]
+# its soft strings (salicional, aeoline): the fundamental held back, a gentle body around the 5th, gone above the 12th
+SPECTRA["PIPE_STRING_SOFT"] = [((0.6 if h == 1 else 0.5 / h ** 0.7 * (1 + 0.9 * math.exp(-((h - 5) / 2.5) ** 2)))
+                               * (1.0 if h <= 10 else math.exp(-(h - 10) / 2.0)) if h <= 24 else 0.0, 0.0)
+                              for h in range(1, NH + 1)]
+# its soft reed (oboe, the orchestral clarinet): the odd partials ahead, a low formant, filtered dark
+SPECTRA["PIPE_REED_SOFT"] = [((1.0 if h % 2 else 0.45) / h ** 0.9 * (1 + 0.8 * math.exp(-((h - 4) / 2.0) ** 2))
+                             * math.exp(-max(0, h - 8) / 3.0) if h <= 24 else 0.0, 0.0) for h in range(1, NH + 1)]
+
+# 18 the baroque regal (short-resonator reed): a weak fundamental, a narrow nasal formant high up (around the 11th)
+_rg = dft_of(lambda x: pulse(x, 0.18, 0.012), NH)
+SPECTRA["PIPE_REGAL"] = [(a * (0.55 if h == 1 else 1.0) * (1 + 2.4 * math.exp(-((h - 11) / 2.2) ** 2))
+                          * (1.0 if h <= 18 else math.exp(-(h - 18) / 3.0)), p) for h, (a, p) in enumerate(_rg, 1)]
+# 19 the French chorus reed (trompette, clairon, bombarde): a rich saw driven into a soft clip, a broad brassy
+# presence over the 4th to 12th
+_an = dft_of(lambda x: math.tanh(2.2 * saw(x)), NH)
+SPECTRA["PIPE_ANCHE"] = [(a * (1 + 1.1 * math.exp(-((h - 7) / 4.0) ** 2)) if h <= 48 else 0.0, p)
+                         for h, (a, p) in enumerate(_an, 1)]
+
+# 20 the Playroom (a toy chord organ: plastic free reeds blown by a small electric fan): a thin, quacking reed,
+# the fundamental weak, a nasal hump around the 4th to 6th, the top rough
+_toy = dft_of(lambda x: pulse(x, 0.1, 0.008), NH)
+SPECTRA["TOY_REED"] = [(a * (0.5 if h == 1 else 1.0) * (1 + 1.8 * math.exp(-((h - 5) / 1.8) ** 2)) * (1.0 if h <= 16 else 0.6), p)
+                       for h, (a, p) in enumerate(_toy, 1)]
+
+WAVES = ["TONEWHEEL", "VOX", "FARFISA", "YAMAHA_YC", "PIPE_PRINCIPAL", "PIPE_FLUTE", "PIPE_STRING_REED", "ACCORDION_REED",
+         "OSAKA", "CASTELLANO", "DUTCH", "REED_DRY", "HELIKON", "PIPE_RENAIS", "PIPE_ROMANTIC", "PIPE_STRING_SOFT",
+         "PIPE_REED_SOFT", "PIPE_REGAL", "PIPE_ANCHE", "TOY_REED"]
 
 
 def synth(spec, nh):
@@ -172,6 +222,19 @@ def main():
     arr("uint32_t", "INC_ET", [inc_of(mtof(GEN0 + g)) for g in range(NGEN)], 6, f"[{NGEN}]")
     micro = [rnd.uniform(-1.2, 1.2) for _ in range(NGEN)]
     arr("uint32_t", "INC_MICRO", [inc_of(mtof(GEN0 + g) * 2 ** (micro[g] / 1200)) for g in range(NGEN)], 6, f"[{NGEN}]")
+    # quarter-comma meantone (pure major thirds, the wolf between G# and Eb), the same micro-detune on top
+    mt = [0.0, -23.95, -6.84, 10.27, -13.69, 3.42, -20.53, -3.42, -27.37, -10.26, 6.84, -17.11]   # C .. B, from C
+    mt = [c - sum(mt) / 12 for c in mt]     # centred on equal temperament (A 1.7 cents flat): it stays with the others
+    arr("uint32_t", "INC_MEANTONE", [inc_of(mtof(GEN0 + g) * 2 ** ((micro[g] + mt[(GEN0 + g) % 12]) / 1200))
+                                     for g in range(NGEN)], 6, f"[{NGEN}]")
+    wm = [0.0, -9.77, -7.82, -5.86, -9.77, -1.95, -11.73, -3.91, -7.82, -11.73, -3.91, -7.82]   # Werckmeister III
+    wm = [c - sum(wm) / 12 for c in wm]     # centred on equal temperament, as the meantone
+    arr("uint32_t", "INC_WERCKMEISTER", [inc_of(mtof(GEN0 + g) * 2 ** ((micro[g] + wm[(GEN0 + g) % 12]) / 1200))
+                                         for g in range(NGEN)], 6, f"[{NGEN}]")
+    trnd = random.Random(1972)              # the Playroom: each plastic reed a few cents off, never retuned
+    toy = [trnd.uniform(-9.0, 9.0) for _ in range(NGEN)]
+    arr("uint32_t", "INC_TOY", [inc_of(mtof(GEN0 + g) * 2 ** (toy[g] / 1200)) for g in range(NGEN)], 6, f"[{NGEN}]")
+    lines.append(f"#define INC_VOCE_UMANA {inc_of(2.0)}u   /* +2 Hz: the voce umana beats the same at every pitch */")
     # per-generator spread of the detuned reed ranks (+-2 cents around the model's setting), as cents
     arr("int8_t", "DET_VAR", [rnd.randint(-2, 2) for _ in range(NGEN)], 21, f"[{NGEN}]")
     arr("uint16_t", "CENT_UP_K", [cents_k(c) for c in range(0, 25)], 13, "[25]")
@@ -196,6 +259,10 @@ def main():
 
     lines += ["", f"#define LP_CAB_A {onepole(4500)}       /* 4.5 kHz cabinet */",
               f"#define LP_XOVER_A {onepole(800)}       /* 800 Hz rotary crossover */",
+              f"#define LP_CAB_DUTCH_A {onepole(3000)}   /* 3 kHz: the Dutch Rock's small speaker */",
+              f"#define LP_CAB_TOY_A {onepole(3800)}     /* the Playroom's plastic speaker: 3.8 kHz ... */",
+              f"#define HP_TOY_A {onepole(320)}          /* ... and nothing below 320 Hz */",
+              f"#define INC_FAN_HUM {inc_of(1.0)}u        /* the fan motor's hum: this per Hz */",
               f"#define LP_DELAY_A {onepole(3200, FS // 2)}   /* 3.2 kHz feedback damping, half rate */",
               f"#define CLICK_SVF_F {svf_f(2600)}     /* key click band */",
               f"#define AIR_SVF_F {svf_f(1400)}       /* bellows air */"]
@@ -203,6 +270,8 @@ def main():
     arr("uint16_t", "CHIFF_F", [svf_f(4 * mtof(GEN0 + g)) for g in range(NGEN)], 12, f"[{NGEN}]")
     # bellows brightness: a one-pole low pass from 700 Hz (soft) to 9 kHz (full) over expression 0..127
     arr("uint16_t", "BRIGHT_A", [onepole(700 * (9000 / 700) ** (i / 127)) for i in range(128)], 16, "[128]")
+    # the TONE knob of the Il Castellano: the cabinet's low pass from 1.5 kHz (dark) to 10 kHz (open) over 0..127
+    arr("uint16_t", "CAB_TONE_A", [onepole(1500 * (10000 / 1500) ** (i / 127)) for i in range(128)], 16, "[128]")
 
     # cassotto body: a peak at 520 Hz (+5 dB, Q 1.1) as an RBJ biquad, Q14 coefficients
     def peak_biquad(fc, gdb, q):

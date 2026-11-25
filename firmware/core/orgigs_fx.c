@@ -93,7 +93,7 @@ static struct {
 static volatile int32_t mst_gain;       /* (the screen: the compressor's gain, Q12) */
 
 static struct {                        /* a bus: stages 1 and 2 */
-    int32_t cab_lp, dc_m, bright_lp, bq_x1, bq_x2, bq_y1, bq_y2;
+    int32_t cab_lp, dc_m, bright_lp, bright_lp2, toy_hp, bq_x1, bq_x2, bq_y1, bq_y2;
     uint32_t vib_w;
     uint32_t idle;                      /* blocks without input */
 } fxb[ORG_NMAN];
@@ -129,7 +129,6 @@ static int32_t lv_dbg[3];               /* host: peaks of dry, after the preamp,
 #define G_IN_REED 102
 #define G_POST_REED 192
 #endif
-static const uint16_t TRIM_VINTAGE_Q8[4] = {256, 448, 371, 282};   /* tonewheel, Brit Combo, Italo Combo, Tokyo Combo: their waves' crest */
 static int16_t sat16(int32_t v) { return (int16_t)(v > 32767 ? 32767 : v < -32767 ? -32767 : v); }
 
 static inline __attribute__((always_inline)) int32_t softclip(int32_t x)              /* linear to 20000, then bends towards 32767 */
@@ -400,11 +399,20 @@ static inline __attribute__((always_inline)) int32_t allpass(int16_t *buf, uint3
 /* stages 1 and 2 of bus m, in place; 0 = the bus is silent and was skipped */
 static uint32_t fx_bus(uint32_t m, int32_t *x, uint32_t n, const int32_t *lfo_v, const int32_t *lfo_t, uint32_t bright_a)
 {
-    uint32_t dept = ORG_MODELS[model_applied < ORG_NMODEL ? model_applied : 0].dept, i, any = 0;
+    const org_model_t *md = &ORG_MODELS[model_applied < ORG_NMODEL ? model_applied : 0];
+    uint32_t dept = md->dept, i, any = 0;
     uint32_t vib = org_par.vib[m] < ORG_NVIB ? org_par.vib[m] : 0u, drive = org_par.drive[m] & 127u;
-    int32_t drive_q8 = 128 + (int32_t)drive * 12;
+    int32_t drive_q8, cab_a = LP_CAB_A;
     int32_t trem_depth = 0, vib_depth = 0, vib_mix = 0;
-    int32_t post_vintage = (G_POST_VINTAGE * TRIM_VINTAGE_Q8[model_applied & 3u]) >> 8;
+    int32_t post_vintage = (G_POST_VINTAGE * md->trim_q8) >> 8;
+    if (md->knob == KNOB_TONE) cab_a = CAB_TONE_A[org_par.character & 127u];
+    else if (md->knob == KNOB_AMP) {            /* the valve amp: the knob drives it from warm to hard, a small speaker */
+        uint32_t amp = 24u + ((org_par.character & 127u) * 3u >> 2);
+        if (drive < amp) drive = amp;
+        cab_a = LP_CAB_DUTCH_A;
+    }
+    else if (md->knob == KNOB_FAN) cab_a = LP_CAB_TOY_A;   /* the Playroom's plastic speaker */
+    drive_q8 = 128 + (int32_t)drive * 12;
     int16_t *vb = vib_buf[m];
     for (i = 0; i < n; i++) any |= (uint32_t)x[i];
     if (any) fxb[m].idle = 0;
@@ -426,13 +434,25 @@ static uint32_t fx_bus(uint32_t m, int32_t *x, uint32_t n, const int32_t *lfo_v,
         /* ---- 1 body and drive. Gain staging (tests/levels.txt): three notes come out near -8 dB of the
            ceiling, both manuals and the pedal at full registration just touch the last soft clip */
         if (dept == DEPT_VINTAGE) {
+            if (md->knob == KNOB_FAN) v = (int32_t)(((int64_t)v * wind_q15) >> 15);   /* the fan's wind */
             v = tube((v * G_IN_VINTAGE) >> 8, drive_q8);
             fxb[m].dc_m += ((v << 8) - fxb[m].dc_m) >> 9;      /* the asymmetric clip makes DC: take the mean out (Q8 state) */
             v -= fxb[m].dc_m >> 8;
-            fxb[m].cab_lp += ((v - fxb[m].cab_lp) * LP_CAB_A) >> 15;
+            fxb[m].cab_lp += ((v - fxb[m].cab_lp) * cab_a) >> 15;
             v = (fxb[m].cab_lp * post_vintage) >> 8;
+            if (md->knob == KNOB_FAN) {         /* ... and no bass (Q8 state) */
+                fxb[m].toy_hp += (int32_t)(((((int64_t)v << 8) - fxb[m].toy_hp) * HP_TOY_A) >> 15);
+                v -= fxb[m].toy_hp >> 8;
+            }
         } else {
             if (dept == DEPT_PIPE) {
+                if (bright_a) {                 /* the swell box (Q8 state, as the reeds') */
+                    fxb[m].bright_lp += (int32_t)(((((int64_t)v << 8) - fxb[m].bright_lp) * (int32_t)bright_a) >> 15);
+                    if (model_applied == MODEL_CATHEDRAL) {     /* the recit's box: two poles */
+                        fxb[m].bright_lp2 += (int32_t)(((int64_t)(fxb[m].bright_lp - fxb[m].bright_lp2) * (int32_t)bright_a) >> 15);
+                        v = fxb[m].bright_lp2 >> 8;
+                    } else v = fxb[m].bright_lp >> 8;
+                }
                 v = (softclip((v * G_IN_PIPE) >> 8) * G_POST_PIPE) >> 8;
             } else {
                 /* the state keeps 8 bits below the sample (y in Q8): a fixed-point biquad otherwise holds a DC dead band */
@@ -492,11 +512,16 @@ static void fx_block(int32_t (*bus)[SUB], int32_t *out, uint32_t n, int32_t *pea
     if (rmode != fx.rv_mode) rev_clear(rmode);
     if (dly_d >= DLY_LEN) dly_d = DLY_LEN - 1u;
 
-    /* expression (CC 11 / bellows): volume, and for the bandoneon the brightness */
+    /* expression (CC 11 / bellows): volume, and for the bandoneon the brightness; the romantic organ's swell box only
+       closes to -10 dB and 2.5 kHz (its roller makes the dynamics), the cathedral's to -20 dB and 700 Hz, two poles */
     expr_t = ((int32_t)org_par.expression * org_par.expression) >> 2;      /* 127 -> 4032 */
+    if (model_applied == MODEL_ROMANTIC) expr_t = 1280 + ((expr_t * 175) >> 8);   /* floor -10 dB */
+    else if (model_applied == MODEL_CATHEDRAL) expr_t = 403 + ((expr_t * 230) >> 8);   /* floor -20 dB */
     fx.expr_q12 += (expr_t - fx.expr_q12) >> 2;
     if (dept == DEPT_REED)
         bright_a = model_applied == MODEL_BANDONEON ? BRIGHT_A[org_par.expression] : BRIGHT_A[96 + (org_par.expression >> 2)];
+    else if (model_applied == MODEL_ROMANTIC) bright_a = BRIGHT_A[64 + (org_par.expression >> 1)];
+    else if (model_applied == MODEL_CATHEDRAL) bright_a = BRIGHT_A[org_par.expression];
 
     /* stage 2: the LFOs, one for all buses */
     if (dept == DEPT_VINTAGE)
@@ -508,7 +533,7 @@ static void fx_block(int32_t (*bus)[SUB], int32_t *out, uint32_t n, int32_t *pea
         }
     else
         for (i = 0; i < n; i++) {
-            fx.trem_ph += model_applied >= MODEL_MUSETTE ? INC_TREM_REED : INC_TREMULANT;
+            fx.trem_ph += dept == DEPT_REED ? INC_TREM_REED : INC_TREMULANT;
             lfo_t[i] = org_sin(fx.trem_ph);
         }
 

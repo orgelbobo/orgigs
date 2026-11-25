@@ -1,0 +1,40 @@
+# OrGigs 2: the Playroom (tests/run_host.sh tests/playroom.txt): model 8 in the order, a toy chord organ blown by a fan.
+# Setup 1's drawbars; one key, then a full chord (the wind sags: flat and softer), the fan slowed down (FX, SEL + KNOB1)
+# and the chord again; the motor hums in between.
+# Buttons: 2 FX 3 SEL; encoders: 1 ALGORITHM 2 KNOB1
+100 enc 1 7
+400 shot
+600 midi 0x90 60 100
+1400 midi 0x80 60 0
+1600 midi 0x90 48 100
+1600 midi 0x90 52 90
+1600 midi 0x90 55 90
+1600 midi 0x90 60 90
+1600 midi 0x90 64 90
+1600 midi 0x90 67 90
+1600 midi 0x90 72 90
+1600 midi 0x90 76 90
+2600 shot
+2800 midi 0x80 48 0
+2800 midi 0x80 52 0
+2800 midi 0x80 55 0
+2800 midi 0x80 60 0
+2800 midi 0x80 64 0
+2800 midi 0x80 67 0
+2800 midi 0x80 72 0
+2800 midi 0x80 76 0
+3000 btn 2
+3100 down 3
+3150 enc 2 -40
+3300 shot
+3350 up 3
+3400 btn 2
+3600 midi 0x90 48 100
+3600 midi 0x90 55 90
+3600 midi 0x90 64 90
+3600 midi 0x90 67 90
+4600 midi 0x80 48 0
+4600 midi 0x80 55 0
+4600 midi 0x80 64 0
+4600 midi 0x80 67 0
+5500 end

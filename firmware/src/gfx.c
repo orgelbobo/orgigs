@@ -134,13 +134,34 @@ static uint32_t glyph(const felucca_font_t *f, uint32_t ch)
     return ch - f->first;
 }
 
-/* text, alpha-blended onto black with colour c; returns the end x */
+/* a pixel of colour c over what is there, alpha a = 0..15 */
+static inline void cv_blend(int32_t x, int32_t y, uint16_t c, uint32_t a)
+{
+    uint32_t d, r, g, b;
+    y += cv_oy;
+    if ((uint32_t)x >= cv_w || (uint32_t)y >= cv_h || !a)
+        return;
+    if (a >= 15u) {
+        cv_px[(uint32_t)y * cv_w + (uint32_t)x] = swap16(c);
+        return;
+    }
+    d = swap16(cv_px[(uint32_t)y * cv_w + (uint32_t)x]);
+    r = ((d >> 11) * (15u - a) + (c >> 11u) * a) / 15u;
+    g = (((d >> 5) & 63u) * (15u - a) + ((c >> 5) & 63u) * a) / 15u;
+    b = ((d & 31u) * (15u - a) + (c & 31u) * a) / 15u;
+    cv_px[(uint32_t)y * cv_w + (uint32_t)x] = swap16((r << 11) | (g << 5) | b);
+}
+
+static uint32_t cv_sq;           /* px taken off every glyph's advance (cv_ctext: a text squeezed into its box) */
+static inline int32_t glyph_adv(const felucca_font_t *f, uint32_t gi)
+{
+    int32_t a = (int32_t)f->adv[gi] - (int32_t)cv_sq;
+    return a < 2 ? 2 : a;
+}
+
+/* text, alpha-blended over the canvas with colour c; returns the end x */
 static int32_t cv_text(int32_t x, int32_t y, const felucca_font_t *f, const char *s, uint16_t c)
 {
-    uint16_t ramp[16];
-    uint32_t r = c >> 11, g = (c >> 5) & 63u, b = c & 31u, a;
-    for (a = 0; a < 16u; a++)
-        ramp[a] = (uint16_t)(((r * a / 15u) << 11) | ((g * a / 15u) << 5) | (b * a / 15u));
     for (; *s; s++) {
         uint32_t gi = glyph(f, (uint8_t)*s), gx, gy, w, bpr;
         const uint8_t *gd;
@@ -152,9 +173,9 @@ static int32_t cv_text(int32_t x, int32_t y, const felucca_font_t *f, const char
                 uint32_t v = gd[gy * bpr + gx / 2u];
                 v = (gx & 1u) ? (v & 15u) : (v >> 4);
                 if (v)
-                    cv_pset(x - f->pad + (int32_t)gx, y + (int32_t)gy, ramp[v]);
+                    cv_blend(x - f->pad + (int32_t)gx, y + (int32_t)gy, c, v);
             }
-        x += f->adv[gi];
+        x += glyph_adv(f, gi);
     }
     return x;
 }
@@ -163,8 +184,21 @@ static int32_t text_w(const felucca_font_t *f, const char *s)
 {
     int32_t w = 0;
     for (; *s; s++)
-        w += f->adv[glyph(f, (uint8_t)*s)];
+        w += glyph_adv(f, glyph(f, (uint8_t)*s));
     return w;
+}
+
+/* text centred on cx, squeezed (up to 2 px a letter) to fit w; returns its left x */
+static int32_t cv_ctext(int32_t cx, int32_t y, int32_t w, const felucca_font_t *f, const char *s, uint16_t c)
+{
+    int32_t tw, x;
+    for (cv_sq = 0; cv_sq < 2u && text_w(f, s) > w; cv_sq++)
+        ;
+    tw = text_w(f, s);
+    x = cx - tw / 2;
+    cv_text(x, y, f, s, c);
+    cv_sq = 0;
+    return x;
 }
 
 /* one-shot: text in a box, cleared to black, blitted */

@@ -84,12 +84,12 @@ class FakeKeyboard {
 // the page in a sandbox: its elements, Web MIDI (the fake keyboard), fetch from build/site, confirm: yes
 async function run(identity, port, after, { midi = true, stale = false, ua = "", yes = true } = {}) {
   const els = {};
-  const el = (id) => els[id] || (els[id] = { id, textContent: "", value: 0, disabled: true, listeners: {},
-    addEventListener(t, f) { this.listeners[t] = f; } });
+  const el = (id) => els[id] || (els[id] = { id, textContent: "", value: 0, disabled: true, listeners: {}, dataset: {},
+    attrs: {}, addEventListener(t, f) { this.listeners[t] = f; }, setAttribute(k, v) { this.attrs[k] = v; } });
   const dev = new FakeKeyboard(identity, port, after);
   const asked = [];
   const ctx = {
-    document: { getElementById: el }, window: { addEventListener() {} }, console, setTimeout, clearTimeout, TextEncoder,
+    document: { getElementById: el }, window: { addEventListener() {} }, location: { search: "" }, URLSearchParams, console, setTimeout, clearTimeout, TextEncoder,
     Uint8Array, Promise, Error, Object, JSON, Math, Date, Map, Set, Array, String, parseInt,
     navigator: midi ? { userAgent: ua, requestMIDIAccess: async () => stale ? dev.snapshot() : dev.access } : { userAgent: ua },
     confirm: (q) => { asked.push(q); return yes; },
@@ -103,7 +103,7 @@ async function run(identity, port, after, { midi = true, stale = false, ua = "",
   vm.runInContext(script + "\n;globalThis.__lib = { pack7, unpack7, logicalImage, productOf };", ctx);
   dev.lib = ctx.__lib;
   if (!midi) return { els };
-  const pkgName = identity.startsWith("FM-1") ? "orgigs-dev.fwsc" : "orgigs-dev-smk37-elite.fwsc";
+  const pkgName = identity.startsWith("FM-1") ? "orgigs-dev.fwsc" : identity.startsWith("SMK-37 Pro") ? "orgigs-dev-smk37-pro.fwsc" : "orgigs-dev-smk37-elite.fwsc";
   dev.image = ctx.__lib.logicalImage(new Uint8Array(readFileSync(join(SITE, "firmware", pkgName))));
   await els.go.listeners.click();
   return { els, dev, asked };
@@ -133,8 +133,16 @@ ok(/^Done/.test(mig.els.status.textContent) && mig.asked.length === 1 && /Elite_
   "OrGigs 1.0.1 and older (97N, zp12's number): updated to 674XYZ after one question");
 const fm1 = await run("FM-1_015", "FM-1", "FM-1_674000");
 ok(/^Done/.test(fm1.els.status.textContent) && fm1.dev.bad === 0, "an FM-1: gets the FM-1 package");
+ok(/Elite_At_a_glance/.test(elite.els.sheet.src) && elite.els["tab-elite"].attrs["aria-pressed"] === "true"
+    && /FM-1_At_a_glance/.test(fm1.els.sheet.src) && /FM-1_Manual/.test(fm1.els.manpdf.href)
+    && fm1.els["tab-fm1"].attrs["aria-pressed"] === "true", "the at-a-glance sheet follows the keyboard found (Elite, FM-1)");
 const pro = await run("SMK-37 Pro_016", "SMK-37 Pro", "SMK-37 Pro_674000");
-ok(/no OrGigs package/.test(pro.els.status.textContent) && pro.dev.served === 0, "an SMK-37 Pro: no package, nothing written");
+ok(/^Done/.test(pro.els.status.textContent) && pro.dev.bad === 0 && pro.asked.length === 1 && /not tested/.test(pro.asked[0]),
+    "an SMK-37 Pro: asked once (untested), gets the Pro package");
+const prono = await run("SMK-37 Pro_016", "SMK-37 Pro", "SMK-37 Pro_674000", { yes: false });
+ok(prono.dev.served === 0, "an SMK-37 Pro, the question answered no: nothing written");
+const mke = await run("MKE-P37_016", "MKE-P37", "MKE-P37_674000");
+ok(/no OrGigs package/.test(mke.els.status.textContent) && mke.dev.served === 0, "an MKE-P37: no package, nothing written");
 const old = await run("SMK-37 Elite_015", "SMK-37 Elite", "SMK-37 Elite_674000");
 ok(/older than V016/.test(old.els.status.textContent) && old.dev.served === 0, "an Elite on stock firmware before V016: refused, nothing written");
 const wrong = await run("SMK-37 Elite_016", "SMK-37 Elite", "SMK-37 Elite_016");

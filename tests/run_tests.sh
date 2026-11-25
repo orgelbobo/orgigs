@@ -21,6 +21,11 @@ run "SMK-37 app on the host: the demo" env BOARD=smk37 sh tests/run_host.sh test
 run "SMK-37 Elite panel: the keys only play; setups, cloner, harmonic on the pads; the MIDI area" python3 tests/elite_test.py
 run "parameter table (core/orgigs_params.c): docs/PARAMETERS.md is what it gives" python3 tools/params_doc.py --check
 run "FM-1 INSERT and MASTER: the effect on its manual only, the WAH's pedal from CC 1, the compressor, saved when silent" python3 tests/fm1_fx_test.py
+sus_in() {   # SUS IN off: C4 ends at its key-up (1200 ms); on (SEL + PLAY): it ends with the CC 64 0 (2300 ms), not before
+    o=$(sh tests/run_host.sh tests/sus_in.txt 2>/dev/null | grep "MIDI out 80  60")
+    echo "$o" | grep -q "^ *1200 ms" && echo "$o" | grep -q "^ *2300 ms" && ! echo "$o" | grep -q "^ *22[0-9][0-9] ms" && echo "ok    SUS IN"
+}
+run "FM-1 SUS IN (ZONE, SEL + PLAY): a sustain coming in holds the FM-1's keys" sus_in
 
 $CC -DBOARD_SMK37=1 -Ifirmware/hal -o "$OUT/smk_flash_test" tests/smk_flash_test.c
 run "SMK-37 flash map: settings, blobs, owner tag, slots in the store; never the head, BTIF/USRTRIM, USR, key_mac" "$OUT/smk_flash_test"
@@ -64,8 +69,11 @@ done
 
 run "installer (tools/fm1_install.py): FM-1 and SMK-37, install and the update-mode resume check the model" python3 tests/install_test.py
 run "settings backup (core/orgigs_backup.c, tools/orgigs_backup.py): send, load with the undo, one setup, keep, damaged" python3 tests/backup_test.py
+if git rev-parse -q --verify v1.1 >/dev/null 2>&1; then
+    run "an update keeps the settings: 1.1's flash in this build, FM-1 and Elite (tests/settings_compat.py)" python3 tests/settings_compat.py
+fi
 run "YST (core/orgigs_yst.c): the SEQTRAK found, its tracks, sounds, knobs; the Elite's bank YST with pickup" python3 tests/yst_test.py
-if [ -f build/orgigs_fm1.fwsc ] && [ -f build/orgigs_fm1-smk37-elite.fwsc ] && command -v node >/dev/null 2>&1; then
+if [ -f build/orgigs_fm1.fwsc ] && [ -f build/orgigs_fm1-smk37-elite.fwsc ] && [ -f build/orgigs_fm1-smk37.fwsc ] && command -v node >/dev/null 2>&1; then
     run "site (tools/make_site.py) and its web installer against a simulated Elite / FM-1" \
         sh -c 'python3 tools/make_site.py >/dev/null && node tests/web_test.mjs'
 else
