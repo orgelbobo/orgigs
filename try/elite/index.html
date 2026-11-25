@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OrGigs Elite Simulator</title>
+<style>
+  :root {
+    --bg: #131417; --panel: #1f2026; --panel2: #2b2c33; --line: #3a3b45; --txt: #e6e6ea; --mut: #8c8d99;
+    --acc: #f2a51d; --on: #28c878; --led: #ff4a3a; --key: #ecebe4; --keyb: #18181c;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--txt); font: 14px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 1680px; margin: 0 auto; padding: 16px; }
+  header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px; margin-bottom: 12px; }
+  header h1 { font-size: 20px; margin: 0; letter-spacing: .04em; }
+  header .sub { color: var(--mut); }
+  header a { color: var(--mut); }
+  #start { margin-left: auto; background: var(--acc); color: #000; border: 0; border-radius: 6px; padding: 8px 14px; font-weight: 600; cursor: pointer; }
+  #start.running { background: var(--on); }
+
+  .device { background: linear-gradient(#232429, #19191d); border: 1px solid var(--line); border-radius: 16px; padding: 18px 18px 14px; overflow: hidden; }
+  .deck, .kbwrap { transform-origin: 0 0; }
+  .deck { display: grid; grid-template-columns: 150px auto auto auto; gap: 22px; align-items: start; width: max-content; }
+  .lbl { font-size: 10px; color: var(--mut); letter-spacing: .06em; text-align: center; }
+
+  /* left block: banks, arrows, octave, wheels */
+  .left { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .wheels { grid-column: 1 / -1; display: flex; justify-content: space-around; margin-top: 10px; }
+  .wheel { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .wheel .slot { width: 34px; height: 150px; border-radius: 8px; background: #0d0d10; border: 1px solid var(--line); position: relative; touch-action: none; cursor: ns-resize; }
+  .wheel .thumb { position: absolute; left: 3px; right: 3px; height: 26px; border-radius: 5px;
+                  background: repeating-linear-gradient(#4a4b55 0 2px, #2c2d34 2px 5px); border: 1px solid #555; }
+
+  .btn { background: var(--panel2); border: 1px solid var(--line); border-radius: 5px; padding: 5px 2px 4px; text-align: center; cursor: pointer;
+         user-select: none; touch-action: none; position: relative; font-size: 10.5px; font-weight: 600; letter-spacing: .03em; min-height: 30px; }
+  .btn.down { background: #44454f; }
+  .btn .led { display: block; width: 18px; height: 3px; margin: 0 auto 3px; border-radius: 2px; background: #3a2725; }
+  .btn .led.on { background: var(--led); box-shadow: 0 0 6px var(--led); }
+  .btn .led.red.on { background: #ff2a2a; }
+
+  /* knobs and pads */
+  .mid { display: flex; flex-direction: column; gap: 10px; }
+  .knobs, .pads { display: grid; grid-template-columns: repeat(8, 58px); gap: 10px; }
+  .enc { display: flex; flex-direction: column; align-items: center; gap: 3px; user-select: none; }
+  .knob { width: 46px; height: 46px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #5a5a60 0, #2b2b31 60%, #1d1d22 100%);
+          border: 2px solid #44454f; position: relative; cursor: ns-resize; touch-action: none; }
+  .knob::after { content: ""; position: absolute; left: 50%; top: 4px; width: 3px; height: 12px; margin-left: -1.5px; background: var(--acc); border-radius: 2px;
+                 transform-origin: 50% 19px; transform: rotate(var(--rot, 0deg)); }
+  .knob:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+  .pad { width: 58px; height: 58px; border-radius: 6px; border: 1px solid #000; background: #26262b; position: relative; cursor: pointer;
+         user-select: none; touch-action: none; box-shadow: inset 0 0 0 1px #3c3c44; }
+  .pad span { position: absolute; left: 5px; top: 3px; font-size: 10px; color: #0008; font-weight: 600; mix-blend-mode: normal; }
+  .pad.dark span { color: #fff5; }
+  .pad.down { transform: scale(.95); }
+
+  /* screen */
+  .screenwrap { background: #000; padding: 8px; border-radius: 8px; border: 1px solid var(--line); }
+  canvas#lcd { display: block; width: 300px; height: 300px; image-rendering: pixelated; }
+  .scrstat { font-size: 11px; color: var(--mut); text-align: center; margin-top: 4px; font-variant-numeric: tabular-nums; }
+
+  /* faders + buttons */
+  .right { display: grid; grid-template-columns: repeat(6, 54px); gap: 8px; }
+  .fader { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .fader input { writing-mode: vertical-lr; direction: rtl; height: 150px; width: 30px; accent-color: var(--acc); }
+  .vel { grid-column: 5 / 7; display: flex; flex-direction: column; gap: 8px; font-size: 11px; color: var(--mut); }
+  .vel input[type=range] { width: 100%; accent-color: var(--acc); }
+  .vel .ped { display: flex; flex-direction: column; gap: 4px; }
+
+  .kbwrap { margin-top: 18px; }
+  .kb { position: relative; height: 130px; user-select: none; touch-action: none; margin: 0 auto; }
+  .wk, .bk { position: absolute; top: 0; border-radius: 0 0 5px 5px; cursor: pointer; }
+  .wk { height: 130px; background: var(--key); border: 1px solid #999; }
+  .bk { height: 80px; background: var(--keyb); border: 1px solid #000; z-index: 2; }
+  .wk.down { background: #ffd38a; } .bk.down { background: #a0702a; }
+  .wk .kl { position: absolute; bottom: 6px; width: 100%; text-align: center; font-size: 10px; color: #777; }
+
+  .meters { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; font-size: 12px; margin-top: 12px; }
+  .meter { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; }
+  .meter b { display: block; font-size: 16px; color: var(--txt); font-variant-numeric: tabular-nums; }
+  .meter span { color: var(--mut); }
+  .bar { height: 4px; background: #333; border-radius: 2px; margin-top: 4px; overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 0; background: var(--on); }
+  .row2 { display: grid; grid-template-columns: 1fr 1.2fr; gap: 16px; margin-top: 16px; }
+  section.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; min-width: 0; }
+  section.card h2 { font-size: 14px; margin: 0 0 8px; letter-spacing: .04em; color: var(--acc); }
+  .midiio { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .midiio select, .midiio button { background: var(--panel2); color: var(--txt); border: 1px solid var(--line); border-radius: 5px; padding: 4px 6px; max-width: 100%; }
+  #log { font: 12px/1.45 ui-monospace, Menlo, Consolas, monospace; height: 220px; overflow: auto; background: #111216; border-radius: 6px; padding: 6px 8px; white-space: pre; }
+  #log .ch { display: inline-block; min-width: 3.2em; color: #000; border-radius: 3px; padding: 0 4px; margin-right: 6px; text-align: center; }
+  table.help { width: 100%; border-collapse: collapse; font-size: 12px; }
+  table.help td { padding: 3px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  table.help td:first-child { color: var(--acc); white-space: nowrap; font-weight: 600; }
+  .note { color: var(--mut); font-size: 12px; margin-top: 8px; }
+  kbd { background: var(--panel2); border: 1px solid var(--line); border-radius: 3px; padding: 0 4px; font-size: 11px; }
+  @media (max-width: 900px) { .row2 { grid-template-columns: 1fr; } .meters { grid-template-columns: repeat(2, 1fr); } }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>ORGIGS ELITE</h1>
+    <span class="sub">the Elite firmware, compiled to WebAssembly — <a href="../">FM-1 simulator</a></span>
+    <button id="start">Start audio</button>
+  </header>
+
+  <div class="device">
+    <div class="deck">
+      <div class="left" id="left">
+        <div class="wheels">
+          <div class="wheel"><div class="slot" id="pw"><div class="thumb"></div></div><div class="lbl">PITCH</div></div>
+          <div class="wheel"><div class="slot" id="mw"><div class="thumb"></div></div><div class="lbl">MOD</div></div>
+        </div>
+      </div>
+      <div class="mid">
+        <div class="knobs" id="knobs"></div>
+        <div class="pads" id="pads"></div>
+        <div class="lbl">PADS: top row 1–8, bottom row 9–16 · Shift + click a pad: velocity 127</div>
+      </div>
+      <div>
+        <div class="screenwrap"><canvas id="lcd" width="240" height="240"></canvas></div>
+        <div class="scrstat" id="scrstat"></div>
+      </div>
+      <div class="right" id="right">
+        <div class="vel">
+          <label>VELOCITY <b id="velv">100</b><input id="vel" type="range" min="1" max="127" value="100"></label>
+          <div class="ped">
+            <span>PEDAL SOCKET</span>
+            <div class="btn" id="sus">SUSTAIN<br><span style="font-weight:400;color:var(--mut)">hold</span></div>
+            <label>EXPRESSION <b id="expv">–</b><input id="exp" type="range" min="0" max="1023" value="0" disabled></label>
+            <label style="display:flex;gap:4px;align-items:center"><input type="checkbox" id="expOn"> expression pedal plugged in</label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="kbwrap"><div class="kb" id="kb"></div></div>
+  </div>
+
+  <div class="meters">
+    <div class="meter"><span>DSP load (this PC)</span><b id="m-load">–</b><div class="bar"><i id="m-loadbar"></i></div></div>
+    <div class="meter"><span>Output</span><b id="m-out">–</b><div class="bar"><i id="m-outbar"></i></div></div>
+    <div class="meter"><span>Keys held / generator layers</span><b id="m-gen">–</b></div>
+    <div class="meter"><span>MIDI out channels</span><b id="m-ch">–</b></div>
+  </div>
+
+  <div class="row2">
+    <section class="card">
+      <h2>MIDI</h2>
+      <div class="midiio">
+        <button id="midiOn">Enable Web MIDI</button>
+        <label>In <select id="midiIn"><option value="">—</option></select></label>
+        <label>Out <select id="midiOut"><option value="">—</option></select></label>
+        <button id="clearLog">Clear log</button>
+      </div>
+      <div id="log"></div>
+      <p class="note">The keys play C3–C6 with velocity; what they send depends on the zones (GLOBE). Incoming MIDI: ch 1 upper, ch 2 lower, ch 3 pedal by default.</p>
+    </section>
+    <section class="card">
+      <h2>Controls</h2>
+      <table class="help">
+        <tr><td>K1–K8</td><td>drawbars 1–8 of the focused manual; on the other screens the screen's eight values. Drag up/down, mouse wheel, or focus + arrow keys</td></tr>
+        <tr><td>F1 F2 F3 F4</td><td>drawbar 9 (up 0, down 8) · reverb send · MIDI out volume · volume (they pick up: move them to the value first)</td></tr>
+        <tr><td>Pads</td><td>layout A: the column under knob n, top pad drawbar to 0, bottom pad to 8. FADER BANK: the next layout A B1 B2 C D</td></tr>
+        <tr><td>KNOB BANK</td><td>the next manual UPPER → LOWER → PEDAL. With FADER BANK: HOME</td></tr>
+        <tr><td>&lt; &gt;</td><td>the drawbar list; SCALE + &lt; &gt;: the model (16); both held: K1 list, K2 model, K3 layout</td></tr>
+        <tr><td>SCALE</td><td>shift (<kbd>Shift</kbd> on the computer). SCALE + pad: setup 1–16, BT + pad: store it</td></tr>
+        <tr><td>FX · GLOBE · PARA</td><td>the FX pages · the MIDI screens · the mixer; again: back. ARP / PATCH: previous / next page</td></tr>
+        <tr><td>CHORD · N.RPT</td><td>chord memory · vibrato / tremulant</td></tr>
+        <tr><td>PLAY · REC</td><td>rotary brake · rotary slow ↔ fast</td></tr>
+        <tr><td>Wheels</td><td>pitch: bend (springs back); mod: rotary slow / fast (reeds: the bellows)</td></tr>
+        <tr><td>Computer keys</td><td><kbd>Z</kbd>…<kbd>M</kbd> C3–B3 (black: <kbd>S D G H J</kbd>), <kbd>Q</kbd>…<kbd>U</kbd> C4–B4 (black: <kbd>2 3 5 6 7</kbd>), <kbd>I</kbd>…<kbd>P</kbd> C5–E5 (black: <kbd>9 0</kbd>)</td></tr>
+      </table>
+      <p class="note">The full story is in the Elite manual. Settings are kept in this browser; the rotary cabinets, the effect and the master are not.</p>
+    </section>
+  </div>
+</main>
+<script src="orgigs_sim.js"></script>
+<script src="sim.js"></script>
+</body>
+</html>
